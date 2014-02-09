@@ -1,0 +1,149 @@
+webpipe
+=======
+
+webpipe is server and a set of tools which bridge the Unix shell and the web.
+You create files using the shell (or R interpreter, etc.), and they will be
+rendered in your browser.
+
+R usage
+-------
+
+The initial motivation was to show R plots in a browser, avoiding the remote
+X11 protocol in favor of HTTP.
+
+Setup:
+
+  $ sudo apt-get install inotify-tools
+
+This installs the "inotifywait" command, which emits notifications of new files
+in a directory.
+
+
+  $ ./run.sh webpipe 
+
+  $ webpipe serve
+  (creates a new session, e.g. /2014-02-07-a/
+
+  $ webpipe serve 2013-12-01  # serve an old session
+  $ webpipe serve downtime    # create a new named session and serve it
+    # inotifywait $dir | (file2html | serve)
+
+
+# TODO: need a better command
+
+  Visit http://localhost:8989/ in your browser.
+
+  $ R
+  ...
+  > source('webpipe.R')
+  >
+  > web.plot(c(1,2))
+  
+  The plot will be pushed to your browser via AJAX.  ggplot works easily as
+  well:
+  
+  > library(ggplot2)
+  > p = ggplot2(x, ...) + geom_bar()
+  > web.plot(p)
+
+
+
+# TODO: animated screenshot
+
+File Types
+----------
+
+
+- echo foo > ~/webpipe/src/foo.txt
+
+Suggest requests for
+
+
+Advanced Usage
+--------------
+
+The tools form a pipeline as follows:
+
+- R (or any other tools): write files into a directory
+
+- inotifywait - every time a new file appears in the directory, print its
+  filename to stdout
+
+- file2html - take the file and "render" it to HTML
+- write_files - write rendered files to a directory
+- wait_server - block on the next file in a sequence, to allow a "hanging GET"
+  to push the file to the browser
+
+- webpipe - main program that strings all these parts together.
+
+Usage:
+  $ ./run.sh serve
+
+  $ mkfifo pipe
+  $ webpipe render >pipe
+    # inotifywait $dir | file2html >pipe
+  $ webpipe serve-rendered <pipe
+    # read from pipe and serve
+
+
+# TODO: do this all in process?  Or does it matter?  I guess it's nicer for
+# usage reporting, etc.  Plumb file2html and webpipe together.
+
+TODO:
+
+For a remote work setup, you will normally have an inotifywait process and a
+webpipe process on the remote machine.  The webpipe process is a web server,
+and you view it from your local machine.
+
+An alternative configuration is to run the web server on the *local* machine.
+If you don't want a public HTTP server on the remote machine, you may prefer
+this setup (although it's more complicated).
+
+- on remote machine: inotify process piped to file2html process, which has its
+  stdout directed to a named pie
+- ssh from local to remote machine, reading from a named pipe
+- ssh stdout piped to webpipe process on local machine, which servers the
+  snippets.
+  
+usage:
+- On remote machine:   ./remote.sh print-parts
+- On local machine:     ssh ... | ./run.sh webpipe
+
+
+Latch Server
+------------
+
+include in the static HTML output
+
+latch.js
+
+webpipe refresh *.txt
+# listen to *.txt
+# and then when it hinges, you do ./build.sh  or Make?
+#  foo.txt -> make foo.html
+# and then it will POST to latch?  or change it to stdin, named pipe?
+#
+# the HTML waits on the latch
+# 
+
+
+while true;
+  inotifywait
+  local file=foo.html
+  make $file
+  curl http://localhost:8989/latch/$FILE?
+done
+
+# what if you change the style?  I guess you can just save the style, and then
+# save the file
+
+
+webpipe scroll
+webpipe serve
+
+
+
+
+
+
+

@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -o nounset
+
+Build() {
+  # TODO: build basis package
+  echo
+}
+
+
+export PYTHONPATH=~/hg/tnet/python:~/hg/json-template/python
+
+Test() {
+  set -o errexit
+  cd webpipe
+  ls *_test.py | awk '{ print "./" $0 }' | sh -x -e
+  echo PASS
+}
+
+# TODO:
+# - usage-address.txt should be set
+
+Deploy() {
+  # copy basis package somewhere?
+  echo
+}
+
+"$@"
+

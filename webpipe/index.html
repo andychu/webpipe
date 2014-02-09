@@ -1,0 +1,77 @@
+<html>
+  <head>
+    <title>Web Roll</title>
+
+    <script type='text/javascript'
+            src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js">
+    </script>
+
+    <script type="text/javascript">
+      function waitForPart(i) {
+        //$('#roll-status').text("Waiting for change");
+
+        // NOTE: must be a URL relative (to /my-session/)
+        var partUrl = i + '.html';
+
+        // NOTE: To be extendable, the response could be JSON:
+        // { "contents": ..., "id": ...}
+        // But we're not doing that so it works with a static web server.
+
+        $.ajax({
+            url: partUrl,
+            type: 'GET',
+            success: function(data){
+                $('#roll-status').text("got response " + i);
+
+                // TODO: How to make it roll to the bottom?
+
+                $('#roll').append('<p>');
+                $('#roll').append(data);
+                $('#roll').append('</p>');
+                var anchor = i + '.html';
+                var linkStr = '<p align="right"><a href="' + partUrl + '">'
+                              + anchor + '</a></p>';
+                $('#roll').append(linkStr);
+                $('#roll').append('<hr />');
+
+                // http://stackoverflow.com/questions/4249353/jquery-scroll-to-bottom-of-the-page
+                $("html, body").animate({ scrollTop: $(document).height() }, 500);
+
+                waitForPart(i+1);
+            },
+            error: function(jqXhr, textStatus, errorThrown) {
+              // Show error from the server.
+              $('#roll-status').text(
+                "error contacting " + partUrl + ": " + jqXhr.responseText);
+            }
+        });
+      }
+
+    waitForPart(1);
+
+  </script>
+
+  <style>
+    #roll-status {
+      background-color: #F0F0F0;
+    }
+  </style>
+
+  </head>
+  <body>
+    <p>
+      <a href="..">back</a>
+    </p>
+
+    <h3>Web Roll</h3>
+
+    <!-- timer would be cool here -->
+    <p id="roll-status">Waiting for part...</p>
+    <hr />
+
+    <div id="roll">
+    </div>
+
+  </body>
+</html>
+
