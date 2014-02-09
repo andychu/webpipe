@@ -1,0 +1,59 @@
+TODO
+
+- Copy latch server from Poly, and use the same static server pattern as
+  webpipe.  I think latch should be a separate server for now.  If people care
+  about auth, they could make an App file.  But we also want to be compatible
+  with other servers.
+
+  - have a latch for each filename.
+
+  Usage:
+  
+  $ latch _tmp/doc
+
+  # starts the server
+
+- The server should take comments like this:
+
+  <head>
+    ...
+  <!-- INSERT LATCH JS -->
+    ...
+  </head>
+
+  <body>
+    <div id="latch-status"></div>
+  </body>
+
+The JSON Template should have this comment in the <head> section, so that all
+docs have it.
+
+
+- Write a shell script like file-latch.sh
+
+  It should take a hook, like
+  
+  file-latch.sh doc.sh *.txt
+
+  Any time a .txt file is changed, then it will do the following:
+  
+  1) call out to 
+  
+  $ doc.sh index.txt
+  
+  Which can all make if it wants, but often a shell script will suffice.
+
+  2) unhook the latch
+    - should I curl it, or write to a pipe, reading from stdin?
+    stdin is more
+
+
+- Test the cases of:
+
+  1) directly editing HTML
+  2) editing .txt, having it built, and writng .html to _tmp
+
+  I think you need two inotifywait processes.  One for txt, and one for HTML.
+
+
+
