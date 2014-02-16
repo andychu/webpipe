@@ -127,10 +127,8 @@ class WaitingRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
   def translate_path(self, path):
       """Translate a /-separated PATH to the local filename syntax.
 
-      Components that mean special things to the local file system
-      (e.g. drive or directory names) are ignored.  (XXX They should
-      probably be diagnosed.)
-
+      NOTE: This is copied from Python stdlib SimpelHTTPServer.py, and we
+      change os.getcwd() to self.root_dir.
       """
       # abandon query parameters
       path = path.split('?',1)[0]
