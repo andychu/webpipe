@@ -37,6 +37,9 @@ print-files() {
 check-tools() {
   which inotifywait >/dev/null \
     || die "inotifywait must be installed (sudo apt-get install inotifytools)."
+
+  which which >/dev/null \
+    || die "curl must be installed (sudo apt-get install curl)."
 }
 
 # Wait on the first change to a group of files by vim.
@@ -63,21 +66,37 @@ _monitor-vim() {
 #
 # some files are for rebuilding, some are for serving?
 
+# if there is no build process, then just use "true" ?  or maybe cp?
+
+
+#readonly LATCH_HOST=localhost:8990
+readonly LATCH_HOST=localhost:1212
 
 rebuild() {
-  local command=$1
+  local build_cmd=$1
   shift
-  log "command $command"
+  log "build_cmd $build_cmd"
 
   check-tools
 
   while true; do
-    local file=$(wait-vim "$@")
+    # Wait for a changed file
+    local changed=$(wait-vim "$@")
 
-    # Run command
+    log "changed $changed"
 
-    $command $file
-    echo $file
+    local rel_output="$(basename $changed).html"
+
+    # TODO: need better path manipulation
+    local output=_tmp/$rel_output
+
+    log "output $output"
+
+    # Rebuild
+    $build_cmd $changed $output
+
+    # Release latch so that the page is refreshed.
+    curl --verbose --request POST http://$LATCH_HOST/latch/$rel_output
   done
 }
 
