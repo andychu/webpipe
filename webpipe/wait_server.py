@@ -56,15 +56,8 @@ class ThreadedHTTPServer(SocketServer.ThreadingMixIn,
   pass
 
 
-class WaitingRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+class BaseRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
   """
-  differences:
-  - block on certain paths
-  - don't always serve in the current directory, let the user do it.
-  - daemon threads so we don't block the process
-  - what about cache headers?  I think I saw a bug where the browser would
-    cache instead of waiting.
-
   NOTE: The structure of Python's SimpleHTTPServer / BaseHTTPServer is quite
   bad.  But we are reusing it for now, since it is built in to the standard
   library, and it gives "Apache-like" static serving semantics.
@@ -72,14 +65,41 @@ class WaitingRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
   If we end up having to hack this up too much, it might be worth it to write
   our own (or at least copy and modify that code, rather than this fragile
   inheritance.
-
-  How to pass it the queue?
-
   """
   server_version = "WebPipe"
   root_dir = None
+
+  def translate_path(self, path):
+      """Translate a /-separated PATH to the local filename syntax.
+
+      NOTE: This is copied from Python stdlib SimpelHTTPServer.py, and we
+      change os.getcwd() to self.root_dir.
+      """
+      # abandon query parameters
+      path = path.split('?',1)[0]
+      path = path.split('#',1)[0]
+      path = posixpath.normpath(urllib.unquote(path))
+      words = path.split('/')
+      words = filter(None, words)
+      path = self.root_dir  # note: class variable
+      for word in words:
+          drive, word = os.path.splitdrive(word)
+          head, word = os.path.split(word)
+          if word in (os.curdir, os.pardir): continue
+          path = os.path.join(path, word)
+      return path
+
+
+class WaitingRequestHandler(BaseRequestHandler):
+  """
+  differences:
+  - block on certain paths
+  - don't always serve in the current directory, let the user do it.
+  - daemon threads so we don't block the process
+  - what about cache headers?  I think I saw a bug where the browser would
+    cache instead of waiting.
+  """
   waiters = None
-  session = None
 
   def send_webpipe_index(self):
     self.send_response(200)
@@ -124,25 +144,6 @@ class WaitingRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       self.copyfile(f, self.wfile)
       f.close()
 
-  def translate_path(self, path):
-      """Translate a /-separated PATH to the local filename syntax.
-
-      NOTE: This is copied from Python stdlib SimpelHTTPServer.py, and we
-      change os.getcwd() to self.root_dir.
-      """
-      # abandon query parameters
-      path = path.split('?',1)[0]
-      path = path.split('#',1)[0]
-      path = posixpath.normpath(urllib.unquote(path))
-      words = path.split('/')
-      words = filter(None, words)
-      path = self.root_dir  # note: class variable
-      for word in words:
-          drive, word = os.path.splitdrive(word)
-          head, word = os.path.split(word)
-          if word in (os.curdir, os.pardir): continue
-          path = os.path.join(path, word)
-      return path
 
 
 WAIT_OK, WAIT_TOO_BIG, WAIT_TOO_BUSY = range(3)

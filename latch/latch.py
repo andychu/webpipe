@@ -6,12 +6,16 @@ Latch server (based on code from polyweb repo).
 """
 
 import optparse
+import re
+import os
 import sys
 import threading
 
 import templates
 from webpipe import wait_server  # temporary
 from webpipe import common
+
+import jsontemplate
 
 log = common.log
 
@@ -99,6 +103,56 @@ def CreateOptionsParser():
   return parser
 
 
+HOME_PAGE = jsontemplate.Template("""\
+<h3>latch</h3>
+
+{.repeated section sessions}
+  <a href="{@|htmltag}">{@}</a> <br/>
+{.end}
+""", default_formatter='html')
+
+
+LATCH_PATH_RE = re.compile(r'/latch/(\S+)$')
+
+class LatchRequestHandler(wait_server.BaseRequestHandler):
+  """
+  Notify latches
+  """
+  server_version = "Latch"
+  latches = None
+
+  def send_index(self):
+    self.send_response(200)
+    self.send_header('Content-Type', 'text/html')
+    self.end_headers()
+    
+    # Session are saved on disk; allow the user to choose one.
+
+    dirs = os.listdir(self.root_dir)
+    dirs.sort(reverse=True)
+    html = HOME_PAGE.expand({'sessions': dirs})
+    self.wfile.write(html)
+
+  def do_GET(self):
+    """Serve a GET request."""
+
+    if self.path == '/':
+      self.send_index()
+      return
+
+    m = LATCH_PATH_RE.match(self.path)
+    if m:
+      latch = m.group(1)
+      log('LATCH', latch)
+
+    # Serve static file.
+
+    f = self.send_head()
+    if f:
+      self.copyfile(f, self.wfile)
+      f.close()
+
+
 def main(argv):
   """Returns an exit code."""
 
@@ -112,7 +166,13 @@ def main(argv):
   #   - except this filters self.wfile
   #   - <!-- INSERT LATCH JS -->
 
-  s = wait_server.WaitServer('', opts.port, opts.root_dir, None)
+  latches = {}
+
+  handler_class = LatchRequestHandler
+  handler_class.root_dir = opts.root_dir
+  handler_class.latches = latches
+
+  s = wait_server.WaitServer('', opts.port, handler_class)
 
   #log("Serving on port %d... (Ctrl-C to quit)", opts.port)
   s.Serve()
