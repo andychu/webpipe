@@ -114,7 +114,9 @@ class Latches(object):
     """Returns whether the named latch was successfully notified."""
     event = self.latches.get(name)
     if event:
-      event.notify()
+      event.set()
+      # Reset the flag so we can wait again.
+      event.clear()
       return True
     else:
       return False
@@ -177,6 +179,13 @@ class LatchRequestHandler(wait_server.BaseRequestHandler):
 
     self.wfile.write(body)
 
+  def send_404(self, msg):
+    self.send_response(404)
+    self.send_header('Content-Type', 'text/plain')
+    self.end_headers()
+
+    self.wfile.write(msg + '\n')
+
   def do_GET(self):
     """Serve a GET request."""
 
@@ -196,7 +205,7 @@ class LatchRequestHandler(wait_server.BaseRequestHandler):
     m = LATCH_PATH_RE.match(self.path)
     if m:
       name = m.group(1)
-      log('LATCH %s', name)
+      log('GET LATCH %s', name)
 
       # wait on or create the latch
       self.latches.Wait(name)
@@ -211,6 +220,24 @@ class LatchRequestHandler(wait_server.BaseRequestHandler):
     if f:
       self.copyfile(f, self.wfile)
       f.close()
+
+  def do_POST(self):
+    """Serve a POST request."""
+    m = LATCH_PATH_RE.match(self.path)
+    if not m:
+      self.send_404('invalid resource %r' % self.path)
+      return
+
+    name = m.group(1)
+    log('POST LATCH %s', name)
+
+    success = self.latches.Notify(name)
+    log('success %s', success)
+
+    if success:
+      self.send_content('text/plain', 'notified %r\n' % name)
+    else:
+      self.send_404('no latch named %r' % name)
 
 
 def main(argv):
@@ -233,7 +260,7 @@ def main(argv):
   #   - except this filters self.wfile
   #   - <!-- INSERT LATCH JS -->
 
-  latches = {}
+  latches = Latches()
 
   d = os.path.dirname(sys.argv[0])
   path = os.path.join(d, 'latch.js')

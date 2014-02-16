@@ -71,8 +71,7 @@ _monitor-vim() {
 # if there is no build process, then just use "true" ?  or maybe cp?
 
 
-#readonly LATCH_HOST=localhost:8990
-readonly LATCH_HOST=localhost:1212
+readonly LATCH_HOST=localhost:8990
 
 rebuild() {
   local build_cmd=$1
@@ -127,6 +126,11 @@ watch() {
 serve() {
   export PYTHONPATH=.:~/hg/json-template/python
   $THIS_DIR/latch.py "$@"
+}
+
+notify() {
+  local name=$1
+  curl --verbose --request POST http://$LATCH_HOST/-/latch/$name
 }
 
 "$@"
