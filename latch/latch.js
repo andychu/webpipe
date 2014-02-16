@@ -1,9 +1,9 @@
 // Continuously get from a latch.  Depends on jQuery.
 
-function waitForLatch() {
+function waitForLatch(name) {
   //$('#latch-status').text("Waiting for change");
 
-  var url = '/HOST/latch/default';
+  var url = '/-/latch/' + name;
 
   $.ajax({
       url: url,
@@ -20,4 +20,6 @@ function waitForLatch() {
   });
 }
 
-waitForLatch();
+// TODO: get doc name
+waitForLatch('README.html');
+

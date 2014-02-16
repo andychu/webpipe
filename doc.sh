@@ -11,6 +11,11 @@ main() {
   cat >$out <<EOF
 <html>
   <head>
+    <!-- TODO: load this only if it's not already loaded? -->
+    <script type='text/javascript'
+            src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js">
+    </script>
+
 <!-- INSERT LATCH JS -->
   </head>
   <body>
