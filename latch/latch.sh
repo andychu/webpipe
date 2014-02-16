@@ -30,13 +30,20 @@ print-files() {
   #inotifywait --monitor --quiet --event close_write "$@"
 }
 
-# print files changed by vim
+# Wait on the first change to a group of files by vim.
 #
 # NOTE: This has to be a list of files, like *.txt.  Directories would require
 # a different %w format.
 
-print-vim-files() {
+wait-vim() {
   inotifywait --quiet --format '%w' --event move_self "$@"
+}
+
+# NOTE: This does NOT work, because the watch is set on a file, and then it
+# BECOMES a different file.  wait-vim in a loop is what we want.
+
+_monitor-vim() {
+  inotifywait --monitor --format '%w' --event move_self "$@"
 }
 
 watch() {
