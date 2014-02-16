@@ -7,6 +7,8 @@
 
 set -o nounset
 
+readonly THIS_DIR=$(dirname $(readlink -f $0))
+
 log() {
   echo 1>&2 "$@"
 }
@@ -120,6 +122,10 @@ watch() {
     #curl -d X http://localhost:1212/HOST/latch/default
     echo
   done
+}
+
+serve() {
+  $THIS_DIR/latch.py "$@"
 }
 
 "$@"
