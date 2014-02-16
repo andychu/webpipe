@@ -128,5 +128,14 @@ write-demo() {
   echo 'file with unknown extension' > $dest/other.other
 }
 
+#
+# Latch
+#
+
+
+latch-demo() {
+  latch/latch.sh rebuild ./doc.sh README
+}
+
 
 "$@"

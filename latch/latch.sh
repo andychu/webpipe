@@ -7,8 +7,12 @@
 
 set -o nounset
 
-die() {
+log() {
   echo 1>&2 "$@"
+}
+
+die() {
+  log "$@"
   exit 1
 }
 
@@ -30,12 +34,18 @@ print-files() {
   #inotifywait --monitor --quiet --event close_write "$@"
 }
 
+check-tools() {
+  which inotifywait \
+    || die "inotifywait must be installed (sudo apt-get install inotifytools)."
+}
+
 # Wait on the first change to a group of files by vim.
 #
 # NOTE: This has to be a list of files, like *.txt.  Directories would require
 # a different %w format.
 
 wait-vim() {
+  log "Watching $@"
   inotifywait --quiet --format '%w' --event move_self "$@"
 }
 
@@ -44,6 +54,31 @@ wait-vim() {
 
 _monitor-vim() {
   inotifywait --monitor --format '%w' --event move_self "$@"
+}
+
+# Rebuild in a loop.
+#
+# Should there be another loop to watch _tmp and notify the latch?  Or can it
+# be the same loop?
+#
+# some files are for rebuilding, some are for serving?
+
+
+rebuild() {
+  local command=$1
+  shift
+  log "command $command"
+
+  check-tools
+
+  while true; do
+    local file=$(wait-vim "$@")
+
+    # Run command
+
+    $command $file
+    echo $file
+  done
 }
 
 watch() {
