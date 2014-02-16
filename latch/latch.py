@@ -106,13 +106,13 @@ def CreateOptionsParser():
 HOME_PAGE = jsontemplate.Template("""\
 <h3>latch</h3>
 
-{.repeated section sessions}
+{.repeated section pages}
   <a href="{@|htmltag}">{@}</a> <br/>
 {.end}
 """, default_formatter='html')
 
 
-LATCH_PATH_RE = re.compile(r'/latch/(\S+)$')
+LATCH_PATH_RE = re.compile(r'/-/latch/(\S+)$')
 
 class LatchRequestHandler(wait_server.BaseRequestHandler):
   """
@@ -120,6 +120,7 @@ class LatchRequestHandler(wait_server.BaseRequestHandler):
   """
   server_version = "Latch"
   latches = None
+  latch_js = None
 
   def send_index(self):
     self.send_response(200)
@@ -128,16 +129,32 @@ class LatchRequestHandler(wait_server.BaseRequestHandler):
     
     # Session are saved on disk; allow the user to choose one.
 
-    dirs = os.listdir(self.root_dir)
-    dirs.sort(reverse=True)
-    html = HOME_PAGE.expand({'sessions': dirs})
+    pages = os.listdir(self.root_dir)
+    pages.sort(reverse=True)
+    html = HOME_PAGE.expand({'pages': pages})
     self.wfile.write(html)
+
+  def send_js(self, body):
+    self.send_response(200)
+    self.send_header('Content-Type', 'application/javascript')
+    self.end_headers()
+
+    self.wfile.write(body)
 
   def do_GET(self):
     """Serve a GET request."""
 
+    # NOTE:
+    # GET notifies?
+    # POST notifies?
+    # do_POST?
+
     if self.path == '/':
       self.send_index()
+      return
+
+    if self.path == '/-/latch.js':
+      self.send_js(self.latch_js)
       return
 
     m = LATCH_PATH_RE.match(self.path)
@@ -161,6 +178,13 @@ def main(argv):
   # TODO:
   # pass request handler map
   # - index
+  #   - list self.latches ?
+  #   - if you click, does it wait?
+  # /-/latch.js
+  # /-/latch/README.html
+  # /-/wait/
+  # /-/notify/  -- or do those come on stdin?  or POST?
+
   # - latch
   # - static
   #   - except this filters self.wfile
@@ -168,9 +192,15 @@ def main(argv):
 
   latches = {}
 
+  d = os.path.dirname(sys.argv[0])
+  path = os.path.join(d, 'latch.js')
+  with open(path) as f:
+    latch_js = f.read()
+
   handler_class = LatchRequestHandler
   handler_class.root_dir = opts.root_dir
   handler_class.latches = latches
+  handler_class.latch_js = latch_js
 
   s = wait_server.WaitServer('', opts.port, handler_class)
 
