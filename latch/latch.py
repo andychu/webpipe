@@ -5,8 +5,15 @@ latch.py
 Latch server (based on code from polyweb repo).
 """
 
+import optparse
 import sys
 import threading
+
+import templates
+from webpipe import wait_server  # temporary
+from webpipe import common
+
+log = common.log
 
 
 class Error(Exception):
@@ -71,10 +78,35 @@ class LatchApp(object):
     return {'body_data': data}
 
 
+def CreateOptionsParser():
+  parser = optparse.OptionParser('webpipe_main <action> [options]')
+
+  parser.add_option(
+      '-v', '--verbose', dest='verbose', default=False, action='store_true',
+      help='Write more log messages')
+  parser.add_option(
+      '--port', dest='port', type='int', default=8990,
+      help='Port to serve on')
+  parser.add_option(
+      '--num-threads', dest='num_threads', type='int', default=5,
+      help='Number of server threads, i.e. simultaneous connections.')
+
+  parser.add_option(
+      '--root-dir', dest='root_dir', type='str',
+      default='_tmp',
+      help='Directory to serve out of.')
+
+  return parser
+
+
 def main(argv):
   """Returns an exit code."""
-  print 'Hello from latch.py'
-  return 0
+
+  (opts, _) = CreateOptionsParser().parse_args(argv[2:])
+  s = wait_server.WaitServer('', opts.port, opts.root_dir, None)
+
+  #log("Serving on port %d... (Ctrl-C to quit)", opts.port)
+  s.Serve()
 
 
 if __name__ == '__main__':

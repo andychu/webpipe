@@ -125,6 +125,7 @@ watch() {
 }
 
 serve() {
+  export PYTHONPATH=.:~/hg/json-template/python
   $THIS_DIR/latch.py "$@"
 }
 
