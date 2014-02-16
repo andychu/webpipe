@@ -10,7 +10,7 @@
 
 
 # two scripts use TNET.
-export PYTHONPATH=~/hg/tnet/python:~/hg/json-template/python
+export PYTHONPATH=.:~/hg/tnet/python:~/hg/json-template/python
 
 log() {
   echo 1>&2 "$@"

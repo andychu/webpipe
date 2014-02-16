@@ -66,7 +66,7 @@ class BaseRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
   our own (or at least copy and modify that code, rather than this fragile
   inheritance.
   """
-  server_version = "WebPipe"
+  server_version = None
   root_dir = None
 
   def translate_path(self, path):
@@ -99,6 +99,7 @@ class WaitingRequestHandler(BaseRequestHandler):
   - what about cache headers?  I think I saw a bug where the browser would
     cache instead of waiting.
   """
+  server_version = "WebPipe"
   waiters = None
 
   def send_webpipe_index(self):

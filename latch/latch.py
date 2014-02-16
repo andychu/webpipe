@@ -82,6 +82,44 @@ class LatchApp(object):
     return {'body_data': data}
 
 
+class Latches(object):
+
+  def __init__(self, num_slots=5):
+    """
+    Args:
+      num_slots: Maximum number of simultaneous waiters.  We don't want to take
+          up all the threads in the server, so this is limited.
+    """
+    self.slots = threading.Semaphore(num_slots)
+    # threading.Condition()?  or Queue.Queue()?
+    # Simply dictionary
+    # when you get a GET, just do .get().  Block forever.
+    # when you get a POST, just do .put().
+    self.latches = {}
+    self.lock = threading.Lock()  # protect self.latches
+
+  def Wait(self, name):
+    assert isinstance(name, str) and len(name) > 0, name
+
+    with self.lock:  # don't want a race between checking and setting
+      event = self.latches.get(name)
+      if event is None:
+        event = threading.Event()
+        self.latches[name] = event
+
+    log('waiting on %r', name)
+    event.wait()
+
+  def Notify(self, name):
+    """Returns whether the named latch was successfully notified."""
+    event = self.latches.get(name)
+    if event:
+      event.notify()
+      return True
+    else:
+      return False
+
+
 def CreateOptionsParser():
   parser = optparse.OptionParser('webpipe_main <action> [options]')
 
@@ -127,16 +165,14 @@ class LatchRequestHandler(wait_server.BaseRequestHandler):
     self.send_header('Content-Type', 'text/html')
     self.end_headers()
     
-    # Session are saved on disk; allow the user to choose one.
-
     pages = os.listdir(self.root_dir)
     pages.sort(reverse=True)
     html = HOME_PAGE.expand({'pages': pages})
     self.wfile.write(html)
 
-  def send_js(self, body):
+  def send_content(self, content_type, body):
     self.send_response(200)
-    self.send_header('Content-Type', 'application/javascript')
+    self.send_header('Content-Type', content_type)
     self.end_headers()
 
     self.wfile.write(body)
@@ -154,15 +190,22 @@ class LatchRequestHandler(wait_server.BaseRequestHandler):
       return
 
     if self.path == '/-/latch.js':
-      self.send_js(self.latch_js)
+      self.send_content('application/javascript', self.latch_js)
       return
 
     m = LATCH_PATH_RE.match(self.path)
     if m:
-      latch = m.group(1)
-      log('LATCH', latch)
+      name = m.group(1)
+      log('LATCH %s', name)
+
+      # wait on or create the latch
+      self.latches.Wait(name)
+
+      self.send_content('text/plain', 'ok')
+      return
 
     # Serve static file.
+    # TODO: if it ends with HTML, search for <!-- INSERT LATCH JS -->
 
     f = self.send_head()
     if f:
