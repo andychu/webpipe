@@ -97,7 +97,7 @@ rebuild() {
     $build_cmd $changed $output
 
     # Release latch so that the page is refreshed.
-    curl --verbose --request POST http://$LATCH_HOST/latch/$rel_output
+    notify $rel_output
   done
 }
 

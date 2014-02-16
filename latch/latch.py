@@ -218,7 +218,14 @@ class LatchRequestHandler(wait_server.BaseRequestHandler):
 
     f = self.send_head()
     if f:
-      self.copyfile(f, self.wfile)
+      for line in f:
+        stripped = line.strip()
+        log('%r', stripped)
+        if stripped == '<!-- INSERT LATCH JS -->':
+          out = '<script src="latch.js"></script>'
+        else:
+          out = line
+        self.wfile.write(out)
       f.close()
 
   def do_POST(self):
