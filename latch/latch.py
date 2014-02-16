@@ -103,6 +103,15 @@ def main(argv):
   """Returns an exit code."""
 
   (opts, _) = CreateOptionsParser().parse_args(argv[2:])
+
+  # TODO:
+  # pass request handler map
+  # - index
+  # - latch
+  # - static
+  #   - except this filters self.wfile
+  #   - <!-- INSERT LATCH JS -->
+
   s = wait_server.WaitServer('', opts.port, opts.root_dir, None)
 
   #log("Serving on port %d... (Ctrl-C to quit)", opts.port)

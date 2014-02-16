@@ -226,7 +226,12 @@ def Serve(opts):
 
   # Serve from the same port that WriteFiles is writing to.
   waiters = {session_name: waiter}
-  s = wait_server.WaitServer('', opts.port, opts.out_dir, waiters)
+
+  handler_class = wait_server.WaitingRequestHandler
+  handler_class.root_dir = opts.out_dir
+  handler_class.waiters = waiters
+
+  s = wait_server.WaitServer('', opts.port, handler_class)
 
   log("Serving on port %d... (Ctrl-C to quit)", opts.port)
   s.Serve()

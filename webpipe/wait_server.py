@@ -200,34 +200,24 @@ class WaitServer(object):
   Wrapper to hide the SocketServer guts from the stdlib.  The OO structure
   there is messy and worth hiding.
   """
-  def __init__(self, host, port, root_dir, waiters):
+  def __init__(self, host, port, handler_class):
     """
     Args:
       waiters: dictionary of {name -> SequenceWaiter}
     """
-    self.host = host
     self.port = port
-    self.root_dir = root_dir
-    self.waiters = waiters
+    self.server = ThreadedHTTPServer((host, port), handler_class)
 
   def Serve(self):
-    host_port = (self.host, self.port)
-
-    # TODO: Add the current directory.  How hard is that?
-
-    handler_class = WaitingRequestHandler
-    handler_class.root_dir = self.root_dir  # this is so so lame
-    handler_class.waiters = self.waiters
-
     # NOTE: This doesn't use a thread pool or anything.  It will just start a new
     # thread for each request.  Since every thread will block waiting for the
     # next part of the scroll, you can create a huge number of threads just by
     # having a huge number of clients.  But since this is mainly a single-user
+    # server, it doesn't matter.
 
     # TODO: There's a still a Ctrl-C bug here, because I think the request
     # threads get blocked on the threading.Event().  Need to setDaemon() all
     # threads, including the ones that the web server makes.
 
-    s = ThreadedHTTPServer(host_port, handler_class)
     log('Serving on port %d', self.port)
-    s.serve_forever()
+    self.server.serve_forever()
