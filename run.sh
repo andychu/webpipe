@@ -133,6 +133,8 @@ write-demo() {
 #
 
 
+# for doc.sh, use Makefile perhaps?
+
 latch-demo() {
   latch/latch.sh rebuild ./doc.sh README
 }

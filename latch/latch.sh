@@ -35,7 +35,7 @@ print-files() {
 }
 
 check-tools() {
-  which inotifywait \
+  which inotifywait >/dev/null \
     || die "inotifywait must be installed (sudo apt-get install inotifytools)."
 }
 
