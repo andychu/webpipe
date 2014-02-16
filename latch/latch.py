@@ -222,7 +222,7 @@ class LatchRequestHandler(wait_server.BaseRequestHandler):
         stripped = line.strip()
         log('%r', stripped)
         if stripped == '<!-- INSERT LATCH JS -->':
-          out = '<script src="latch.js"></script>'
+          out = '<script src="latch.js"></script>\n'
         else:
           out = line
         self.wfile.write(out)
