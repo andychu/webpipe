@@ -12,7 +12,7 @@ import sys
 import threading
 
 import templates
-from webpipe import wait_server  # temporary
+from webpipe import httpd  # temporary
 from webpipe import common
 
 import jsontemplate
@@ -154,7 +154,7 @@ HOME_PAGE = jsontemplate.Template("""\
 
 LATCH_PATH_RE = re.compile(r'/-/latch/(\S+)$')
 
-class LatchRequestHandler(wait_server.BaseRequestHandler):
+class LatchRequestHandler(httpd.BaseRequestHandler):
   """
   Notify latches
   """
@@ -279,10 +279,10 @@ def main(argv):
   handler_class.latches = latches
   handler_class.latch_js = latch_js
 
-  s = wait_server.WaitServer('', opts.port, handler_class)
+  s = httpd.ThreadedHTTPServer(('', opts.port), handler_class)
 
-  #log("Serving on port %d... (Ctrl-C to quit)", opts.port)
-  s.Serve()
+  log("Serving on port %d... (Ctrl-C to quit)", opts.port)
+  s.serve_forever()
 
 
 if __name__ == '__main__':

@@ -18,12 +18,8 @@ Blocker()
 """
 
 import os
-import posixpath
 import re
-import sys
 import threading
-import time
-import urllib
 
 from common import log
 import httpd
