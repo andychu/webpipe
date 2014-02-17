@@ -20,6 +20,13 @@ function waitForLatch(name) {
   });
 }
 
-// TODO: get doc name
-waitForLatch('README.html');
+function getLatchName(path) {
+  // /README.html -> README.html
+  // TODO: what about index.html?
+  return path.substring(1);
+}
+
+// Each document has its own latch.
+var latchName = getLatchName(window.location.pathname);
+waitForLatch(latchName);
 
