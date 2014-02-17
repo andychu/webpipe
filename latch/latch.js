@@ -5,6 +5,7 @@ function waitForLatch(name) {
 
   var url = '/-/latch/' + name;
 
+  // TODO: use raw XHR to get rid of jQuery dependency.
   $.ajax({
       url: url,
       type: 'GET',

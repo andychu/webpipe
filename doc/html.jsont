@@ -1,0 +1,70 @@
+meta: []
+default-formatter: raw
+
+<!DOCTYPE HTML>
+
+[# A simple template for HTML docs]
+
+<html lang=en>
+
+<head>
+  <meta charset=utf-8>
+  <title>[title]</title>
+
+[.repeated section include-js]
+  <script type='text/javascript' src="[@|html-attr-value]"></script>
+[.end]
+
+[.section latch]
+  <script type='text/javascript'
+          src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js">
+  </script>
+  <script type="text/javascript" src="latch.js"></script>
+[.end]
+
+[.repeated section include-css]
+  <link rel="stylesheet" type="text/css"
+        href="[@|html-attr-value]" />
+[.end]
+
+[# This one lets you set the media attribute ]
+[.repeated section fancy-css]
+  <link rel="stylesheet" type="text/css"
+        href="[href|html-attr-value]" media="[media]" />
+[.end]
+</head>
+
+[# NOTE: id="content" is needed for the toc.js script]
+<body onload="[.section onload-js][@][.end]" id="content">
+
+[.section latch]
+  <p id="latch-status">Waiting for latch...</p>
+[.end]
+
+[.section home-anchor]
+  <p id="nav" style="text-align: right">
+    <a href=".">[@]</a>
+  </p>
+[.end]
+
+[body]
+
+[.section source-modtime]
+<hr/>
+<p><i>Last modified: [@|html]</i></p>
+[.end]
+
+[.section google-analytics-id]
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("[@]");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+[.end]
+</body>
+
+</html>
