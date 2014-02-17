@@ -10,42 +10,31 @@ default-formatter: raw
 <head>
   <meta charset=utf-8>
   <title>[title]</title>
+  <style>
+    #latch-status {
+      text-align: center;
+      color: grey;
+    }
 
-[.repeated section include-js]
-  <script type='text/javascript' src="[@|html-attr-value]"></script>
-[.end]
+    /* Make it skinny. */
+    body {
+      margin: 0 auto;
+      width: 80ex;
+      font-family: serif;
+    }
+    
+    /* Inline code */
+    code {
+      color: green;
+    }
+  </style>
 
-[.section latch]
-  <script type='text/javascript'
-          src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js">
-  </script>
-  <script type="text/javascript" src="latch.js"></script>
-[.end]
-
-[.repeated section include-css]
-  <link rel="stylesheet" type="text/css"
-        href="[@|html-attr-value]" />
-[.end]
-
-[# This one lets you set the media attribute ]
-[.repeated section fancy-css]
-  <link rel="stylesheet" type="text/css"
-        href="[href|html-attr-value]" media="[media]" />
-[.end]
-</head>
+  <!-- INSERT LATCH JS -->
 
 [# NOTE: id="content" is needed for the toc.js script]
 <body onload="[.section onload-js][@][.end]" id="content">
 
-[.section latch]
-  <p id="latch-status">Waiting for latch...</p>
-[.end]
-
-[.section home-anchor]
-  <p id="nav" style="text-align: right">
-    <a href=".">[@]</a>
-  </p>
-[.end]
+<p id="latch-status">Waiting for latch...</p>
 
 [body]
 
