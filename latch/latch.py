@@ -154,6 +154,16 @@ HOME_PAGE = jsontemplate.Template("""\
 
 LATCH_PATH_RE = re.compile(r'/-/latch/(\S+)$')
 
+# TODO: Rewrite latch.js using raw XHR, and get rid of jQuery.  This could
+# interfere with pages that have jQuery already.
+LATCH_HEAD = """\
+<script type='text/javascript'
+  src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js">
+</script>
+
+<script src="/-/latch.js"></script>
+"""
+
 class LatchRequestHandler(httpd.BaseRequestHandler):
   """
   Notify latches
@@ -221,7 +231,7 @@ class LatchRequestHandler(httpd.BaseRequestHandler):
       for line in f:
         stripped = line.strip()
         if stripped == '<!-- INSERT LATCH JS -->':
-          out = '<script src="/-/latch.js"></script>\n'
+          out = LATCH_HEAD
           log('replaced %r', stripped)
         else:
           out = line

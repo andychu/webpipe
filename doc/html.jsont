@@ -31,6 +31,8 @@ default-formatter: raw
 
   <!-- INSERT LATCH JS -->
 
+</head>
+
 [# NOTE: id="content" is needed for the toc.js script]
 <body onload="[.section onload-js][@][.end]" id="content">
 

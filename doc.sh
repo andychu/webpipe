@@ -7,16 +7,13 @@
 # depend on $PWD, so callers can cd.
 
 to-html() {
-  local name=$1
-  jsont doc/html.jsont > _tmp/$name-full.html
+  local out=$1
+  jsont doc/html.jsont > $out
 }
 
 make-dict() {
-  local name="$1"
-  # Add PULP_ variables from the environment, so that 'PULP_latch=1 poly build'
-  pin \
-    --title-tag=h1 \
-    _tmp/$name.html
+  local body_filename=$1
+  pin --title-tag=h1 $body_filename
 }
 
 main() {
@@ -24,30 +21,17 @@ main() {
   local out=$2
 
   echo "Building $in -> $out"
-  cat >$out <<EOF
-<html>
-  <head>
-    <!-- TODO: load this only if it's not already loaded? -->
-    <script type='text/javascript'
-            src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js">
-    </script>
 
-<!-- INSERT LATCH JS -->
-  </head>
-  <body>
-    <div id="latch-status">Waiting</div>
-EOF
+  local body=_tmp/$in-body.html
+  markdown $in >$body
 
-  markdown $in >>$out
+  ls -al $body
 
-  cat >>$out <<EOF
-  </body>
-</html>
-EOF
+  make-dict $body | to-html $out
 
   ls -al $out
 }
 
-#main "$@"
+main "$@"
 
-"$@"
+#"$@"
