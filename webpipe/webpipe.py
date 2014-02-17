@@ -20,6 +20,7 @@ import sys
 
 import common
 import file2html  # run in process
+import httpd
 import spy
 import wait_server
 
@@ -122,40 +123,6 @@ class Notify(object):
       self.waiter.Notify()
 
 
-def CreateOptionsParser():
-  parser = optparse.OptionParser('webpipe_main <action> [options]')
-
-  parser.add_option(
-      '-v', '--verbose', dest='verbose', default=False, action='store_true',
-      help='Write more log messages')
-  parser.add_option(
-      '-s', '--session', dest='session', type='str', default='',
-      help="Name of the session (by default it is based on today's date)")
-  parser.add_option(
-      '--port', dest='port', type='int', default=8989,
-      help='Port to serve on')
-  parser.add_option(
-      '--length', dest='length', type='int', default=1000,
-      help='Length of the scroll, i.e. amount of history to keep.')
-  parser.add_option(
-      '--num-threads', dest='num_threads', type='int', default=5,
-      help='Number of server threads, i.e. simultaneous connections.')
-
-  # argument to "file2html" is an input dir.  This is the output dir.
-
-  # scrolls go in the 's' dir
-  parser.add_option(
-      '--out-dir', dest='out_dir', type='str',
-      default=os.path.expanduser('~/webpipe/s'),
-      help='Base directory for scrolls')
-
-  # TODO:
-  # - merge options from other modules?  from file2html?
-  # - --stages flag?
-
-  return parser
-
-
 def SuffixGen():
   """Generate a readable suffix for a session name
 
@@ -231,10 +198,44 @@ def Serve(opts):
   handler_class.root_dir = opts.out_dir
   handler_class.waiters = waiters
 
-  s = wait_server.WaitServer('', opts.port, handler_class)
+  s = httpd.ThreadedHTTPServer(('', opts.port), handler_class)
 
   log("Serving on port %d... (Ctrl-C to quit)", opts.port)
-  s.Serve()
+  s.serve_forever()
+
+
+def CreateOptionsParser():
+  parser = optparse.OptionParser('webpipe_main <action> [options]')
+
+  parser.add_option(
+      '-v', '--verbose', dest='verbose', default=False, action='store_true',
+      help='Write more log messages')
+  parser.add_option(
+      '-s', '--session', dest='session', type='str', default='',
+      help="Name of the session (by default it is based on today's date)")
+  parser.add_option(
+      '--port', dest='port', type='int', default=8989,
+      help='Port to serve on')
+  parser.add_option(
+      '--length', dest='length', type='int', default=1000,
+      help='Length of the scroll, i.e. amount of history to keep.')
+  parser.add_option(
+      '--num-threads', dest='num_threads', type='int', default=5,
+      help='Number of server threads, i.e. simultaneous connections.')
+
+  # argument to "file2html" is an input dir.  This is the output dir.
+
+  # scrolls go in the 's' dir
+  parser.add_option(
+      '--out-dir', dest='out_dir', type='str',
+      default=os.path.expanduser('~/webpipe/s'),
+      help='Base directory for scrolls')
+
+  # TODO:
+  # - merge options from other modules?  from file2html?
+  # - --stages flag?
+
+  return parser
 
 
 def AppMain(argv):
