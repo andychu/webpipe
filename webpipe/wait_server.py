@@ -49,7 +49,7 @@ class WaitingRequestHandler(httpd.BaseRequestHandler):
   - what about cache headers?  I think I saw a bug where the browser would
     cache instead of waiting.
   """
-  server_version = "WebPipe"
+  server_version = "webpipe"
   waiters = None
 
   def send_webpipe_index(self):
