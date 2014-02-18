@@ -123,6 +123,9 @@ watch() {
   done
 }
 
+# TODO: There should be a 'latch run' command that does 'watch and 'serve'
+# together.  This is like 'webpipe run'.
+
 serve() {
   export PYTHONPATH=$(dirname $THIS_DIR)/common:~/hg/json-template/python
   $THIS_DIR/latch.py "$@"
