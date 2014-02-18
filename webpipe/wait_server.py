@@ -29,7 +29,7 @@ import jsontemplate
 
 
 HOME_PAGE = jsontemplate.Template("""\
-<h3>webpipe</h3>
+<h3>webpipe index</h3>
 
 {.repeated section sessions}
   <a href="{@|htmltag}">{@}</a> <br/>
