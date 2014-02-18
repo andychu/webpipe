@@ -24,7 +24,7 @@ readonly INPUT_DIR=~/webpipe/input
 
 check-tools() {
   local err="inotifywait not found.  Run 'sudo apt-get install inotify-tools'"
-  which inotifywait || die "$err"
+  which inotifywait >/dev/null || die "$err"
 }
 
 print-events() {
@@ -36,8 +36,9 @@ print-events() {
   # The filename is third token.  The fflush fixes buffering issues in awk
   # (like PYTHONUNBUFFERED does for Python).
 
-  inotifywait --monitor --quiet -e close_write $input_dir | awk '{print $3; fflush()}'
-  log "Watching $input_dir"
+  log "webpipe: Watching $input_dir"
+  inotifywait --monitor --quiet -e close_write $input_dir \
+    | awk '{print $3; fflush()}'
 }
 
 webpipe-main() {

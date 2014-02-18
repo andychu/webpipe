@@ -78,7 +78,7 @@ class WriteFiles(object):
   def __call__(self):
     i = 1
     while True:
-      log('disk thread waiting for %d', i)
+      #log('disk thread waiting for %d', i)
       record = self.in_q.get()
       #log('got %r', record)
 
@@ -200,7 +200,8 @@ def Serve(opts):
 
   s = httpd.ThreadedHTTPServer(('', opts.port), handler_class)
 
-  log("Serving on port %d... (Ctrl-C to quit)", opts.port)
+  # TODO: add opts.hostname?
+  log('Serving at http://localhost:%d/  (Ctrl-\ to quit)', opts.port)
   s.serve_forever()
 
 
