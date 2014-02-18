@@ -19,6 +19,22 @@ On a Debian/Ubuntu system, do:
 This installs the `inotifywait` tool, which notifies the server when a new file
 appears.
 
+(Optionally) put webpipe in your `PATH`, perhaps:
+
+    $ ln -s /path/to/webpipe/webpipe ~/bin
+
+Then do one-time initialization of your `~/webpipe` dir:
+
+    $ webpipe init
+
+<!--
+
+TODO: Make symlink in your bin dir?
+add /path/to/webpipe.R
+
+-->
+
+
 R Plots
 -------
 
