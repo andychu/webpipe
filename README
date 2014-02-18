@@ -2,65 +2,83 @@ webpipe
 =======
 
 webpipe is server and a set of tools which bridge the Unix shell and the web.
-You create files using the shell (or R interpreter, etc.), and they will be
-rendered in your browser.
+You create files in a terminal (using [R][], a shell script, etc.), and they
+will be rendered immediately in your browser.
 
-R usage
+It gets rid of the `Alt-Tab F5` dance when creating content.
+
+[R]: http://r-project.org/
+
+Setup
+-----
+
+On a Debian/Ubuntu system, do:
+
+    $ sudo apt-get install inotify-tools
+
+This installs the `inotifywait` tool, which notifies the server when a new file
+appears.
+
+R Plots
 -------
 
-The initial motivation was to show R plots in a browser, avoiding the remote
-X11 protocol in favor of HTTP.
+The initial motivation for webpipe was to show R plots in a browser, avoiding
+the remote X11 protocol in favor of HTTP.
 
-Setup:
+First start the server:
 
-  $ sudo apt-get install inotify-tools
+    $ webpipe serve
 
-This installs the "inotifywait" command, which emits notifications of new files
-in a directory.
-
-
-  $ ./run.sh webpipe 
-
-  $ webpipe serve
-  (creates a new session, e.g. /2014-02-07-a/
-
-  $ webpipe serve 2013-12-01  # serve an old session
-  $ webpipe serve downtime    # create a new named session and serve it
-    # inotifywait $dir | (file2html | serve)
-
-
-# TODO: need a better command
-
-  Visit http://localhost:8989/ in your browser.
-
-  $ R
-  ...
-  > source('webpipe.R')
-  >
-  > web.plot(c(1,2))
+This creates a new "session", e.g. `2014-02-17`.  It listens for files in the
+`~/webpipe/input` directory, and then renders them to HTML in the
+`~/webpipe/s/2014-02-17` directory.
   
-  The plot will be pushed to your browser via AJAX.  ggplot works easily as
-  well:
+Visit http://localhost:8989/ in your browser.
+
+Then in R, make a plot using the the wrapper functions in `webpipe.R`:
   
-  > library(ggplot2)
-  > p = ggplot2(x, ...) + geom_bar()
-  > web.plot(p)
+    $ R
+    ...
+    > source('/path/to/webpipe.R')
+    >
+    > web.plot(1:10)
+    
+Instead of opening up an desktop window, the plot will be pushed to your
+browser via AJAX.
+
+ggplot works easily as well:
+    
+    > library(ggplot2)
+    > p = ggplot(mtcars, aes(wt, mpg)) + geom_point()
+    > web.plot(p)
 
 
+<!--
+Advanced usage?
 
-# TODO: animated screenshot
+    $ webpipe serve 2013-12-01  # serve an old session
+    $ webpipe serve downtime    # create a new named session and serve it
+      # inotifywait $dir | (file2html | serve)
+  -->
+
+ 
+<!-- TODO: animated screenshot -->
+
 
 File Types
 ----------
 
+There renderer module is called `file2html`.  Right now it understands .png
+files, plain text, HTML, and CSV files.
 
-- echo foo > ~/webpipe/src/foo.txt
-
-Suggest requests for
-
+The goal is to add other file types, e.g. graphviz dot format.
 
 Advanced Usage
 --------------
+
+TODO ...
+
+<!--
 
 The tools form a pipeline as follows:
 
@@ -86,8 +104,8 @@ Usage:
     # read from pipe and serve
 
 
-# TODO: do this all in process?  Or does it matter?  I guess it's nicer for
-# usage reporting, etc.  Plumb file2html and webpipe together.
+- TODO: do this all in process?  Or does it matter?  I guess it's nicer for
+- usage reporting, etc.  Plumb file2html and webpipe together.
 
 TODO:
 
@@ -109,6 +127,11 @@ usage:
 - On remote machine:   ./remote.sh print-parts
 - On local machine:     ssh ... | ./run.sh webpipe
 
+-->
+
+
+
+<!-- 
 
 Latch Server
 ------------
@@ -141,6 +164,6 @@ done
 webpipe scroll
 webpipe serve
 
-
+-->
 
 
