@@ -124,7 +124,7 @@ watch() {
 }
 
 serve() {
-  export PYTHONPATH=.:~/hg/json-template/python
+  export PYTHONPATH=$(dirname $THIS_DIR)/common:~/hg/json-template/python
   $THIS_DIR/latch.py "$@"
 }
 

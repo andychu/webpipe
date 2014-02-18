@@ -12,12 +12,12 @@ import sys
 import threading
 
 import templates
-from webpipe import httpd  # temporary
-from webpipe import common
+import httpd  # common
+import util
 
 import jsontemplate
 
-log = common.log
+log = util.log
 
 
 class Error(Exception):

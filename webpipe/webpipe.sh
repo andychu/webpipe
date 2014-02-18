@@ -60,7 +60,7 @@ init() {
 }
 
 # TODO: package these together.  Or make a dev version.
-export PYTHONPATH=~/hg/tnet/python:~/hg/json-template/python
+export PYTHONPATH=$(dirname $THIS_DIR)/common:~/hg/tnet/python:~/hg/json-template/python
 
 # People can run this directly to render on a different host.
 file2html() {
