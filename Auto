@@ -2,9 +2,16 @@
 
 set -o nounset
 
-Build() {
+manifest() {
+  # TODO: Use deps in _tmp
+  export PYTHONPATH=.:~/hg/tnet/python:~/hg/json-template/python
   # TODO: build basis package
-  echo
+  py-deps webpipe.webpipe webpipe.file2html
+  echo webpipe/*.html webpipe/*.sh
+}
+
+Build() {
+  manifest | multi tar _tmp/webpipe.tar.gz
 }
 
 

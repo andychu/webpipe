@@ -139,5 +139,4 @@ latch-demo() {
   latch/latch.sh rebuild ./doc.sh README
 }
 
-
 "$@"

@@ -21,10 +21,12 @@ import os
 import re
 import threading
 
-from common import log
-import httpd
+from common import util
+from common import httpd
 
 import jsontemplate
+
+log = util.log
 
 
 

@@ -18,16 +18,17 @@ import time
 import string  # for lower case letters
 import sys
 
-import common
+from common import httpd
+from common import util
+
 import file2html  # run in process
-import httpd
 import spy
 import wait_server
 
 # outside
 import tnet
 
-log = common.log
+log = util.log
 
 
 class Error(Exception):
