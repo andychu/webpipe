@@ -7,7 +7,7 @@ manifest() {
   export PYTHONPATH=.:~/hg/tnet/python:~/hg/json-template/python
   # TODO: build basis package
   py-deps webpipe.webpipe webpipe.file2html
-  echo webpipe/*.html webpipe/*.sh
+  ls webpipe/*.html webpipe/*.sh
 }
 
 Build() {
