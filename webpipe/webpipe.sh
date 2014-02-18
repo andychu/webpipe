@@ -68,7 +68,8 @@ file2html() {
   $THIS_DIR/file2html.py $dir
 }
 
-serve() {
+# Run the whole pipeline.
+run() {
   local input_dir=${1:-~/webpipe/input}
   shift
 
