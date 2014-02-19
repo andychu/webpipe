@@ -15,6 +15,7 @@ import jsontemplate
 
 from common import httpd
 from common import util
+from common import spy
 
 import templates
 

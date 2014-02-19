@@ -19,9 +19,9 @@ import sys
 
 from common import httpd
 from common import util
+from common import spy
 
 import file2html  # run in process
-import spy
 import wait_server
 
 # outside
