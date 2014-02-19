@@ -8,6 +8,7 @@ manifest() {
   # TODO: build basis package
   py-deps webpipe.webpipe webpipe.file2html
   ls webpipe/*.html webpipe/webpipe.sh
+  ls webpipe.R
 }
 
 Build() {
