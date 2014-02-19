@@ -13,7 +13,7 @@ readonly THIS_DIR=$(dirname $(readlink -f $0))
 
 webpipe_dev=${WEBPIPE_DEV:-}
 if test -z "$webpipe_dev"; then
-  export PYTHONPATH=$THIS_DIR/..
+  export PYTHONPATH=$THIS_DIR
 fi
 
 log() {
@@ -58,7 +58,7 @@ init() {
 # People can run this directly to render on a different host.
 file2html() {
   local dir=$1
-  $THIS_DIR/file2html.py $dir
+  $THIS_DIR/webpipe/file2html.py $dir
 }
 
 # Run the whole pipeline.
@@ -72,7 +72,7 @@ run() {
 
   print-events $input_dir \
     | file2html $input_dir \
-    | $THIS_DIR/webpipe.py serve "$@"
+    | $THIS_DIR/webpipe/webpipe.py serve "$@"
 }
 
 "$@"
