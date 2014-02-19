@@ -2,9 +2,18 @@
 
 set -o nounset
 
+# Setup:
+# - Single source repo for webpipe/latch, for convenience, code sharing, etc.
+# - Two different basis packages?  Or one.
+#   - A single package can expose two executables: webpipe and latch.
+#   - And the webpipe.R library.
+# - A single set of documentation?  If it is versioned, that doesn't really
+# make that much sense.  But for now we won't bother versioning it.
+
+export PYTHONPATH=.:~/hg/tnet/python:~/hg/json-template/python
+
 manifest() {
   # TODO: Use deps in _tmp
-  export PYTHONPATH=.:~/hg/tnet/python:~/hg/json-template/python
   # TODO: build basis package
   py-deps webpipe.webpipe webpipe.file2html
   ls webpipe/*.html webpipe.R webpipe.sh
@@ -14,8 +23,6 @@ Build() {
   manifest | multi tar _tmp/webpipe.tar.gz
 }
 
-
-export PYTHONPATH=~/hg/tnet/python:~/hg/json-template/python
 
 Test() {
   set -o errexit
