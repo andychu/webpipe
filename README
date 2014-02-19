@@ -145,9 +145,7 @@ usage:
 Known Issues
 ------------
 
-- The server should be stopped with `Ctrl-\` now.  `Ctrl-C` won't work.  (This
-  is because of a Python threading issue, and should be fixed in a future
-  release.)
+- Error message on a session that is not "live" is a little ugly.
 
 Feedback
 --------

@@ -200,7 +200,7 @@ def Serve(opts, waiter):
   s = httpd.ThreadedHTTPServer(('', opts.port), handler_class)
 
   # TODO: add opts.hostname?
-  log('Serving at http://localhost:%d/  (Ctrl-\ to quit)', opts.port)
+  log('Serving at http://localhost:%d/  (Ctrl-C to quit)', opts.port)
   s.serve_forever()
 
 

@@ -30,7 +30,8 @@ class ThreadedHTTPServer(SocketServer.ThreadingMixIn,
   get blocked on the threading.Event().  Need to setDaemon() all threads,
   including the ones that the web server makes.
   """
-  pass
+  # override class variable in ThreadingMixIn.  This makes it so that Ctrl-C works.
+  daemon_threads = True
 
 
 class BaseRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
