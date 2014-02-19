@@ -32,7 +32,6 @@ class UsageReporter(object):
         # TODO: would getfqdn() be appropriate?  How does thiat work.
         'hostname': socket.gethostname(),
         'pid': os.getpid(),
-        'start-ts': time.time(),
         }
 
   def Send(self, msg):
@@ -56,11 +55,16 @@ class UsageReporter(object):
     self.Send(msg)
 
   def SendRecord(self, event, d):
-    """Send a JSON-encoded record with some standard data, e.g. PID."""
+    """Send a JSON-encoded record with some standard data.
+
+    Hostname and PID are send to uniquely identify the process.  local time is
+    calculated and sent.
+    """
     rec = dict(self.id_data)
     if d:
       rec.update(d)
     rec['ev'] = event  # type of event
+    rec['ts'] = time.time()
     self.SendDict(rec)
 
   # TODO:
