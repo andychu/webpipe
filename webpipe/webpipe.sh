@@ -53,11 +53,6 @@ print-events() {
 # Set up the default dir to watch.
 init() {
   mkdir --verbose -p $INPUT_DIR
-
-  # Make a convenience symlink, because it's easier to type
-  # source('~/webpipe/webpipe.R') in the R interpreter.
-  log "Making convenience symlink"
-  ln -s --force --verbose $(dirname $THIS_DIR)/webpipe.R ~/webpipe
 }
 
 # People can run this directly to render on a different host.

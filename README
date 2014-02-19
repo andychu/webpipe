@@ -21,7 +21,11 @@ appears.
 
 (Optionally) put webpipe in your `PATH`, perhaps:
 
-    $ ln -s /path/to/webpipe/webpipe ~/bin
+    $ ln -s /path/to/webpipe/webpipe.sh ~/bin
+
+And create a convenience symlink for the R library:
+
+    $ ln -s /path/to/webpipe/webpipe.R ~/webpipe
 
 Then do one-time initialization of your `~/webpipe` dir:
 
