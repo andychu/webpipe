@@ -9,6 +9,7 @@ threading.Event on the server.
 
 import datetime
 import errno
+import getpass
 import optparse
 import os
 import Queue
@@ -273,7 +274,7 @@ def main(argv):
 
   spy_client = spy.GetClientFromConfig()
 
-  d = {'argv': sys.argv}
+  d = {'argv': sys.argv, 'user': getpass.getuser()}
   spy_client.SendRecord('start', d)
 
   # TODO: also report unhandled exceptions.  The ones in the serving thread are
