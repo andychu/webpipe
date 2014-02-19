@@ -21,7 +21,7 @@ appears.
 
 (Optionally) put webpipe in your `PATH`, perhaps:
 
-    $ ln -s /path/to/webpipe/webpipe.sh ~/bin
+    $ ln -s /path/to/webpipe/webpipe.sh ~/bin/webpipe
 
 And create a convenience symlink for the R library:
 
@@ -148,6 +148,10 @@ Known Issues
   is because of a Python threading issue, and should be fixed in a future
   release.)
 
+Feedback
+--------
+
+Contact `__EMAIL_ADDRESS__`.
 
 
 
