@@ -23,15 +23,16 @@ class UsageReporter(object):
     # Internet / UDP socket
     self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-    # These values are constant throughout the life of the process.  We assume
-    # we have just one usage reporter per process, and that it is instantiated
-    # early in the process.  That way start-ts is reasonably accurate.
+    # These values are constant throughout the life of the process, and can be
+    # used to match messages.  We assume we have just one usage reporter per
+    # process, and that it is instantiated early in the process.  That way
+    # start-ts is reasonably accurate.
 
-    self.basic_data = {
+    self.id_data = {
         # TODO: would getfqdn() be appropriate?  How does thiat work.
         'hostname': socket.gethostname(),
         'pid': os.getpid(),
-        'start-ts': time.time()
+        'start-ts': time.time(),
         }
 
   def Send(self, msg):
@@ -54,11 +55,12 @@ class UsageReporter(object):
     msg = json.dumps(d)
     self.Send(msg)
 
-  def SendRecord(self, d):
+  def SendRecord(self, event, d):
     """Send a JSON-encoded record with some standard data, e.g. PID."""
-    rec = dict(self.basic_data)
+    rec = dict(self.id_data)
     if d:
       rec.update(d)
+    rec['ev'] = event  # type of event
     self.SendDict(rec)
 
   # TODO:
@@ -72,7 +74,7 @@ class NullUsageReporter(object):
     pass
   def SendDict(self, d):
     pass
-  def SendRecord(self, d):
+  def SendRecord(self, event, d):
     pass
 
 

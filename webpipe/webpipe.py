@@ -12,9 +12,7 @@ import errno
 import optparse
 import os
 import Queue
-import socket
 import threading
-import time
 import string  # for lower case letters
 import sys
 
@@ -275,14 +273,15 @@ def main(argv):
 
   spy_client = spy.GetClientFromConfig()
 
-  # TODO: use unevaluated functions?  And wrap them in exceptions.
-  d = {'hostname': socket.gethostname(), 'time': time.time()}
-  spy_client.SendRecord(None)
+  d = {'argv': sys.argv}
+  spy_client.SendRecord('start', d)
 
+  # TODO: also report unhandled exceptions.  The ones in the serving thread are
+  # caught by a library though -- we should get at them.
   try:
     length = AppMain(sys.argv)
     d = {'scroll-length': length}
-    spy_client.SendRecord(d)
+    spy_client.SendRecord('end', d)
   except Error, e:
     print >>sys.stderr, 'webpipe:', e.args[0]
     return 1
