@@ -157,7 +157,7 @@ def MakeSession(out_dir):
   return session, full_path
 
 
-def Serve(opts):
+def Serve(opts, waiter):
   # Pipeline:
   # Read stdin messages -> Write to disk -> notify server
 
@@ -168,7 +168,6 @@ def Serve(opts):
 
   q1 = Queue.Queue()
   q2 = Queue.Queue()
-  waiter = wait_server.SequenceWaiter()
 
   r = ReadStdin(q1)
   t1 = threading.Thread(target=r)
@@ -249,27 +248,26 @@ def AppMain(argv):
     raise Error('Action required')
 
   global _verbose
+  (opts, _) = CreateOptionsParser().parse_args(argv[2:])
+  if opts.verbose:
+    _verbose = True
 
-  try:
-    (opts, _) = CreateOptionsParser().parse_args(argv[2:])
-    if opts.verbose:
-      _verbose = True
+  waiter = wait_server.SequenceWaiter()
 
-    # Other actions:
-    # render (or should they just use file2html?)
-    # serve-rendered (or servehtml)
-    # refresh
+  # Other actions:
+  # render (or should they just use file2html?)
+  # serve-rendered (or servehtml)
+  # refresh
 
-    if action == 'serve':
-      Serve(opts)
-    else:
-      raise Error('Invalid action %r' % action)
+  if action == 'serve':
+    try:
+      Serve(opts, waiter)
+    except KeyboardInterrupt:
+      log('Stopped')
+      return waiter.Length()
+  else:
+    raise Error('Invalid action %r' % action)
 
-  except KeyboardInterrupt:
-    log('Stopped')
-    # TODO: return waiter.Length() ?
-    #return scroll.Length()
-    return 0
 
 
 def main(argv):

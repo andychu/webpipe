@@ -147,3 +147,7 @@ class SequenceWaiter(object):
 
     # unblock all MaybeWait() calls
     self.events[n].set()
+
+  def Length(self):
+    return self.counter
+
