@@ -8,7 +8,13 @@
 set -o nounset
 set -o pipefail
 
+# dereference symlinks in $0
 readonly THIS_DIR=$(dirname $(readlink -f $0))
+
+webpipe_dev=${WEBPIPE_DEV:-}
+if test -z "$webpipe_dev"; then
+  export PYTHONPATH=$THIS_DIR/..
+fi
 
 log() {
   echo 1>&2 "$@"
@@ -20,7 +26,6 @@ die() {
 }
 
 readonly INPUT_DIR=~/webpipe/input
-
 
 check-tools() {
   local err="inotifywait not found.  Run 'sudo apt-get install inotify-tools'"
@@ -41,11 +46,6 @@ print-events() {
     | awk '{print $3; fflush()}'
 }
 
-webpipe-main() {
-  ./webpipe.py "$@"
-}
-
-
 #
 # Public functions
 #
@@ -59,9 +59,6 @@ init() {
   log "Making convenience symlink"
   ln -s --force --verbose $(dirname $THIS_DIR)/webpipe.R ~/webpipe
 }
-
-# TODO: package these together.  Or make a dev version.
-export PYTHONPATH=$(dirname $THIS_DIR)/common:~/hg/tnet/python:~/hg/json-template/python
 
 # People can run this directly to render on a different host.
 file2html() {
@@ -82,6 +79,5 @@ run() {
     | file2html $input_dir \
     | $THIS_DIR/webpipe.py serve "$@"
 }
-
 
 "$@"
