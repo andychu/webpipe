@@ -23,7 +23,7 @@ class FooTest(unittest.TestCase):
     u = spy.UsageReporter(('localhost', 8988))
     u.Send('unit test')
     u.SendDict({'method': 'SendDict'})
-    u.SendRecord({'method': 'SendRecord'})
+    u.SendRecord('start', {'method': 'SendRecord'})
 
     # TODO:
     # - send function values which raise errors

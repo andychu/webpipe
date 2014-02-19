@@ -11,11 +11,12 @@ import os
 import sys
 import threading
 
-import templates
-import httpd  # common
-import util
-
 import jsontemplate
+
+from common import httpd
+from common import util
+
+import templates
 
 log = util.log
 

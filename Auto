@@ -10,7 +10,9 @@ set -o nounset
 # - A single set of documentation?  If it is versioned, that doesn't really
 # make that much sense.  But for now we won't bother versioning it.
 
-export PYTHONPATH=.:~/hg/tnet/python:~/hg/json-template/python
+readonly THIS_DIR=$(readlink -f $(dirname $0))
+
+export PYTHONPATH=$THIS_DIR:~/hg/tnet/python:~/hg/json-template/python
 
 manifest() {
   # TODO: Use deps in _tmp
@@ -24,10 +26,25 @@ Build() {
 }
 
 
+run-py-tests() {
+  ls *_test.py | awk '{ print "./" $0 }' | sh -x -e
+}
+
 Test() {
   set -o errexit
-  cd webpipe
-  ls *_test.py | awk '{ print "./" $0 }' | sh -x -e
+
+  pushd webpipe
+  run-py-tests
+  popd
+
+  pushd common
+  run-py-tests
+  popd
+
+  pushd latch
+  run-py-tests
+  popd
+
   echo PASS
 }
 

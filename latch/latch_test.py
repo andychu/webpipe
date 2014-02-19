@@ -18,7 +18,9 @@ class LatchTest(unittest.TestCase):
   def testLatch(self):
     la = latch.Latches()
     print 'hi'
-    la.Wait('foo')
+    #la.Wait('foo')
+    success = la.Notify('foo')
+    self.assertEqual(False, success)
 
 
 if __name__ == '__main__':
