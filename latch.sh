@@ -127,8 +127,8 @@ watch() {
 # together.  This is like 'webpipe run'.
 
 serve() {
-  export PYTHONPATH=$(dirname $THIS_DIR)/common:~/hg/json-template/python
-  $THIS_DIR/latch.py "$@"
+  export PYTHONPATH=$THIS_DIR/common:~/hg/json-template/python
+  $THIS_DIR/latch/latch.py "$@"
 }
 
 notify() {
