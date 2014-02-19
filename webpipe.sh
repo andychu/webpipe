@@ -75,4 +75,13 @@ run() {
     | $THIS_DIR/webpipe/webpipe.py serve "$@"
 }
 
+help() {
+  log "Usage: webpipe [ init | run | help | version ]"
+}
+
+version() {
+  readlink -f $0
+}
+
+
 "$@"
