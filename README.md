@@ -9,14 +9,32 @@ It gets rid of the `Alt-Tab F5` dance when creating content.
 
 [R]: http://r-project.org/
 
-See webpipe.html for instructions on how to use it.
+End Users
+---------
+
+See [doc/webpipe.html]() for instructions on how to use it.
+
 
 Developing
 ----------
 
-Developers, see instructions below.
+The idea is to run:
 
-TODO ...
+    $ ./webpipe-dev.sh run
+
+This script relies on a couple dependencies existing in hard-coded paths, as
+follows:
+
+Make a `~/hg` dir.
+
+    $ hg clone https://code.google.com/p/json-template/ 
+
+    $ hg clone https://code.google.com/p/tnet/
+
+[JSON Template](https://code.google.com/p/json-template/) is the template
+language used, and [TNET](https://code.google.com/p/tnet/) is the serialization
+format.
+
 
 
 
