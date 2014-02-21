@@ -15,26 +15,16 @@ readonly THIS_DIR=$(readlink -f $(dirname $0))
 export PYTHONPATH=$THIS_DIR:~/hg/tnet/python:~/hg/json-template/python
 
 manifest() {
+  # TODO: create a versioning scheme.  We are just using this for the build
+  # stamp (timestamp, host)
+  local version=prerelease
+  basisc echo-stamp webpipe $version > _tmp/Package.stamp
+  echo _tmp/Package.stamp Package.stamp
+
   # TODO: Use deps in _tmp
   # TODO: build basis package
   py-deps webpipe.webpipe webpipe.file2html
   ls webpipe/*.html webpipe.R webpipe.sh
-}
-
-# TODO: Make a real basis package out of this.  Look at container-tools
-# package.
-release-manifest() {
-  # NOTE: this versioning scheme is different than our date-based one.
-  # Reconcile them.
-
-  local version=0.1
-  basisc echo-stamp webpipe $version > _tmp/Package.stamp
-  echo _tmp/Package.stamp $version/Package.stamp
-
-  # This doesn't work because we don't always have two tokens.
-
-  # add a versioned directory
-  #manifest | awk -v version=$version '{ print $1 " " version "/" $2 }'
 }
 
 Build() {
