@@ -18,12 +18,12 @@ See [doc/webpipe.html]() for instructions on how to use it.
 Developing
 ----------
 
-The idea is to run:
+Use the `webpipe-dev.sh` wrapper for `webpipe.sh`:
 
     $ ./webpipe-dev.sh run
 
-This script relies on a couple dependencies existing in hard-coded paths, as
-follows:
+This script relies on a couple dependencies existing in hard-coded paths.
+Fetch them as follows:
 
 Make a `~/hg` dir.
 
