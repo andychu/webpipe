@@ -6,6 +6,9 @@
 # Add the HTML shell.  A data dictionary should be readable stdin.  Does NOT
 # depend on $PWD, so callers can cd.
 
+set -o nounset
+set -o errexit
+
 to-html() {
   local out=$1
   jsont doc/html.jsont > $out
@@ -20,9 +23,11 @@ main() {
   local in=$1
   local out=$2
 
-  echo "Building $in -> $out"
+  local base_in=$(basename $in)  # For now, get rid of subdirs
+  local body=_tmp/$base_in-body.html
 
-  local body=_tmp/$in-body.html
+  echo "Building $in -> $body -> $out"
+
   markdown $in >$body
 
   ls -al $body

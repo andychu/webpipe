@@ -86,7 +86,7 @@ rebuild() {
 
     log "changed $changed"
 
-    local rel_output="$(basename $changed).html"
+    local rel_output="$(basename $changed .md).html"
 
     # TODO: need better path manipulation
     local output=_tmp/$rel_output
@@ -133,7 +133,7 @@ serve() {
 
 notify() {
   local name=$1
-  curl --verbose --request POST http://$LATCH_HOST/-/latch/$name
+  curl --request POST http://$LATCH_HOST/-/latch/$name
 }
 
 "$@"
