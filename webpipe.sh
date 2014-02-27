@@ -32,6 +32,19 @@ check-tools() {
   which inotifywait >/dev/null || die "$err"
 }
 
+#
+# Public functions
+#
+
+# Set up the default dir to watch.
+init() {
+  mkdir --verbose -p $INPUT_DIR
+}
+
+# People can run print-events | file2html to directly to render on a different
+# host.  For now we keep them separate, so we have an explicit and flexible
+# pipeline.
+
 print-events() {
   local input_dir=${1:-~/webpipe/input}
 
@@ -46,16 +59,6 @@ print-events() {
     | awk '{print $3; fflush()}'
 }
 
-#
-# Public functions
-#
-
-# Set up the default dir to watch.
-init() {
-  mkdir --verbose -p $INPUT_DIR
-}
-
-# People can run this directly to render on a different host.
 file2html() {
   local dir=$1
   $THIS_DIR/webpipe/file2html.py $dir
