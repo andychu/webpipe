@@ -8,7 +8,7 @@
 
 main() {
   local this_dir=$(dirname $0)
-  export PYTHONPATH=.:~/hg/tnet/python:~/hg/json-template/python
+  export PYTHONPATH=$this_dir:~/hg/tnet/python:~/hg/json-template/python
   export WEBPIPE_DEV=1
   exec $this_dir/webpipe.sh "$@"
 }

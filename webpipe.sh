@@ -59,9 +59,15 @@ print-events() {
     | awk '{print $3; fflush()}'
 }
 
+# render files to HTML.
 file2html() {
   local dir=$1
   $THIS_DIR/webpipe/file2html.py $dir
+}
+
+# serve HTML and static files.
+serve() {
+  $THIS_DIR/webpipe/webpipe.py serve "$@"
 }
 
 # Run the whole pipeline.
@@ -75,7 +81,7 @@ run() {
 
   print-events $input_dir \
     | file2html $input_dir \
-    | $THIS_DIR/webpipe/webpipe.py serve "$@"
+    | serve
 }
 
 help() {
