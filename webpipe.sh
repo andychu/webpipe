@@ -50,13 +50,10 @@ print-events() {
 
   # --quiet: only print events
   # --monitor: loop forever
-
-  # The filename is third token.  The fflush fixes buffering issues in awk
-  # (like PYTHONUNBUFFERED does for Python).
+  # --format %f: print out the filename in the directory we're watching
 
   log "webpipe: Watching $input_dir"
-  inotifywait --monitor --quiet -e close_write $input_dir \
-    | awk '{print $3; fflush()}'
+  inotifywait --monitor --quiet -e close_write $input_dir --format '%f'
 }
 
 # render files to HTML.
