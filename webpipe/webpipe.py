@@ -168,6 +168,7 @@ def Serve(opts, waiter):
   q1 = Queue.Queue()
   q2 = Queue.Queue()
 
+  # TODO: Add spy_client here; count the number of things on stdin?
   r = ReadStdin(q1)
   t1 = threading.Thread(target=r)
   t1.setDaemon(True)  # So Ctrl-C works
@@ -202,6 +203,9 @@ def Serve(opts, waiter):
   # TODO: add opts.hostname?
   log('Serving at http://localhost:%d/  (Ctrl-C to quit)', opts.port)
   s.serve_forever()
+
+  # NOTE: Could do webbrowser.open() after we serve.  But people can also just
+  # click the link we printed above, since most terminals will make them URLs.
 
 
 def CreateOptionsParser():
@@ -266,7 +270,6 @@ def AppMain(argv):
       return waiter.Length()
   else:
     raise Error('Invalid action %r' % action)
-
 
 
 def main(argv):

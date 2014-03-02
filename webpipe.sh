@@ -68,6 +68,12 @@ serve() {
 }
 
 # Run the whole pipeline.
+#
+# TODO: should the input dir be a flag?
+# Right now people have to do:
+#
+# $ webpipe run '' --port 8888
+
 run() {
   local input_dir=${1:-~/webpipe/input}
   shift
@@ -78,7 +84,7 @@ run() {
 
   print-events $input_dir \
     | file2html $input_dir \
-    | serve
+    | serve "$@"
 }
 
 help() {
