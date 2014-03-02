@@ -30,6 +30,17 @@ usage-config() {
 }
 
 #
+# Manually demo plugins
+#
+
+ansi() {
+  plugins/bin/ansi typescript ~/webpipe/input/ansi.html
+  sleep 1
+  plugins/bin/ansi diff.ansi ~/webpipe/input/diff.html
+}
+
+
+#
 # Latch
 #
 

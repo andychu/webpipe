@@ -1,0 +1,20 @@
+#!/bin/sh
+
+log() {
+  echo 1>&2 "$@"
+}
+
+install_message() {
+  log "aha not found.  Run 'sudo apt-get install aha'"
+}
+
+main() {
+  local input=$1
+  local output=$2
+
+  which aha >/dev/null || install_message
+  aha -f $input > $output
+}
+
+main "$@"
+
