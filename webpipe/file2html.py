@@ -211,6 +211,16 @@ BUILTINS = {
     }
 
 
+class Resources(object):
+  def __init__(self, base_dir=None):
+    self.base_dir = base_dir or os.path.dirname(sys.argv[0])
+
+  def ReadFile(self, path):
+    full_path = os.path.join(self.base_dir, path)
+    with open(full_path) as f:
+      return f.read()
+
+
 def main(argv):
   """Returns an exit code."""
 
@@ -218,12 +228,8 @@ def main(argv):
   # stdin.  It might be better to just get absolute paths on stdin.
   dir = argv[1]
 
-  # Write out the index
-  d = os.path.dirname(sys.argv[0])
-  index_path = os.path.join(d, 'index.html')
-
-  with open(index_path) as f:
-    index_html = f.read()
+  res = Resources()
+  index_html = res.ReadFile('index.html')
 
   out = {'files': [
       {'path': 'index.html', 'contents': index_html},
