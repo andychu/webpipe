@@ -24,5 +24,19 @@ class FunctionsTest(unittest.TestCase):
     self.assertEqual('ansi', file2html.GuessFileType('typescript'))
 
 
+class ResourcesTest(unittest.TestCase):
+
+  def testResources(self):
+    res = file2html.Resources()
+    s = res.ReadFile('index.html')
+    print 'index', len(s)
+
+    p = res.GetPluginBin('ansi')
+    print p
+
+    p = res.GetPluginBin('unknown')
+    print p
+
+
 if __name__ == '__main__':
   unittest.main()

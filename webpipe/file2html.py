@@ -34,6 +34,7 @@ single process.
 import cgi
 import csv
 import os
+import subprocess
 import sys
 
 import jsontemplate
@@ -214,11 +215,23 @@ BUILTINS = {
 class Resources(object):
   def __init__(self, base_dir=None):
     self.base_dir = base_dir or os.path.dirname(sys.argv[0])
+    b = os.path.join(self.base_dir, '..', 'plugins', 'bin')
+    self.bin_base = os.path.normpath(b)
 
   def ReadFile(self, path):
     full_path = os.path.join(self.base_dir, path)
     with open(full_path) as f:
       return f.read()
+
+  def GetPluginBin(self, file_type):
+    # plugins dir is parallel to webpipe python dir.
+    p = os.path.join(self.bin_base, file_type)
+
+    # TODO: test if it's executable.  Show clear error if not.
+    if os.path.exists(p):
+      return p
+    else: 
+      return None
 
 
 def main(argv):
@@ -245,10 +258,10 @@ def main(argv):
 
     filename = line.strip()
 
-    path = os.path.join(dir, filename)
+    input_path = os.path.join(dir, filename)
 
     # TODO: handle errors
-    with open(path) as f:
+    with open(input_path) as f:
       contents = f.read()
 
     orig_rel_path = '%d/%s' % (counter, filename)
@@ -261,12 +274,34 @@ def main(argv):
       log("Couldn't determine file type for %r; ignored", filename)
       continue
 
-    func = BUILTINS.get(file_type)
-    if func:
-      html, orig = func(orig_rel_path, filename, contents)
+    # Order of resolution:
+    #
+    # 1. Check user's ~/webpipe dir
+    # 2. Check resources
+    # 3. Builtins
+
+    plugin_bin = res.GetPluginBin(file_type)
+
+    if plugin_bin:
+      # TODO: determine output session dir?
+      argv = [plugin_bin, input_path, '/tmp/webpipe-dummy']
+      exit_code = subprocess.call(argv)
+      if exit_code != 0:
+        log('ERROR: %s exited with code %d', argv, exit_code)
+
+      # The plugin outputs HTML to a file?  Or pipe?
+      html = 'Plugin placeholder'
+      orig = None
+
     else:
-      log('No builtin renderer for %r; ignored', filename)
-      continue
+      # TODO: use a chaining pattern instead of nested if-else
+
+      func = BUILTINS.get(file_type)
+      if func:
+        html, orig = func(orig_rel_path, filename, contents)
+      else:
+        log('No builtin renderer for %r; ignored', filename)
+        continue
 
     # Default: use "file" command?
     #log('ignored: %s', filename)
