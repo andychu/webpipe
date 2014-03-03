@@ -172,10 +172,9 @@ def main(argv):
 
     path = os.path.join(dir, filename)
 
-    # TODO: errors
-    f = open(path)
-    contents = f.read()
-    f.close()
+    # TODO: handle errors
+    with open(path) as f:
+      contents = f.read()
 
     _, ext = os.path.splitext(filename)
 
