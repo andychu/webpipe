@@ -29,6 +29,44 @@ function will use the tnet tool?
 
 TODO: Make this usable as a library too?  So in the common case you can have a
 single process.
+
+Plugins
+-------
+
+TODO: define interface.
+
+3 args:
+
+$input $output_html $output_dir
+       5.html       5/
+
+5.html has to be at the root, not in 5/index.html, because of the relative
+<img> links.
+
+What abut pipe?  Instead of writing to output HTML file.  Can the plugin write
+to stdout?  It's going to be on disk anyway, so I guess there's no point.  The
+only time that's inefficient is what you are running file2html and server on
+different machines.  But then you could use tmpfs if it was really a big deal.
+
+"Style Guide".  Things plugins should do:
+
+- check size of file (whether in bytes, entries, depth, etc.)
+  - small: just display it inline (and possibly summary)
+  - large: display summary, then click through to full view
+  - huge: display summary, and message that says it's too big to preview
+
+- summary:
+  - size in bytes
+  - entries, etc.
+
+- provide original file for download (in most cases)
+
+- zero copy
+  - if you make a symlink, then the plugin can read that stuff, create a summary
+  - and then can it output a *capability* for the server to serve files
+    anywhere on the file system?
+    - or perhaps the symlink is enough?  well it could change.
+    - maybe you have to dereference the link.
 """
 
 import cgi
