@@ -12,6 +12,8 @@ log() {
 }
 
 unit() {
+  local this_dir=$(dirname $0)
+  export PYTHONPATH=$this_dir:~/hg/tnet/python:~/hg/json-template/python
   "$@"
 }
 

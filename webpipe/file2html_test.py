@@ -13,15 +13,15 @@ name,age
 <dave>,20
 """
 
-class FooTest(unittest.TestCase):
-  def setUp(self):
-    pass
-
-  def tearDown(self):
-    pass
+class FunctionsTest(unittest.TestCase):
 
   def testRenderCsv(self):
-    print file2html.RenderCsv('dir/foo.csv', 'foo.csv', CSV)
+    html, orig = file2html.RenderCsv('dir/foo.csv', 'foo.csv', CSV)
+    print html
+
+  def testGuessFileType(self):
+    self.assertEqual('png', file2html.GuessFileType('Rplot001.png'))
+    self.assertEqual('ansi', file2html.GuessFileType('typescript'))
 
 
 if __name__ == '__main__':

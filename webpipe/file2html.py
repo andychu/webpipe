@@ -139,7 +139,76 @@ def RenderCsv(orig_rel_path, filename, contents):
     else:
       d['rows'].append(row)
   #print d
-  return TABLE_TEMPLATE.expand(d)
+  return TABLE_TEMPLATE.expand(d), None
+
+
+# TODO: use mime types here?
+# The two-level hierarchy of:
+# image/png, image/gif, etc. might be useful
+#
+# Also: aliases like htm, html, etc. are detected
+
+def GuessFileType(filename):
+  filename, ext = os.path.splitext(filename)
+  if ext == '':
+    # The 'script' command defaults to a file called 'typescript'.  We assume
+    # the terminal is ansi, so we use the ansi plugin to handle it.
+    if filename == 'typescript':
+      return 'ansi'
+    else:
+      return None
+  else:
+    # .png -> png
+    return ext[1:]
+
+  return file_type
+
+
+def RenderPng(orig_rel_path, unused_filename, contents):
+  html = IMG_TAG.expand({'url': orig_rel_path})
+  orig = contents
+  return html, orig
+
+
+def RenderHtml(orig_rel_path, filename, contents):
+  # This is how users can "extend" webpipe.  They just write a tool
+  # that outputs HTML.
+  # But can they have separate files and hyperlinks to them?
+  #
+  # You probably need a JavaScript plugin.  Say you want to experiment with
+  # d3.js.
+
+  # TODO: have option for sanitizing?
+  # By default, the web roll server trusts all input.  It performs no
+  # validation whatsoever.  Security is the responsibility of the file2html
+  # process.
+  html = contents
+  return html, None
+
+
+def RenderTxt(orig_rel_path, unused_filename, contents):
+  # TODO: need a tool that converts this
+  b = cgi.escape(contents).strip()
+
+  # TODO: add raw link, with the filename.
+  # we don't really know the number though.
+  # <a href="filename.txt">filename.txt<a>
+  # <a href="i/filename.txt">filename.txt<a>
+  #
+  # if there is a "files", then the server can write it to "1/index.html".
+  # otherwise 1.html?
+  # then serve 1/
+
+  html = PRE_TEMPLATE % b
+  return html, None
+
+
+BUILTINS = {
+    'png': RenderPng,
+    'csv': RenderCsv,
+    'html': RenderHtml,
+    'txt': RenderTxt,
+    }
 
 
 def main(argv):
@@ -176,59 +245,25 @@ def main(argv):
     with open(path) as f:
       contents = f.read()
 
-    _, ext = os.path.splitext(filename)
-
-    log('ext: %s', ext)
-
     orig_rel_path = '%d/%s' % (counter, filename)
     orig = None  # original contents
 
-    if ext == '.png':
-      html = IMG_TAG.expand({'url': orig_rel_path})
-      orig = contents
-      # For now, put it all on one line
+    file_type = GuessFileType(filename)
+    log('file type: %s', file_type)
 
-    elif ext == '.csv':
-      html = RenderCsv(orig_rel_path, filename, contents)
-      orig = contents
+    if file_type is None:
+      log("Couldn't determine file type for %r; ignored", filename)
+      continue
 
-    elif ext == '.html':
-      # This is how users can "extend" the web roll.  They just write a tool
-      # that outputs HTML.
-      # But can they have separate files and hyperlinks to them?
-      #
-      # You probably need a JavaScript plugin.  Say you want to experiment with
-      # d3.js.
-
-      # TODO: have option for sanitizing?
-      # By default, the web roll server trusts all input.  It performs no
-      # validation whatsoever.  Security is the responsibility of the file2html
-      # process.
-      html = contents
-
-    elif ext == '.txt':
-      # TODO: need a tool that converts this
-      b = cgi.escape(contents).strip()
-
-      # TODO: add raw link, with the filename.
-      # we don't really know the number though.
-      # <a href="filename.txt">filename.txt<a>
-      # <a href="i/filename.txt">filename.txt<a>
-      #
-      # if there is a "files", then the server can write it to "1/index.html".
-      # otherwise 1.html?
-      # then serve 1/
-
-      html = PRE_TEMPLATE % b
-
+    func = BUILTINS.get(file_type)
+    if func:
+      html, orig = func(orig_rel_path, filename, contents)
     else:
-      # Default: ignore?  Render text?  Or show error?
-      log('ignored: %s', filename)
+      log('No builtin renderer for %r; ignored', filename)
+      continue
 
-    # TODO: Add filenames.
-    # Only if it's too big do we omit it... and we can append HTML that says
-    # "too big"
-    #out = {'html': html}
+    # Default: use "file" command?
+    #log('ignored: %s', filename)
 
     path = '%d.html' % counter
     files = [
