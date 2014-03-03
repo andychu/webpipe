@@ -52,8 +52,11 @@ print-events() {
   # --monitor: loop forever
   # --format %f: print out the filename in the directory we're watching
 
+  # close_write: when a file is closed after writing
+  # create: creating a symlink (ln -sf of a dir alway does DELETE then CREATE)
+
   log "webpipe: Watching $input_dir"
-  inotifywait --monitor --quiet -e close_write $input_dir --format '%f'
+  inotifywait --monitor --quiet -e close_write,create $input_dir --format '%f'
 }
 
 # render files to HTML.

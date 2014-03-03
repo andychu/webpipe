@@ -298,6 +298,11 @@ def main(argv):
 
     input_path = os.path.join(dir, filename)
 
+    # TODO: Plugins should be passed directories directly.
+    if os.path.isdir(input_path):
+      log('Skipping directory %s (for now)', input_path)
+      continue
+
     # TODO: handle errors
     with open(input_path) as f:
       contents = f.read()
