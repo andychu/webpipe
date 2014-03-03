@@ -106,7 +106,7 @@ class WriteFiles(object):
 class Notify(object):
   """Thread to read from queue and notify waiter."""
 
-  def __init__(self, q, waiter):
+  def __init__(self, q, waiter, spy_client):
     """
     Args:
       q: Queue
@@ -114,13 +114,23 @@ class Notify(object):
     """
     self.q = q
     self.waiter = waiter
+    self.spy_client = spy_client
 
   def __call__(self):
     # take care of index.html ?  Is this the right way to do it?
     unused = self.q.get()
+    i = 0
     while True:
       unused = self.q.get()
       self.waiter.Notify()
+
+      i += 1
+      # For now, just how many parts there are.  Later we could see what file
+      # types are being used.
+      #
+      # We send 'num-parts: 10' AFTER we have notified 10 parts.
+      if i % 10 == 0:
+        self.spy_client.SendRecord('every10', {'num-parts': i})
 
 
 def SuffixGen():
@@ -156,7 +166,7 @@ def MakeSession(out_dir):
   return session, full_path
 
 
-def Serve(opts, waiter):
+def Serve(opts, waiter, spy_client):
   # Pipeline:
   # Read stdin messages -> Write to disk -> notify server
 
@@ -181,7 +191,7 @@ def Serve(opts, waiter):
   t2.setDaemon(True)  # So Ctrl-C works
   t2.start()
 
-  n = Notify(q2, waiter)
+  n = Notify(q2, waiter, spy_client)
   t3 = threading.Thread(target=n)
   t3.setDaemon(True)  # So Ctrl-C works
   t3.start()
@@ -242,7 +252,7 @@ def CreateOptionsParser():
   return parser
 
 
-def AppMain(argv):
+def AppMain(argv, spy_client):
   """Returns the length of the scroll created."""
 
   try:
@@ -264,7 +274,7 @@ def AppMain(argv):
 
   if action == 'serve':
     try:
-      Serve(opts, waiter)
+      Serve(opts, waiter, spy_client)
     except KeyboardInterrupt:
       log('Stopped')
       return waiter.Length()
@@ -283,7 +293,7 @@ def main(argv):
   # TODO: also report unhandled exceptions.  The ones in the serving thread are
   # caught by a library though -- we should get at them.
   try:
-    length = AppMain(sys.argv)
+    length = AppMain(sys.argv, spy_client)
     d = {'scroll-length': length}
     spy_client.SendRecord('end', d)
   except Error, e:
