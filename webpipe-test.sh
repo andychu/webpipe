@@ -111,6 +111,14 @@ test-send() {
   | ./webpipe-stub.sh send
 }
 
+# Since the stub can be copied to many machines, test that it an run with a
+# non-bash shell.
+test-stub-with-busybox() {
+  ( echo webpipe-stub.sh;
+    echo nonexistent ) \
+  | busybox sh webpipe-stub.sh send
+}
+
 test-send-recv() {
   local out=~/webpipe/input/webpipe-stub.sh
   rm $out
