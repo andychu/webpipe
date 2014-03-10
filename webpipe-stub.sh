@@ -29,13 +29,14 @@ log() {
 # minimal custom TNET encoder.  Avoid dependencies on Python, C, etc.
 tnetEncodeFile() {
   local filename=$1
-  local size=$2
+  local remote_name=$2
+  local size=$3
 
   # { file: example.txt, body: foobar }
 
   local k1='8:filename,'
   # $#s gets the length of s; should be portable
-  local v1="${#filename}:${filename},"
+  local v1="${#remote_name}:${remote_name},"
   local k2='4:body,'
   local s2="$size:"
 
@@ -53,13 +54,22 @@ tnetEncodeFile() {
 
 # very 
 send() {
-  log 'send'
+  # Add hostname prefix to every filename.
+  local hostname
+  local prefix
+  hostname=$(hostname)
+  if test $? -eq 0; then
+    prefix="${hostname}_"
+  else
+    prefix=""
+  fi
+
   while read filename; do
     local size
     size=$(stat --printf '%s' $filename)  # stat should be portable?
     local exit_code=$?
     if test $exit_code -eq 0; then
-      tnetEncodeFile $filename $size
+      tnetEncodeFile $filename "$prefix$filename" $size
     else
       log "stat error, ignoring $filename"
     fi
