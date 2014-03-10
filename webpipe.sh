@@ -99,6 +99,20 @@ recv() {
   $THIS_DIR/webpipe/recv.py "$@"
 }
 
+#
+# Introspection
+#
+
+# So people can do scp $(webpipe stub-path) user@example.org:bin
+stub-path() {
+  local path=$THIS_DIR/webpipe-stub.sh
+  if test -f $path; then
+    echo $path
+  else
+    die "Invalid installation; $path doesn't exist"
+  fi
+}
+
 version() {
   readlink -f $0
 }
