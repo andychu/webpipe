@@ -9,7 +9,7 @@ set -o nounset
 set -o pipefail
 
 # cross platform readlink -f
-canon() {
+realpath() {
   local ostype=${OSTYPE:-}
   # test if ostype begins with "drawin".  ignore stdout of expr.
   if expr $ostype : darwin >/dev/null; then
@@ -20,7 +20,7 @@ canon() {
 }
 
 # dereference symlinks in $0
-readonly THIS_DIR=$(dirname $(canon $0))
+readonly THIS_DIR=$(dirname $(realpath $0))
 
 webpipe_dev=${WEBPIPE_DEV:-}
 if test -z "$webpipe_dev"; then
@@ -125,7 +125,7 @@ stub-path() {
 }
 
 version() {
-  canon $0
+  realpath $0
 }
 
 
