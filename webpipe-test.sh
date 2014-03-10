@@ -93,8 +93,12 @@ test-serve() {
 EOF
 }
 
-test-recv() {
-  echo -n '3:foo,' | ./webpipe-dev.sh recv
+test-recv-bad-fields() {
+  echo -n '8:1:a,1:b,}' | ./webpipe-dev.sh recv ~/webpipe/input
+}
+
+test-recv-bad-message() {
+  echo -n 'abc' | ./webpipe-dev.sh recv ~/webpipe/input
 }
 
 test-send() {

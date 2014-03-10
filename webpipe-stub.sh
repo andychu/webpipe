@@ -33,7 +33,7 @@ tnetEncodeFile() {
 
   # { file: example.txt, body: foobar }
 
-  local k1='4:file,'
+  local k1='8:filename,'
   # $#s gets the length of s; should be portable
   local v1="${#filename}:${filename},"
   local k2='4:body,'
