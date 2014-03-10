@@ -97,5 +97,11 @@ test-recv() {
   echo -n '3:foo,' | ./webpipe-dev.sh recv
 }
 
+test-send() {
+  ( echo webpipe-stub.sh;
+    echo nonexistent ) \
+  | ./webpipe-stub.sh send
+}
+
 
 "$@"
