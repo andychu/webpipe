@@ -11,7 +11,8 @@ set -o pipefail
 # cross platform readlink -f
 canon() {
   local ostype=${OSTYPE:-}
-  if echo $ostype | grep -q darwin; then
+  # test if ostype begins with "drawin".  ignore stdout of expr.
+  if expr $ostype : darwin >/dev/null; then
     python -S -c 'import os,sys; print os.path.realpath(sys.argv[1])' $0
   else
     readlink -f $0
