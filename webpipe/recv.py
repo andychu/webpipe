@@ -33,6 +33,16 @@ def main(argv):
 
   base_dir = argv[1]
 
+  try:
+    header = tnet.load(sys.stdin)
+  except ValueError, e:
+    log('fatal: %s', e)
+    return 1
+  except EOFError:
+    return 1  # a header is expected
+
+  print 'send/recv header', header
+
   while True:
     # must be unbuffered
     try:

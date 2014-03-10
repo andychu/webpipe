@@ -120,7 +120,7 @@ test-stub-with-busybox() {
 }
 
 test-send-recv() {
-  local out=~/webpipe/input/webpipe-stub.sh
+  local out=~/webpipe/input/$(hostname)_webpipe-stub.sh
   rm $out
   echo webpipe-stub.sh \
     | ./webpipe-stub.sh send \

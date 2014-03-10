@@ -52,6 +52,12 @@ tnetEncodeFile() {
   echo -n }
 }
 
+sendHeader() {
+  # Send empty dictionary for now.  Send other stream options here in the
+  # future.
+  echo -n '0:}'
+}
+
 # very 
 send() {
   # Add hostname prefix to every filename.
@@ -63,6 +69,8 @@ send() {
   else
     prefix=""
   fi
+
+  sendHeader
 
   while read filename; do
     local size
