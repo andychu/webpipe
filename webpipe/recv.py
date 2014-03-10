@@ -41,7 +41,7 @@ def main(argv):
   except EOFError:
     return 1  # a header is expected
 
-  print 'send/recv header', header
+  log('header: %s', header)
 
   while True:
     # must be unbuffered
@@ -53,6 +53,8 @@ def main(argv):
     except EOFError:
       break
 
+    # TODO: instead of a single record, make this pairs of (metadata, data),
+    # like DFO.
     try:
       filename = record['filename']
       body = record['body']

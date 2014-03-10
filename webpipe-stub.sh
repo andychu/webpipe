@@ -61,6 +61,7 @@ sendHeader() {
 # very 
 send() {
   # Add hostname prefix to every filename.
+  # TODO: make this a tag instead in the metadata message?
   local hostname
   local prefix
   hostname=$(hostname)
