@@ -26,15 +26,40 @@ log() {
   echo 1>&2 "$@"
 }
 
+# minimal custom TNET encoder.  Avoid dependencies on Python, C, etc.
+tnetEncodeFile() {
+  local filename=$1
+  local size=$2
+
+  # { file: example.txt, body: foobar }
+
+  local k1='4:file,'
+  # $#s gets the length of s; should be portable
+  local v1="${#filename}:${filename},"
+  local k2='4:body,'
+  local s2="$size:"
+
+  # 1 for trailing comma
+  local v2_size=$(expr ${#s2} + $size + 1)
+  local msg_size=$(expr ${#k1} + ${#v1} + ${#k2} + $v2_size)
+
+  echo -n "$msg_size:$k1$v1$k2"
+
+  echo -n $s2
+  cat $filename
+  echo -n ,
+  echo -n }
+}
+
 # very 
 send() {
   log 'send'
   while read filename; do
-    # is stat on
-    stat --printf '%s' $filename
+    local size
+    size=$(stat --printf '%s' $filename)  # stat should be portable?
     local exit_code=$?
     if test $exit_code -eq 0; then
-      echo
+      tnetEncodeFile $filename $size
     else
       log "stat error, ignoring $filename"
     fi
