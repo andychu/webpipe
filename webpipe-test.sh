@@ -107,5 +107,15 @@ test-send() {
   | ./webpipe-stub.sh send
 }
 
+test-send-recv() {
+  local out=~/webpipe/input/webpipe-stub.sh
+  rm $out
+  echo webpipe-stub.sh \
+    | ./webpipe-stub.sh send \
+    | ./webpipe-dev.sh recv ~/webpipe/input
+  ls -al $out
+  diff webpipe-stub.sh $out
+  echo $?
+}
 
 "$@"

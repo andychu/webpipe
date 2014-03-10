@@ -42,7 +42,9 @@ def main(argv):
       log('Record should have filename and body (missing %s)', missing)
       continue
 
-    if os.path.isrel(filename) and '/' in filename:
+    # either foo.txt or /full/path/foo.txt accepted, but not
+    # rel/path/foo.txt.
+    if not os.path.isabs(filename) and '/' in filename:
       log('Relative paths not accepted')
       continue
 
