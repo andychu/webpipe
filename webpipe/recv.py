@@ -1,6 +1,14 @@
 #!/usr/bin/python
 """
 recv.py
+
+Receive file contents from stdin, write to the base directory, and print
+filename on stdout.
+
+A main use case is to emulate the print-events (inotifywait) interface, but
+on a remote machine.  webpipe send takes the filename stdin, the file is
+transferred from remote to local, and webpipe recv echoes the filename to
+stdout.
 """
 
 import os
@@ -22,8 +30,9 @@ def log(msg, *args):
 
 def main(argv):
   """Returns an exit code."""
-  print 'Hello from recv.py'
+
   base_dir = argv[1]
+
   while True:
     # must be unbuffered
     try:
@@ -41,6 +50,8 @@ def main(argv):
       missing = e.args[0]
       log('Record should have filename and body (missing %s)', missing)
       continue
+
+    # TODO: also receive { dirname tar } messages?  Or { dirname vat } ?
 
     # either foo.txt or /full/path/foo.txt accepted, but not
     # rel/path/foo.txt.
