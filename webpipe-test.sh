@@ -93,5 +93,9 @@ test-serve() {
 EOF
 }
 
+test-recv() {
+  echo -n '3:foo,' | ./webpipe-dev.sh recv
+}
+
 
 "$@"

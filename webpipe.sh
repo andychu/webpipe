@@ -94,6 +94,11 @@ help() {
   log "Usage: webpipe [ init | run | help | version ]"
 }
 
+recv() {
+  export PYTHONUNBUFFERED=1
+  $THIS_DIR/webpipe/recv.py "$@"
+}
+
 version() {
   readlink -f $0
 }

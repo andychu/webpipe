@@ -1,6 +1,6 @@
 #!/usr/bin/python
 """
-weboll.py
+webpipe.py
 
 Server that receives content from a pipe, and serves it "interactively" to the
 browser.  It relies on a "hanging GET" -- jQuery on the client and
