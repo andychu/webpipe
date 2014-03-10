@@ -39,7 +39,7 @@ def main(argv):
       record = tnet.load(sys.stdin)
     except ValueError, e:
       log('fatal: %s', e)
-      return
+      return 1
     except EOFError:
       break
 
@@ -66,6 +66,8 @@ def main(argv):
     basename = os.path.basename(filename)
     # Now the file is in base_dir, so just print the basename.
     print basename
+
+  return 0
 
 
 if __name__ == '__main__':
