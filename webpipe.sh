@@ -8,8 +8,18 @@
 set -o nounset
 set -o pipefail
 
+# cross platform readlink -f
+canon() {
+  local ostype=${OSTYPE:-}
+  if echo $ostype | grep -q darwin; then
+    python -S -c 'import os,sys; print os.path.realpath(sys.argv[1])' $0
+  else
+    readlink -f $0
+  fi
+}
+
 # dereference symlinks in $0
-readonly THIS_DIR=$(dirname $(readlink -f $0))
+readonly THIS_DIR=$(dirname $(canon $0))
 
 webpipe_dev=${WEBPIPE_DEV:-}
 if test -z "$webpipe_dev"; then
@@ -114,7 +124,7 @@ stub-path() {
 }
 
 version() {
-  readlink -f $0
+  canon $0
 }
 
 
