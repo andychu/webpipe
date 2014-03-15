@@ -95,7 +95,6 @@ EOF
 
 # not fatal
 test-recv-bad-fields() {
-  export PYTHONUNBUFFERED=1
   echo -n '0:}8:1:a,1:b,}' | ./webpipe-dev.sh recv ~/webpipe/input
   echo $?
 }

@@ -35,17 +35,18 @@ def log(msg, *args):
 
 
 def GenRecords(f):
-  try:
-    v = tnet.load(f)
-    if not isinstance(v, (str, dict)):  # byte string or dict
-      log('Invalid value %r', v)
-      yield False
-    yield v
-  except ValueError, e:
-    log('fatal: %s', e)
-    yield False  # fatal error
-  except EOFError:
-    yield True  # end of stream, success
+  while True:
+    try:
+      v = tnet.load(f)
+      if not isinstance(v, (str, dict)):  # byte string or dict
+        log('Invalid value %r', v)
+        yield False
+      yield v
+    except ValueError, e:
+      log('fatal: %s', e)
+      yield False  # fatal error
+    except EOFError:
+      yield True  # end of stream, success
 
 
 def main(argv):
@@ -65,21 +66,18 @@ def main(argv):
     return 0 if header else 1
 
   if not isinstance(header, dict):
+    log('Invalid header: %r', header)
     return 1
 
   # For now, don't do anything with it.
   log('header: %s', header)
 
   while True:
-    print 'loop'
-
     try:
       metadata = g.next()
     except StopIteration:
       print 'done'
       return 0
-
-    print 'yo'
 
     if isinstance(metadata, bool):
       return 0 if metadata else 1
@@ -87,8 +85,7 @@ def main(argv):
     try:
       filename = metadata['filename']
     except KeyError, e:
-      missing = e.args[0]
-      log('Record should have filename (missing %s)', missing)
+      log('Record should have filename')
       continue
     hostname = metadata.get('hostname')
     filetype = metadata.get('filetype')
