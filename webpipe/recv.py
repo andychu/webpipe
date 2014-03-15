@@ -28,40 +28,79 @@ def log(msg, *args):
   print >>sys.stderr, 'recv: ' + msg
 
 
+# Wrapper around tnet.laod
+# - string or dict
+# - True for error success
+# - False for error fail
+
+
+def GenRecords(f):
+  try:
+    v = tnet.load(f)
+    if not isinstance(v, (str, dict)):  # byte string or dict
+      log('Invalid value %r', v)
+      yield False
+    yield v
+  except ValueError, e:
+    log('fatal: %s', e)
+    yield False  # fatal error
+  except EOFError:
+    yield True  # end of stream, success
+
+
 def main(argv):
   """Returns an exit code."""
 
   base_dir = argv[1]
 
-  try:
-    header = tnet.load(sys.stdin)
-  except ValueError, e:
-    log('fatal: %s', e)
-    return 1
-  except EOFError:
-    return 1  # a header is expected
+  g = GenRecords(sys.stdin)
 
+  try:
+    header = g.next()
+  except StopIteration:
+    log('Expected header')
+    return 0
+
+  if isinstance(header, bool):
+    return 0 if header else 1
+
+  if not isinstance(header, dict):
+    return 1
+
+  # For now, don't do anything with it.
   log('header: %s', header)
 
   while True:
-    # must be unbuffered
-    try:
-      record = tnet.load(sys.stdin)
-    except ValueError, e:
-      log('fatal: %s', e)
-      return 1
-    except EOFError:
-      break
+    print 'loop'
 
-    # TODO: instead of a single record, make this pairs of (metadata, data),
-    # like DFO.
     try:
-      filename = record['filename']
-      body = record['body']
+      metadata = g.next()
+    except StopIteration:
+      print 'done'
+      return 0
+
+    print 'yo'
+
+    if isinstance(metadata, bool):
+      return 0 if metadata else 1
+
+    try:
+      filename = metadata['filename']
     except KeyError, e:
       missing = e.args[0]
-      log('Record should have filename and body (missing %s)', missing)
+      log('Record should have filename (missing %s)', missing)
       continue
+    hostname = metadata.get('hostname')
+    filetype = metadata.get('filetype')
+
+    try:
+      body = g.next()
+    except StopIteration:
+      log('Expected body record')
+      return 1
+
+    if isinstance(body, bool):
+      return 0 if metadata else 1
 
     # TODO: also receive { dirname tar } messages?  Or { dirname vat } ?
 
@@ -78,8 +117,6 @@ def main(argv):
     basename = os.path.basename(filename)
     # Now the file is in base_dir, so just print the basename.
     print basename
-
-  return 0
 
 
 if __name__ == '__main__':

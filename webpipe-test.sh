@@ -95,13 +95,19 @@ EOF
 
 # not fatal
 test-recv-bad-fields() {
-  echo -n '8:1:a,1:b,}' | ./webpipe-dev.sh recv ~/webpipe/input
+  export PYTHONUNBUFFERED=1
+  echo -n '0:}8:1:a,1:b,}' | ./webpipe-dev.sh recv ~/webpipe/input
   echo $?
 }
 
 # fatal, because the stream could be messed up
 test-recv-bad-message() {
   echo -n 'abc' | ./webpipe-dev.sh recv ~/webpipe/input
+  echo $?
+}
+
+test-recv-empty() {
+  echo -n '' | ./webpipe-dev.sh recv ~/webpipe/input
   echo $?
 }
 

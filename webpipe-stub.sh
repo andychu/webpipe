@@ -58,7 +58,10 @@ sendHeader() {
   echo -n '0:}'
 }
 
-# very 
+# TODO:
+# - send filename, optional hostname, optional file type as fields
+# - send body as separate message
+
 send() {
   # Add hostname prefix to every filename.
   # TODO: make this a tag instead in the metadata message?
