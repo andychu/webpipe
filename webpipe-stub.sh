@@ -28,28 +28,22 @@ log() {
 
 # minimal custom TNET encoder.  Avoid dependencies on Python, C, etc.
 tnetEncodeFile() {
-  local filename=$1
-  local remote_name=$2
-  local size=$3
+  local filename="$1"
+  local hostname="$2"
+  local size="$3"
 
   # { file: example.txt, body: foobar }
 
   local k1='8:filename,'
   # $#s gets the length of s; should be portable
-  local v1="${#remote_name}:${remote_name},"
-  local k2='4:body,'
-  local s2="$size:"
+  local v1="${#filename}:${filename},"
 
-  # 1 for trailing comma
-  local v2_size=$(expr ${#s2} + $size + 1)
-  local msg_size=$(expr ${#k1} + ${#v1} + ${#k2} + $v2_size)
+  local meta="$k1$v1"
+  echo -n "${#meta}:$meta}"
 
-  echo -n "$msg_size:$k1$v1$k2"
-
-  echo -n $s2
+  echo -n "$size:"
   cat $filename
   echo -n ,
-  echo -n }
 }
 
 sendHeader() {
@@ -66,13 +60,7 @@ send() {
   # Add hostname prefix to every filename.
   # TODO: make this a tag instead in the metadata message?
   local hostname
-  local prefix
-  hostname=$(hostname)
-  if test $? -eq 0; then
-    prefix="${hostname}_"
-  else
-    prefix=""
-  fi
+  hostname=$(hostname)  # could be empty if this fails
 
   sendHeader
 
@@ -81,7 +69,7 @@ send() {
     size=$(stat --printf '%s' $filename)  # stat should be portable?
     local exit_code=$?
     if test $exit_code -eq 0; then
-      tnetEncodeFile $filename "$prefix$filename" $size
+      tnetEncodeFile "$filename" "$hostname" "$size"
     else
       log "stat error, ignoring $filename"
     fi

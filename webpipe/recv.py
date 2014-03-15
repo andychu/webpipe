@@ -73,22 +73,34 @@ def main(argv):
   log('header: %s', header)
 
   while True:
+
+    #
+    # Get metadata
+    #
+
     try:
       metadata = g.next()
     except StopIteration:
-      print 'done'
       return 0
 
     if isinstance(metadata, bool):
       return 0 if metadata else 1
 
+    if not isinstance(metadata, dict):
+      log('Invalid metadata: %r', metadata)
+      return 1
+
     try:
       filename = metadata['filename']
     except KeyError, e:
       log('Record should have filename')
-      continue
+      return 1
     hostname = metadata.get('hostname')
     filetype = metadata.get('filetype')
+
+    #
+    # Get body
+    #
 
     try:
       body = g.next()
