@@ -97,7 +97,7 @@ def main(argv):
       return 1
 
     if isinstance(body, bool):
-      return 0 if metadata else 1
+      return 0 if body else 1
 
     # TODO: also receive { dirname tar } messages?  Or { dirname vat } ?
 
