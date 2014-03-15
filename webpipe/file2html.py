@@ -275,9 +275,10 @@ class Resources(object):
 def main(argv):
   """Returns an exit code."""
 
-  # NOTE: This is the base path.  We just join them with the filenames on
-  # stdin.  It might be better to just get absolute paths on stdin.
+  # NOTE: This is the input base path.  We just join them with the filenames on
+  # stdin.
   dir = argv[1]
+  # TODO: pass in_dir, out_dir
 
   res = Resources()
   index_html = res.ReadFile('index.html')

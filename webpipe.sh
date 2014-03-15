@@ -97,6 +97,8 @@ run() {
 
   export PYTHONUNBUFFERED=1
 
+  # TODO: determine session here.  Latest dir in ~/webpipe/s/ or
+  # ~/webpipe/session.
   print-events $input_dir \
     | file2html $input_dir \
     | serve "$@"
