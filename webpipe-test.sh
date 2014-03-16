@@ -75,10 +75,13 @@ remove-nonprintable() {
 #
 
 test-file2html() {
+  cp testdata/typescript ~/webpipe/input
+
   # TODO: These files don't exist
-  { file2html ~/webpipe/input <<EOF
+  { file2html ~/webpipe/input ~/webpipe/s/webpipe-test <<EOF
 Rplot001.png
 test.csv
+typescript
 EOF
   } | remove-nonprintable
 }

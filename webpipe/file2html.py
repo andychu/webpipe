@@ -253,7 +253,7 @@ BUILTINS = {
 class Resources(object):
   def __init__(self, base_dir=None):
     self.base_dir = base_dir or os.path.dirname(sys.argv[0])
-    b = os.path.join(self.base_dir, '..', 'plugins', 'bin')
+    b = os.path.join(self.base_dir, '..', 'plugins')
     self.bin_base = os.path.normpath(b)
 
   def ReadFile(self, path):
@@ -263,7 +263,7 @@ class Resources(object):
 
   def GetPluginBin(self, file_type):
     # plugins dir is parallel to webpipe python dir.
-    p = os.path.join(self.bin_base, file_type)
+    p = os.path.join(self.bin_base, file_type, 'render')
 
     # TODO: test if it's executable.  Show clear error if not.
     if os.path.exists(p):
@@ -278,14 +278,17 @@ def main(argv):
   # NOTE: This is the input base path.  We just join them with the filenames on
   # stdin.
   in_dir = argv[1]
+  out_dir = argv[2]
   # TODO:
-  # - pass in_dir, out_dir
   # - input is a single line for now.  Later it could be a message, if you want
   # people to specify an explicit file type.  I guess that can be done with a
   # file extension too, like typescript.ansi.  The problem is that you can't
   # get any other options with it.
   # - output is pointer to files/dirs written.
 
+
+  # TODO:
+  # - Move index.html to server.  It logically belongs there.
   res = Resources()
   index_html = res.ReadFile('index.html')
 
@@ -293,7 +296,7 @@ def main(argv):
       {'path': 'index.html', 'contents': index_html},
       ]}
 
-  sys.stdout.write(tnet.dumps(out))
+  #sys.stdout.write(tnet.dumps(out))
 
   counter = 1  # application is 1-indexed
   while True:
@@ -336,6 +339,7 @@ def main(argv):
     if plugin_bin:
       # TODO: determine output session dir?
       argv = [plugin_bin, input_path, '/tmp/webpipe-dummy']
+      log('argv: %s', argv)
       exit_code = subprocess.call(argv)
       if exit_code != 0:
         log('ERROR: %s exited with code %d', argv, exit_code)
@@ -366,7 +370,7 @@ def main(argv):
       files.append(o)
 
     out = {'files': files}
-    sys.stdout.write(tnet.dumps(out))
+    #sys.stdout.write(tnet.dumps(out))
 
     counter += 1
 
