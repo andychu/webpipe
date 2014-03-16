@@ -16,14 +16,17 @@ main() {
   local output_dir=$3
 
   log "input $input"
-  log "output $output"
-  log "output_dir $output_dir"
+
+  # These must be RELATIVE, so you can use them as URLs too!
+  log "output $output"  # 1.html
+  log "output_dir $output_dir"  #1/
 
   # Script is responsible for this!  I think.
   mkdir -p $output_dir
 
   which dot >/dev/null || install_message
-  dot -T png -o "$output_dir/$(basename $input).png" $input
+  local out_png="$output_dir/$(basename $input).png" 
+  dot -T png -o $out_png $input
 
   echo $output_dir  # we wrote it
 
@@ -32,6 +35,7 @@ main() {
 <p>
   <i>Dot file</i>
   <a href="$output_dir">$output_dir</a>
+  <img src="$out_png">rendered dot image</img>
 </p>
 EOF
 
