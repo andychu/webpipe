@@ -103,6 +103,20 @@ run() {
     | server serve "$@"
 }
 
+run2() {
+  local input_dir=${1:-~/webpipe/input}
+  shift
+
+  check-tools
+
+  export PYTHONUNBUFFERED=1
+
+  local session=~/webpipe/s/webpipe-test
+  print-events $input_dir \
+    | file2html $input_dir $session \
+    | server serve2 $session
+}
+
 help() {
   log "Usage: webpipe [ init | run | help | version ]"
 }
