@@ -74,6 +74,12 @@ class ReadStdin2(object):
 
   def __call__(self):
     log('stdin 2')
+    # TODO: read header?
+    # if it doesn't start with 'lines:' or '[lines]' or 
+    # protocol:
+    # readline first... if line starts with '3:', then you need to read header
+    # as JSON?  or tnet?
+
     while True:
       # must be unbuffered
       line = sys.stdin.readline()
@@ -355,7 +361,16 @@ def AppMain(argv, spy_client):
     log('serve2')
     session = argv[2]
     opts.session = session
-    # TODO: Write index.html in the session dir.
+
+    # Write index.html in the session dir.
+    this_dir = os.path.dirname(sys.argv[0])
+    path = os.path.join(this_dir, 'index.html')
+    with open(path) as f:
+      index_html = f.read()
+
+    out_path = os.path.join(session, 'index.html')
+    with open(out_path, 'w') as f:
+      f.write(index_html)
 
     try:
       Serve2(opts, waiter, spy_client)
