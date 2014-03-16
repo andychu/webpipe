@@ -77,8 +77,8 @@ file2html() {
 }
 
 # serve HTML and static files.
-serve() {
-  $THIS_DIR/webpipe/webpipe.py serve "$@"
+server() {
+  $THIS_DIR/webpipe/webpipe.py "$@"
 }
 
 # Run the whole pipeline.
@@ -100,7 +100,7 @@ run() {
   # ~/webpipe/session.
   print-events $input_dir \
     | file2html $input_dir \
-    | serve "$@"
+    | server serve "$@"
 }
 
 help() {

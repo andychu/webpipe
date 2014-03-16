@@ -62,6 +62,28 @@ class ReadStdin(object):
       self.q.put(record)
 
 
+class ReadStdin2(object):
+  """Read filenames from stdin and put them on a queue."""
+
+  def __init__(self, q):
+    """
+    Args:
+      q: Queue, can be None
+    """
+    self.q = q
+
+  def __call__(self):
+    log('stdin 2')
+    while True:
+      # must be unbuffered
+      line = sys.stdin.readline()
+      if not line:
+        break
+
+      log('putting %r', line)
+      self.q.put(line)
+
+
 class WriteFiles(object):
   """Write files to a single session dir."""
 
@@ -118,10 +140,11 @@ class Notify(object):
 
   def __call__(self):
     # take care of index.html ?  Is this the right way to do it?
-    unused = self.q.get()
+    #unused = self.q.get()
     i = 0
     while True:
-      unused = self.q.get()
+      name = self.q.get()
+      log('notify: %s', name)
       self.waiter.Notify()
 
       i += 1
@@ -184,7 +207,11 @@ def Serve(opts, waiter, spy_client):
   t1.setDaemon(True)  # So Ctrl-C works
   t1.start()
 
-  session_name, session_path = opts.session or MakeSession(opts.out_dir)
+  if opts.session:
+    session_path = opts.session
+    session_name = os.path.basename(session_path)
+  else:
+    session_name, session_path = MakeSession(opts.out_dir)
 
   w = WriteFiles(q1, q2, session_path)
   t2 = threading.Thread(target=w)
@@ -195,6 +222,50 @@ def Serve(opts, waiter, spy_client):
   t3 = threading.Thread(target=n)
   t3.setDaemon(True)  # So Ctrl-C works
   t3.start()
+
+  # TODO:
+  # - server should get root dir ~/webpipe/s
+  # - waiters is {"session", waiter}
+  # There's only one waiter I guess.  the rest of it is just served.
+
+  # Serve from the same port that WriteFiles is writing to.
+  waiters = {session_name: waiter}
+
+  handler_class = wait_server.WaitingRequestHandler
+  handler_class.root_dir = opts.out_dir
+  handler_class.waiters = waiters
+
+  s = httpd.ThreadedHTTPServer(('', opts.port), handler_class)
+
+  # TODO: add opts.hostname?
+  log('Serving at http://localhost:%d/  (Ctrl-C to quit)', opts.port)
+  s.serve_forever()
+
+  # NOTE: Could do webbrowser.open() after we serve.  But people can also just
+  # click the link we printed above, since most terminals will make them URLs.
+
+
+def Serve2(opts, waiter, spy_client):
+  # Pipeline:
+  # Read stdin messages -> notify server
+
+  q = Queue.Queue()
+
+  r = ReadStdin2(q)
+  t1 = threading.Thread(target=r)
+  t1.setDaemon(True)  # So Ctrl-C works
+  t1.start()
+
+  if opts.session:
+    session_path = opts.session
+    session_name = os.path.basename(session_path)
+  else:
+    session_name, session_path = MakeSession(opts.out_dir)
+
+  n = Notify(q, waiter, spy_client)
+  t2 = threading.Thread(target=n)
+  t2.setDaemon(True)  # So Ctrl-C works
+  t2.start()
 
   # TODO:
   # - server should get root dir ~/webpipe/s
@@ -278,6 +349,20 @@ def AppMain(argv, spy_client):
     except KeyboardInterrupt:
       log('Stopped')
       return waiter.Length()
+
+  elif action == 'serve2':
+    # NOTE: serve from --out-dir, --session
+    log('serve2')
+    session = argv[2]
+    opts.session = session
+    # TODO: Write index.html in the session dir.
+
+    try:
+      Serve2(opts, waiter, spy_client)
+    except KeyboardInterrupt:
+      log('Stopped')
+      return waiter.Length()
+
   else:
     raise Error('Invalid action %r' % action)
 
