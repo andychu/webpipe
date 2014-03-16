@@ -257,11 +257,6 @@ class Resources(object):
     b = os.path.join(self.base_dir, '..', 'plugins')
     self.bin_base = os.path.normpath(b)
 
-  def ReadFile(self, path):
-    full_path = os.path.join(self.base_dir, path)
-    with open(full_path) as f:
-      return f.read()
-
   def GetPluginBin(self, file_type):
     # plugins dir is parallel to webpipe python dir.
     p = os.path.join(self.bin_base, file_type, 'render')
@@ -286,18 +281,6 @@ def main(argv):
   # file extension too, like typescript.ansi.  The problem is that you can't
   # get any other options with it.
   # - output is pointer to files/dirs written.
-
-
-  # TODO:
-  # - Move index.html to server.  It logically belongs there.
-  res = Resources()
-  index_html = res.ReadFile('index.html')
-
-  out = {'files': [
-      {'path': 'index.html', 'contents': index_html},
-      ]}
-
-  #sys.stdout.write(tnet.dumps(out))
 
   counter = 1  # application is 1-indexed
   while True:
