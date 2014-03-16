@@ -73,6 +73,7 @@ import cgi
 import csv
 import errno
 import os
+import re
 import subprocess
 import sys
 
@@ -282,7 +283,23 @@ def main(argv):
   # get any other options with it.
   # - output is pointer to files/dirs written.
 
-  counter = 1  # application is 1-indexed
+  res = Resources()
+
+  entries = os.listdir(out_dir)
+  nums = []
+  for e in entries:
+    m = re.match(r'(\d+)\.html', e)
+    if m:
+      nums.append(int(m.group(1)))
+
+  if nums:
+    maximum = max(nums)
+  else:
+    maximum = 0
+
+  counter = maximum + 1  # application is 1-indexed
+  log('counter initialized to %d', counter)
+
   while True:
     line = sys.stdin.readline()
     if not line:
