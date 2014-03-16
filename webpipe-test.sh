@@ -75,12 +75,10 @@ remove-nonprintable() {
 #
 
 test-file2html() {
-  csv-demo > ~/webpipe/default/table.csv
-
   # TODO: These files don't exist
-  { file2html ~/webpipe/default <<EOF
+  { file2html ~/webpipe/input <<EOF
 Rplot001.png
-table.csv
+test.csv
 EOF
   } | remove-nonprintable
 }
