@@ -1,0 +1,40 @@
+#!/bin/sh
+
+set -o nounset
+
+log() {
+  echo 1>&2 "$@"
+}
+
+install_message() {
+  log "dot not found.  Run 'sudo apt-get install graphviz'"
+}
+
+main() {
+  local input=$1
+  local output=$2
+  local output_dir=$3
+
+  log "input $input"
+  log "output $output"
+  log "output_dir $output_dir"
+
+  # Script is responsible for this!  I think.
+  mkdir -p $output_dir
+
+  which dot >/dev/null || install_message
+  dot -T png -o "$output_dir/$(basename $input).png" $input
+
+  echo $output_dir  # we wrote it
+
+  cat >$output <<EOF
+<p>
+  <i>Dot file</i>
+  <a href="$output_dir">$output_dir</a>
+</p>
+EOF
+
+}
+
+main "$@"
+

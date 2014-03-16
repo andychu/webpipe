@@ -332,6 +332,9 @@ def main(argv):
     out_html_filename = '%d.html' % counter
     out_html_path = os.path.join(out_dir, out_html_filename)
 
+    # 23/
+    part_dir = os.path.join(out_dir, str(counter))
+
     # Order of resolution:
     #
     # 1. Check user's ~/webpipe dir for plugins
@@ -341,13 +344,16 @@ def main(argv):
 
     plugin_bin = res.GetPluginBin(file_type)
     if plugin_bin:
-      argv = [plugin_bin, input_path, out_html_path]
-      #log('argv: %s', argv)
+
+      # TODO: add action here
+      argv = [plugin_bin, input_path, out_html_path, part_dir]
+      log('argv: %s', argv)
       exit_code = subprocess.call(argv)
       if exit_code != 0:
         log('ERROR: %s exited with code %d', argv, exit_code)
 
-      # NOTE: the plugin responsible for printing the directory, if any?
+      # NOTE: the plugin responsible for printing the directory, if any?  And
+      # making it.
 
       # Check that the plugin actually create the file.
       if not os.path.exists(out_html_path):

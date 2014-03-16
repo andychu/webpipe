@@ -44,6 +44,11 @@ name,age
 EOF
 }
 
+dot-demo() {
+  local dest=${1:-~/webpipe/input}
+  cp plugins/dot/examples/cluster.dot $dest
+}
+
 write-demo() {
   local dest=~/webpipe/input
   set -x
@@ -59,6 +64,9 @@ write-demo() {
 
   sleep 1
   csv-demo > $dest/test.csv
+
+  sleep 1
+  dot-demo $dest
 
   sleep 1
   echo 'file with unknown extension' > $dest/other.other
