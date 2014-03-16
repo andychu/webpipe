@@ -84,11 +84,13 @@ EOF
 }
 
 test-serve() {
-  # TODO: need tnet input
-  serve <<EOF
-<p>one</p>
-<p>two</p>
-EOF
+  # Test it without a renderer.
+  local stub=$PWD/webpipe-stub.sh
+  local dev=$PWD/webpipe-dev.sh
+  cd testdata
+  # TODO: It expects a message with "files" on stdin.  It could just take a
+  # line like '1.html'
+  echo hello.html | $stub send | $dev serve
 }
 
 # not fatal
