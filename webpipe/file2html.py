@@ -71,6 +71,7 @@ different machines.  But then you could use tmpfs if it was really a big deal.
 
 import cgi
 import csv
+import errno
 import os
 import subprocess
 import sys
@@ -328,22 +329,28 @@ def main(argv):
       log("Couldn't determine file type for %r; ignored", filename)
       continue
 
+    out_html_filename = '%d.html' % counter
+    out_html_path = os.path.join(out_dir, out_html_filename)
+
     # Order of resolution:
     #
-    # 1. Check user's ~/webpipe dir
-    # 2. Check resources
+    # 1. Check user's ~/webpipe dir for plugins
+    # 2. Check installation dir for plugins distributed with the webpipe
+    #    package
     # 3. Builtins
 
     plugin_bin = res.GetPluginBin(file_type)
-
     if plugin_bin:
       # TODO: determine output session dir?
-      argv = [plugin_bin, input_path, '/tmp/webpipe-dummy']
+      argv = [plugin_bin, input_path, out_html_path]
       log('argv: %s', argv)
       exit_code = subprocess.call(argv)
       if exit_code != 0:
         log('ERROR: %s exited with code %d', argv, exit_code)
 
+      # NOTE: the plugin responsible for printing the directory, if any?
+
+      print out_html_path
       # The plugin outputs HTML to a file?  Or pipe?
       html = 'Plugin placeholder'
       orig = None
@@ -354,23 +361,28 @@ def main(argv):
       func = BUILTINS.get(file_type)
       if func:
         html, orig = func(orig_rel_path, filename, contents)
+        if orig:
+          orig_out_path = os.path.join(out_dir, orig_rel_path)
+
+          try:
+            os.makedirs(os.path.dirname(orig_out_path))
+          except OSError, e:
+            if e.errno != errno.EEXIST:
+              raise
+
+          with open(orig_out_path, 'w') as f:
+            f.write(orig)
+          # Print the directory, because we wrote a file there.
+          print '%d/' % counter
+
+        with open(out_html_path, 'w') as f:
+          f.write(html)
+        # This triggers the server
+        print out_html_filename
+
       else:
         log('No builtin renderer for %r; ignored', filename)
         continue
-
-    # Default: use "file" command?
-    #log('ignored: %s', filename)
-
-    path = '%d.html' % counter
-    files = [
-        {'path': path, 'contents': html},
-        ]
-    if orig:
-      o = {'path': orig_rel_path, 'contents': contents}
-      files.append(o)
-
-    out = {'files': files}
-    #sys.stdout.write(tnet.dumps(out))
 
     counter += 1
 
