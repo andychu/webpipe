@@ -73,8 +73,7 @@ print-events() {
 
 # render files to HTML.
 file2html() {
-  local dir=$1
-  $THIS_DIR/webpipe/file2html.py $dir
+  $THIS_DIR/webpipe/file2html.py "$@"
 }
 
 # serve HTML and static files.
