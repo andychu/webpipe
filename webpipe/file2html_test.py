@@ -28,8 +28,6 @@ class ResourcesTest(unittest.TestCase):
 
   def testResources(self):
     res = file2html.Resources()
-    s = res.ReadFile('index.html')
-    print 'index', len(s)
 
     p = res.GetPluginBin('ansi')
     print p
