@@ -108,17 +108,14 @@ class SequenceWaiter(object):
     # If this limit it
     self.max_waiters = max_waiters
 
-    self.events = [threading.Event()]
+    # even, odd scheme.  When one event is notified, the other is reset.
+    self.events = [threading.Event(), threading.Event()]
     self.lock = threading.Lock()  # protects self.events
-    # TODO: initialize this from header?
-    #
-    # initialize to 15, then 15 will block
-    # MaybeWait(15.html)
-    # every
-
     self.counter = 1
 
   def SetCounter(self, n):
+    # TODO: Make this a constructor param?
+    assert self.counter == 1, "Only call before using"
     self.counter = n
 
   def MaybeWait(self, n):
@@ -137,24 +134,23 @@ class SequenceWaiter(object):
       #print self.items
       return WAIT_OK
     elif i == n:
-      log('Waiting for event %d', i)
-      self.events[i].wait()  # wait for it to be added
+      log('Waiting for event %d (%d)', i, i % 2)
+      self.events[i % 2].wait()  # wait for it to be added
       return WAIT_OK
     else:
       return WAIT_TOO_BIG
 
   def Notify(self):
-    # *Atomically* append item N and event N+1.
+    # *Atomically* increment counter and add event event N+1.
     with self.lock:
       n = self.counter
       self.counter += 1
 
-      # Now add another event to wait on.
-      e = threading.Event()
-      self.events.append(e)
+      # instantiate a new event in the other space
+      self.events[self.counter % 2] = threading.Event()
 
     # unblock all MaybeWait() calls
-    self.events[n].set()
+    self.events[n % 2].set()
 
   def Length(self):
     return self.counter

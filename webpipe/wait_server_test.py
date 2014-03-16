@@ -18,7 +18,7 @@ class WaitTest(unittest.TestCase):
 
   def testSequenceWaiter(self):
     s = wait_server.SequenceWaiter()
-    result = s.MaybeWait(1)
+    result = s.MaybeWait(2)
     self.assertEqual(wait_server.WAIT_TOO_BIG, result)
 
 
