@@ -357,15 +357,29 @@ def main(argv):
 
       # TODO: add action here
       # 
+      # protocol is:
+      # render <action> <input> <output>
+      #
+      # output is just "3".  You are allowed to create the file 3.html, and the
+      # *directory* 3 (optionally)
+      #
+      # And then you must print all the files you create to stdout, and output
+      # nothing else.
+      #
+      # Other tools may output stuff on stdout.  You should redirect them to stderr with:
+      # 1>&2.  stderr could show up in debug output on the web page (probably
+      # only if the exit code is 1?)
+      #
+      # In the error case, file2html.py should write 3.html, along with a log
+      # file?  The html should preview it, but only if it's long.  Use the .log
+      # viewer.
+      # 
       # Pass 3.html, 3 (for the directory)
       argv = [plugin_bin, input_path, out_html_filename, str(counter)]
       log('argv: %s cwd %s', argv, out_dir)
       exit_code = subprocess.call(argv, cwd=out_dir)
       if exit_code != 0:
         log('ERROR: %s exited with code %d', argv, exit_code)
-
-      # NOTE: the plugin responsible for printing the directory, if any?  And
-      # making it.
 
       # Check that the plugin actually create the file.
       if not os.path.exists(out_html_path):
