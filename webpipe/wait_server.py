@@ -77,15 +77,14 @@ class WaitingRequestHandler(httpd.BaseRequestHandler):
     if m:
       session, num = m.groups()
       num = int(num)
-      i = num - 1  # container is 0-based
 
       waiter = self.waiters.get(session)
       if waiter is not None:
         log('PATH: %s', self.path)
 
-        log('MaybeWait session %r, part %d', session, i)
-        result = waiter.MaybeWait(i)
-        log('Done %d', i)
+        log('MaybeWait session %r, part %d', session, num)
+        result = waiter.MaybeWait(num)
+        log('Done %d', num)
         # result could be:
         # 404: too big
         # 503: 503
@@ -111,7 +110,16 @@ class SequenceWaiter(object):
 
     self.events = [threading.Event()]
     self.lock = threading.Lock()  # protects self.events
-    self.counter = 0
+    # TODO: initialize this from header?
+    #
+    # initialize to 15, then 15 will block
+    # MaybeWait(15.html)
+    # every
+
+    self.counter = 1
+
+  def SetCounter(self, n):
+    self.counter = n
 
   def MaybeWait(self, n):
     """

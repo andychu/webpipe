@@ -72,6 +72,7 @@ different machines.  But then you could use tmpfs if it was really a big deal.
 import cgi
 import csv
 import errno
+import json
 import os
 import re
 import subprocess
@@ -157,10 +158,15 @@ $.ajax({
 """, default_formatter='html')
 
 
+if sys.stderr.isatty():
+  PREFIX = '\033[36m' + 'file2html:' + '\033[0;0m'
+else:
+  PREFIX = 'file2html:'
+
 def log(msg, *args):
   if args:
     msg = msg % args
-  print >>sys.stderr, 'file2html:', msg
+  print >>sys.stderr, PREFIX, msg
 
 
 def RenderCsv(orig_rel_path, filename, contents):
@@ -299,6 +305,13 @@ def main(argv):
 
   counter = maximum + 1  # application is 1-indexed
   log('counter initialized to %d', counter)
+
+  # e.g. we are about to write "1"
+  header = json.dumps({'stream': 'netstring', 'nextPart': counter})
+
+  # Print it on a single line.  Also allow netstring parsing.  Minimal
+  # JSON/netstring header is: 2:{}\n.
+  sys.stdout.write(tnet.dump_line(header))
 
   while True:
     line = sys.stdin.readline()

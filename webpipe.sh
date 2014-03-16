@@ -111,6 +111,11 @@ run2() {
 
   export PYTHONUNBUFFERED=1
 
+  # NOTE: Could recover state here too.
+  # file2html has to know what filenames to write/generate.  Serve has to know
+  # which one to block on.  Or I guess serve could recover it too by looking at
+  # the file system.  But there is a race condition there.  Because
+
   local session=~/webpipe/s/webpipe-test
   print-events $input_dir \
     | file2html $input_dir $session \

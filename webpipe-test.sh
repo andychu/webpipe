@@ -95,7 +95,7 @@ test-serve2() {
   # line like '1.html'
   local session=~/webpipe/s/webpipe-test
   echo '<i>one</i>' > $session/1.html
-  echo 1.html | $dev server serve2 $session
+  { echo '2:{}'; echo 1.html; } | $dev server serve2 $session
 }
 
 # not fatal

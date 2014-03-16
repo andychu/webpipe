@@ -10,6 +10,7 @@ threading.Event on the server.
 import datetime
 import errno
 import getpass
+import json
 import optparse
 import os
 import Queue
@@ -261,6 +262,23 @@ def Serve(opts, waiter, spy_client):
 def Serve2(opts, waiter, spy_client):
   # Pipeline:
   # Read stdin messages -> notify server
+
+  header_line = sys.stdin.readline()
+  # skip over length prefix
+  i = header_line.find(':')
+  if i == -1:
+    raise Error('Expected colon in header line: %r' % header_line)
+
+  header = json.loads(header_line[i+1:])
+  log('received header %r', header)
+
+  next_part = header.get('nextPart')
+  if next_part is not None:
+    if isinstance(next_part, int):
+      waiter.SetCounter(next_part)
+      log('received counter state in header: %d', next_part)
+    else:
+      log('Ignored invalid nextPart %r', next_part)
 
   q = Queue.Queue()
 
