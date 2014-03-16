@@ -341,19 +341,19 @@ def main(argv):
 
     plugin_bin = res.GetPluginBin(file_type)
     if plugin_bin:
-      # TODO: determine output session dir?
       argv = [plugin_bin, input_path, out_html_path]
-      log('argv: %s', argv)
+      #log('argv: %s', argv)
       exit_code = subprocess.call(argv)
       if exit_code != 0:
         log('ERROR: %s exited with code %d', argv, exit_code)
 
       # NOTE: the plugin responsible for printing the directory, if any?
 
-      print out_html_path
-      # The plugin outputs HTML to a file?  Or pipe?
-      html = 'Plugin placeholder'
-      orig = None
+      # Check that the plugin actually create the file.
+      if not os.path.exists(out_html_path):
+        log('Plugin error: %r not created' % out_html_path)
+        continue
+      print out_html_filename
 
     else:
       # TODO: use a chaining pattern instead of nested if-else

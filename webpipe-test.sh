@@ -64,12 +64,6 @@ write-demo() {
   echo 'file with unknown extension' > $dest/other.other
 }
 
-# Found here
-# http://www.unix.com/shell-programming-scripting/14108-remove-non-printing-chars.html
-remove-nonprintable() {
-  tr -c '[:print:]' '_'
-}
-
 #
 # Tests
 #
@@ -78,12 +72,11 @@ test-file2html() {
   cp testdata/typescript ~/webpipe/input
 
   # TODO: These files don't exist
-  { file2html ~/webpipe/input ~/webpipe/s/webpipe-test <<EOF
+  file2html ~/webpipe/input ~/webpipe/s/webpipe-test <<EOF
 Rplot001.png
 test.csv
 typescript
 EOF
-  } | remove-nonprintable
 }
 
 test-serve() {
