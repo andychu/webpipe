@@ -277,8 +277,14 @@ def main(argv):
 
   # NOTE: This is the input base path.  We just join them with the filenames on
   # stdin.
-  dir = argv[1]
-  # TODO: pass in_dir, out_dir
+  in_dir = argv[1]
+  # TODO:
+  # - pass in_dir, out_dir
+  # - input is a single line for now.  Later it could be a message, if you want
+  # people to specify an explicit file type.  I guess that can be done with a
+  # file extension too, like typescript.ansi.  The problem is that you can't
+  # get any other options with it.
+  # - output is pointer to files/dirs written.
 
   res = Resources()
   index_html = res.ReadFile('index.html')
@@ -297,7 +303,8 @@ def main(argv):
 
     filename = line.strip()
 
-    input_path = os.path.join(dir, filename)
+    # NOTE: Right now, this allows absolute paths too.
+    input_path = os.path.join(in_dir, filename)
 
     # TODO: Plugins should be passed directories directly.
     if os.path.isdir(input_path):
