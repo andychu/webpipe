@@ -56,6 +56,8 @@ def main(argv):
 
   g = GenRecords(sys.stdin)
 
+  # TODO: use readline for the header instead.
+  # Expected {"stream": "tnet", "description": "dict metadata, bytes data"}
   try:
     header = g.next()
   except StopIteration:
