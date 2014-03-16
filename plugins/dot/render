@@ -27,6 +27,7 @@ main() {
 
   echo $output_dir  # we wrote it
 
+  # TODO: Use jsont here.
   cat >$output <<EOF
 <p>
   <i>Dot file</i>

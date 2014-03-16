@@ -86,6 +86,7 @@ class ReadStdin2(object):
       if not line:
         break
 
+      line = line.rstrip()
       log('putting %r', line)
       self.q.put(line)
 
@@ -151,6 +152,12 @@ class Notify(object):
     while True:
       name = self.q.get()
       log('notify: %s', name)
+
+      # TODO: do a better check
+      if not name.endswith('.html'):
+        log('skipped: %s', name)
+        continue
+
       self.waiter.Notify()
 
       i += 1
