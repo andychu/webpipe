@@ -51,6 +51,11 @@ check-tools() {
 # Set up the default dir to watch.
 init() {
   mkdir --verbose -p $INPUT_DIR
+  # Where user can install their own plugins
+  mkdir --verbose -p ~/webpipe/plugins
+  # Where files from $INPUT_DIR are moved and renamed to, so they are HTML and
+  # shell safe.
+  mkdir --verbose -p ~/webpipe/renamed
 }
 
 # People can run print-events | file2html to directly to render on a different
