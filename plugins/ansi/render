@@ -1,18 +1,19 @@
 #!/bin/sh
 
-log() {
-  echo 1>&2 "$@"
-}
+readonly THIS_DIR=$(dirname $0)
+. $THIS_DIR/../webpipe-lib.sh
 
-install_message() {
-  log "aha not found.  Run 'sudo apt-get install aha'"
+checkDeps() {
+  local msg="aha not found.  Run 'sudo apt-get install aha'"
+  which aha >/dev/null || die "$msg"
 }
 
 main() {
   local input=$1
   local output=$2
 
-  which aha >/dev/null || install_message
+  checkDeps
+
   aha -f $input > $output
 }
 

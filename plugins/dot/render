@@ -1,19 +1,22 @@
 #!/bin/sh
 
-set -o nounset
+readonly THIS_DIR=$(dirname $0)
+. $THIS_DIR/../webpipe-lib.sh
 
-log() {
-  echo 1>&2 "$@"
-}
-
-install_message() {
-  log "dot not found.  Run 'sudo apt-get install graphviz'"
+checkDeps() {
+  local msg="dot not found.  Run 'sudo apt-get install graphviz'"
+  which dot >/dev/null || die $msg
 }
 
 main() {
   local input=$1
   local output=$2
   local output_dir=$3
+
+  checkDeps
+
+  # fail if dot fails, etc.
+  set -o errexit
 
   log "input $input"
 
@@ -24,7 +27,6 @@ main() {
   # Script is responsible for this!  I think.
   mkdir -p $output_dir
 
-  which dot >/dev/null || install_message
   local out_png="$output_dir/$(basename $input).png" 
   dot -T png -o $out_png $input
 
@@ -38,7 +40,6 @@ main() {
   <img src="$out_png">rendered dot image</img>
 </p>
 EOF
-
 }
 
 main "$@"
