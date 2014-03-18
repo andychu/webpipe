@@ -7,10 +7,8 @@ readonly THIS_DIR=$(dirname $0)
 . $THIS_DIR/../webpipe-lib.sh
 
 main() {
-  local action=$1
-  test $action == "scroll" || die "Invalid action '$action'"
-  local input=$2
-  local output=$3
+  local input=$1
+  local output=$2
 
   # fail if cp fails, etc.
   set -o errexit
