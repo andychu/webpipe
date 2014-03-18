@@ -47,6 +47,15 @@ class BaseRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
   server_version = None
   root_dir = None
 
+  # TODO:
+  #
+  # Override translate_path in handlers.  It should call a function
+  # resolve_path.  I would like it if translate_path could return None, e.g.
+  # because we don't want to serve anything under plugins/ but not matching
+  # plugins/*/static.
+  #
+  # You copy and modify send_head -- it's not too big.
+
   def translate_path(self, path):
     """Translate a /-separated PATH to the local filename syntax.
 
@@ -56,11 +65,10 @@ class BaseRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     # abandon query parameters
     path = path.split('?',1)[0]
     path = path.split('#',1)[0]
+    # eliminates double slashes, etc.
     path = posixpath.normpath(urllib.unquote(path))
 
     words = [p for p in path.split('/') if p]
-
-    # TODO: Add mapping here, e.g. session/ and plugins/
 
     path = self.root_dir  # note: class variable
 

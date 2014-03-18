@@ -91,7 +91,11 @@ class WaitingRequestHandler(httpd.BaseRequestHandler):
 
     # Serve static file.
 
+    # NOTE: translate_path is called in send_head.  Takes URL and changes it to
+    # a file system path.  Very hacky design.
     f = self.send_head()
+
+    # f is None if the file doesn't exist, and send_error(404) was called.
     if f:
       self.copyfile(f, self.wfile)
       f.close()
