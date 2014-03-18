@@ -9,12 +9,17 @@ checkDeps() {
 }
 
 main() {
-  local input=$1
-  local output=$2
+  local action=$1
+  if test $action != "scroll"; then
+    die "Invalid action '$action'"
+  fi
+  local input=$2
+  local output=$3
 
   checkDeps
 
-  aha -f $input > $output
+  aha -f $input > $output.html
+  echo $output.html
 }
 
 main "$@"

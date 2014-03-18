@@ -49,6 +49,11 @@ dot-demo() {
   cp plugins/dot/examples/cluster.dot $dest
 }
 
+ansi-demo() {
+  local dest=${1:-~/webpipe/input}
+  cp testdata/typescript $dest
+}
+
 write-demo() {
   local dest=~/webpipe/input
   set -x
@@ -64,6 +69,9 @@ write-demo() {
 
   sleep 1
   csv-demo > $dest/test.csv
+
+  sleep 1
+  ansi-demo $dest
 
   sleep 1
   dot-demo $dest

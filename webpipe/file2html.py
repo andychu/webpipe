@@ -386,6 +386,9 @@ def main(argv):
       # Check that the plugin actually create the file.
       if not os.path.exists(out_html_path):
         log('Plugin error: %r not created' % out_html_path)
+        # TODO: Remove this counter duplication.  Failing here would make it
+        # hard to develop plugins.
+        counter += 1
         continue
 
     else:
