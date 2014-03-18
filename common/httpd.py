@@ -59,6 +59,8 @@ class BaseRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
   def translate_path(self, path):
     """Translate a /-separated PATH to the local filename syntax.
 
+    Called from send_head() (see SimpleHTTPServer).
+
     NOTE: This is copied from Python stdlib SimpleHTTPServer.py.  I just
     changed os.getcwd() to self.root_dir.
     """
@@ -71,6 +73,14 @@ class BaseRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     words = [p for p in path.split('/') if p]
 
     path = self.root_dir  # note: class variable
+
+    # TODO: move to app by putting in resolve_path.  Resolve multiple roots.
+    import sys
+    if words and words[0] == 'plugins':
+      plugins_dir = os.path.join(sys.argv[0], '../../plugins')
+      path = os.path.join(plugins_dir, *words[1:])
+      path = os.path.normpath(path)
+      return path
 
     for word in words:
       drive, word = os.path.splitdrive(word)
