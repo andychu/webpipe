@@ -169,6 +169,29 @@ def log(msg, *args):
   print >>sys.stderr, PREFIX, msg
 
 
+BAD_RE = re.compile(r'[^a-zA-Z0-9_\-]')
+
+def CleanFilename(filename):
+  """Return an escaped filename that's both HTML and shell safe.
+
+  If it weren't shell safe, then
+  
+    cp $input $output
+
+  Would fail if $input had spaces.
+
+  If it weren't HTML safe, then
+
+    <a href="$output"></a>
+
+  would result in XSS if $output had a double quote.
+
+  We use @hh, where h is a hex digit.  For example, @20 for space.
+  """
+  assert isinstance(filename, str)  # byte string, not unicode
+  return BAD_RE.sub(lambda m: '@%x' % ord(m.group(0)), filename)
+
+
 def RenderCsv(orig_rel_path, filename, contents):
   """
   Turn CSV into an HTML table.

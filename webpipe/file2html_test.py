@@ -23,6 +23,12 @@ class FunctionsTest(unittest.TestCase):
     self.assertEqual('png', file2html.GuessFileType('Rplot001.png'))
     self.assertEqual('ansi', file2html.GuessFileType('typescript'))
 
+  def testCleanFilename(self):
+    print file2html.CleanFilename('foo-bar_baz')
+    print file2html.CleanFilename('foo bar')
+    print file2html.CleanFilename('foo bar <>&')
+    print file2html.CleanFilename('foo bar \\ @ ')
+
 
 class ResourcesTest(unittest.TestCase):
 
