@@ -117,6 +117,9 @@ run2() {
   # the file system.  But there is a race condition there.  Because
 
   local session=~/webpipe/s/webpipe-test
+  # Right now, it has to exist.  I guess the shell wrappers should be
+  # responsible for making it.
+  mkdir -p $session
   print-events $input_dir \
     | file2html $input_dir $session \
     | server serve2 $session
