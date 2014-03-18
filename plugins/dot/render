@@ -22,7 +22,7 @@ main() {
 
   local input="$1"  # can have spaces
   local output=$2
-  local output_dir=$3
+  local outputDir=$3
 
   checkDeps
 
@@ -33,25 +33,29 @@ main() {
 
   # These must be RELATIVE, so you can use them as URLs too!
   log "output $output"  # 1.html
-  log "output_dir $output_dir"  #1/
+  log "outputDir $outputDir"  #1/
 
   # Script is responsible for this!  I think.
-  mkdir -p $output_dir
+  mkdir -p $outputDir
 
-  local outPngFilename="$output_dir/$(WP_BasenameNoExt "$input").png" 
+  local outPngFilename="$outputDir/$(WP_BasenameNoExt "$input").png" 
   dot -T png -o "$outPngFilename" "$input"
 
   # In case the filename contains < > & " etc?  Another thing we could do is
   # just escape them in the tool.  I think that is less error prone.
   local WP_INPUT_HTMLSAFE="$input"
-  local outPngUrl="$output_dir/$(WP_BasenameNoExt "$WP_INPUT_HTMLSAFE").png" 
+  local outPngUrl="$outputDir/$(WP_BasenameNoExt "$WP_INPUT_HTMLSAFE").png" 
 
-  echo $output_dir  # we wrote it
+  echo $outputDir  # we wrote it
+
+  local inputFilename=$(basename $input)
+  cp $input $outputDir/$inputFilename.txt
 
   # TODO: Use jsont here.
   cat >$output <<EOF
 <p>
-  <a href="$output_dir">$output_dir</a>
+  <a href="$outputDir">$outputDir</a>
+  <a href="$outputDir/$inputFilename.txt">$inputFilename.txt</a>
   <center>
     <img src="$outPngUrl" alt="Rendered dot image" />
   </center>
