@@ -57,13 +57,18 @@ class BaseRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     path = path.split('?',1)[0]
     path = path.split('#',1)[0]
     path = posixpath.normpath(urllib.unquote(path))
-    words = path.split('/')
-    words = filter(None, words)
+
+    words = [p for p in path.split('/') if p]
+
+    # TODO: Add mapping here, e.g. session/ and plugins/
+
     path = self.root_dir  # note: class variable
+
     for word in words:
       drive, word = os.path.splitdrive(word)
       head, word = os.path.split(word)
-      if word in (os.curdir, os.pardir): continue
+      if word in (os.curdir, os.pardir):  # . ..
+        continue
       path = os.path.join(path, word)
     return path
 

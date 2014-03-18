@@ -8,15 +8,21 @@ import unittest
 import httpd  # module under test
 
 
-class FooTest(unittest.TestCase):
+class HandlerTest(unittest.TestCase):
   def setUp(self):
     pass
 
   def tearDown(self):
     pass
 
-  def testFoo(self):
-    print 'Hello from httpd_test.py'
+  def testHandler(self):
+    # Can't really instantiate this.  req should be a socket?
+    return
+    req = None
+    client_address = None
+    server = None
+    handler = httpd.BaseRequestHandler(req, client_address, server)
+    print handler.translate_path('/')
 
 
 if __name__ == '__main__':
