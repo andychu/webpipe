@@ -318,6 +318,8 @@ def main(argv):
     if not line:
       break
 
+    # TODO: If file contains punctuation, escape it to be BOTH shell and HTML
+    # safe, and then MOVE It to ~/webpipe/safe-name
     filename = line.strip()
 
     # NOTE: Right now, this allows absolute paths too.
@@ -375,7 +377,7 @@ def main(argv):
       # viewer.
       # 
       # Pass 3.html, 3 (for the directory)
-      argv = [plugin_bin, input_path, out_html_filename, str(counter)]
+      argv = [plugin_bin, 'scroll', input_path, str(counter)]
       log('argv: %s cwd %s', argv, out_dir)
       exit_code = subprocess.call(argv, cwd=out_dir)
       if exit_code != 0:
@@ -385,7 +387,6 @@ def main(argv):
       if not os.path.exists(out_html_path):
         log('Plugin error: %r not created' % out_html_path)
         continue
-      print out_html_filename
 
     else:
       # TODO: use a chaining pattern instead of nested if-else

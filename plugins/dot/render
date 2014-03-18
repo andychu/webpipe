@@ -8,60 +8,41 @@ checkDeps() {
   which dot >/dev/null || die $msg
 }
 
-# changes:
-# rename to scroll?
-# ./render scroll foo.html 33
-
 main() {
-  # $input=$1         # absolute path.  NOT SAFE for html.
-  # $output_htmlsafe  # guaranteed to be safe, since it's just a number.
-  #
-  # $WP_INPUT_HTMLSAFE - filename passed through cgi.escape(quote=T)
-  #
-  # local outputDir=$outputHtmlSafe
-
-  local input="$1"  # can have spaces
-  local output=$2
-  local outputDir=$3
+  local action=$1
+  if test $action != "scroll"; then
+    die "Invalid action '$action'"
+  fi
+  local input=$2
+  local output=$3
 
   checkDeps
 
   # fail if dot fails, etc.
   set -o errexit
 
-  log "input $input"
+  mkdir -p $output
 
-  # These must be RELATIVE, so you can use them as URLs too!
-  log "output $output"  # 1.html
-  log "outputDir $outputDir"  #1/
-
-  # Script is responsible for this!  I think.
-  mkdir -p $outputDir
-
-  local outPngFilename="$outputDir/$(WP_BasenameNoExt "$input").png" 
-  dot -T png -o "$outPngFilename" "$input"
-
-  # In case the filename contains < > & " etc?  Another thing we could do is
-  # just escape them in the tool.  I think that is less error prone.
-  local WP_INPUT_HTMLSAFE="$input"
-  local outPngUrl="$outputDir/$(WP_BasenameNoExt "$WP_INPUT_HTMLSAFE").png" 
-
-  echo $outputDir  # we wrote it
+  local pngOut="$output/$(WP_BasenameNoExt $input).png"
+  dot -T png -o $pngOut $input
 
   local inputFilename=$(basename $input)
-  cp $input $outputDir/$inputFilename.txt
+  local origOut=$output/$inputFilename.txt
 
-  # TODO: Use jsont here.
-  cat >$output <<EOF
+  cp $input $origOut
+
+  echo $output  # finished writing directory
+
+  cat >$output.html <<EOF
 <p>
-  <a href="$outputDir">$outputDir</a>
-  <a href="$outputDir/$inputFilename.txt">$inputFilename.txt</a>
+  <a href="$origOut">$inputFilename.txt</a>
   <center>
-    <img src="$outPngUrl" alt="Rendered dot image" />
+    <img src="$pngOut" alt="Rendered dot image" />
   </center>
 </p>
 EOF
+
+  echo $output.html  # wrote it
 }
 
 main "$@"
-
