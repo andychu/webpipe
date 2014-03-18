@@ -1,0 +1,34 @@
+#!/bin/sh
+#
+# Surround .png files with an <img> tag.  Right now this is used for R plots;
+# later we could have something more sophisticated (e.g. show underlying data).
+
+readonly THIS_DIR=$(dirname $0)
+. $THIS_DIR/../webpipe-lib.sh
+
+main() {
+  local action=$1
+  test $action == "scroll" || die "Invalid action '$action'"
+  local input=$2
+  local output=$3
+
+  # fail if cp fails, etc.
+  set -o errexit
+
+  mkdir -p $output
+  cp $input $output
+
+  echo $output  # finished writing directory
+
+  local basename=$(basename $input)
+
+  cat >$output.html <<EOF
+<center>
+<img src="$output/$basename" />
+</center>
+EOF
+
+  echo $output.html  # finished writing
+}
+
+main "$@"

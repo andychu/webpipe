@@ -94,12 +94,6 @@ PRE_TEMPLATE = """\
 </center>
 """
 
-IMG_TAG = jsontemplate.Template("""\
-<center>
-<img src="{url|htmltag}" />
-</center>
-""", default_formatter='html')
-
 # See http://datatables.net/usage/
 # CDN: http://www.asp.net/ajaxlibrary/CDNjQueryDataTables194.ashx
 
@@ -234,12 +228,6 @@ def GuessFileType(filename):
   return file_type
 
 
-def RenderPng(orig_rel_path, unused_filename, contents):
-  html = IMG_TAG.expand({'url': orig_rel_path})
-  orig = contents
-  return html, orig
-
-
 def RenderHtml(orig_rel_path, filename, contents):
   # This is how users can "extend" webpipe.  They just write a tool
   # that outputs HTML.
@@ -274,7 +262,6 @@ def RenderTxt(orig_rel_path, unused_filename, contents):
 
 
 BUILTINS = {
-    'png': RenderPng,
     'csv': RenderCsv,
     'html': RenderHtml,
     'txt': RenderTxt,
