@@ -26,8 +26,9 @@ BasenameWithoutExt() {
   #echo $(basename $path)
   #echo "$path -> ${path%%.*}"
   python -c '
-import os,sys
-base, _ = os.path.splitext(sys.argv[1])  # spam/eggs.c -> spam/eggs
-print os.path.basename(base)             # spam/eggs -> eggs ' \
+import os, sys
+filename = os.path.basename(sys.argv[1])  # spam/eggs.c -> eggs.c
+base, _ = os.path.splitext(filename)      # eggs.c -> eggs
+print base' \
   $path
 }
