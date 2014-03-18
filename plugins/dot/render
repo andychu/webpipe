@@ -38,17 +38,23 @@ main() {
   # Script is responsible for this!  I think.
   mkdir -p $output_dir
 
-  local out_png="$output_dir/$(WP_BasenameNoExt $input).png" 
-  dot -T png -o "$out_png" "$input"
+  local outPngFilename="$output_dir/$(WP_BasenameNoExt "$input").png" 
+  dot -T png -o "$outPngFilename" "$input"
+
+  # In case the filename contains < > & " etc?  Another thing we could do is
+  # just escape them in the tool.  I think that is less error prone.
+  local WP_INPUT_HTMLSAFE="$input"
+  local outPngUrl="$output_dir/$(WP_BasenameNoExt "$WP_INPUT_HTMLSAFE").png" 
 
   echo $output_dir  # we wrote it
 
   # TODO: Use jsont here.
   cat >$output <<EOF
 <p>
-  <i>Dot file</i>
   <a href="$output_dir">$output_dir</a>
-  <img src="$out_png">rendered dot image</img>
+  <center>
+    <img src="$outPngUrl" alt="Rendered dot image" />
+  </center>
 </p>
 EOF
 }
