@@ -8,8 +8,19 @@ checkDeps() {
   which dot >/dev/null || die $msg
 }
 
+# changes:
+# rename to scroll?
+# ./render scroll foo.html 33
+
 main() {
-  local input=$1
+  # $input=$1         # absolute path.  NOT SAFE for html.
+  # $output_htmlsafe  # guaranteed to be safe, since it's just a number.
+  #
+  # $WP_INPUT_HTMLSAFE - filename passed through cgi.escape(quote=T)
+  #
+  # local outputDir=$outputHtmlSafe
+
+  local input="$1"  # can have spaces
   local output=$2
   local output_dir=$3
 
@@ -27,8 +38,8 @@ main() {
   # Script is responsible for this!  I think.
   mkdir -p $output_dir
 
-  local out_png="$output_dir/$(basename $input).png" 
-  dot -T png -o $out_png $input
+  local out_png="$output_dir/$(WP_BasenameNoExt $input).png" 
+  dot -T png -o "$out_png" "$input"
 
   echo $output_dir  # we wrote it
 
