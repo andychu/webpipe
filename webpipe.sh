@@ -58,7 +58,7 @@ init() {
 # pipeline.
 
 print-events() {
-  local input_dir=${1:-~/webpipe/input}
+  local input_dir=${1:-$INPUT_DIR}
 
   # --quiet: only print events
   # --monitor: loop forever
@@ -89,7 +89,7 @@ server() {
 # $ webpipe run '' --port 8888
 
 run() {
-  local input_dir=${1:-~/webpipe/input}
+  local input_dir=${1:-$INPUT_DIR}
   shift
 
   check-tools
@@ -104,7 +104,7 @@ run() {
 }
 
 run2() {
-  local input_dir=${1:-~/webpipe/input}
+  local input_dir=${1:-$INPUT_DIR}
   shift
 
   check-tools
