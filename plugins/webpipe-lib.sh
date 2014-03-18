@@ -21,11 +21,9 @@ die() {
 # of converters.
 #
 # GNU basename doesn't seem to let you remove an arbitrary extension.
-BasenameWithoutExt() {
+WP_BasenameNoExt() {
   local path=$1
-  #echo $(basename $path)
-  #echo "$path -> ${path%%.*}"
-  python -c '
+  python -S -c '
 import os, sys
 filename = os.path.basename(sys.argv[1])  # spam/eggs.c -> eggs.c
 base, _ = os.path.splitext(filename)      # eggs.c -> eggs

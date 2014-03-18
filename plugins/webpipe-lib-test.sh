@@ -8,14 +8,14 @@
 . $PWD/webpipe-lib.sh
 
 testBasenameExt() {
-  BasenameWithoutExt foo
-  BasenameWithoutExt foo.bar
-  BasenameWithoutExt /foo
-  BasenameWithoutExt /foo.bar
-  BasenameWithoutExt ../foo
-  BasenameWithoutExt ../foo.bar
-  BasenameWithoutExt spam/../foo
-  BasenameWithoutExt spam/../foo.bar
+  WP_BasenameNoExt foo
+  WP_BasenameNoExt foo.bar
+  WP_BasenameNoExt /foo
+  WP_BasenameNoExt /foo.bar
+  WP_BasenameNoExt ../foo
+  WP_BasenameNoExt ../foo.bar
+  WP_BasenameNoExt spam/../foo
+  WP_BasenameNoExt spam/../foo.bar
 }
 
 main() {
