@@ -40,6 +40,27 @@ HOME_PAGE = jsontemplate.Template("""\
 """, default_formatter='html')
 
 
+# TODO: put file system paths here?  So people can easily find their plugins.
+PLUGINS_PAGE = jsontemplate.Template("""\
+<h3>webpipe Plugins</h3>
+
+<h2>User plugins installed in ~/webpipe</h2>
+
+<p><i>User plugins override packaged plugins.</i></p>
+
+{.repeated section user}
+  <a href="{@|htmltag}">{@}</a> <br/>
+{.end}
+
+<h2>Packaged Plugins</h2>
+
+{.repeated section package}
+  <a href="{@|htmltag}">{@}</a> <br/>
+{.end}
+
+""", default_formatter='html')
+
+
 # /s//<session>/<partnum>.html
 PATH_RE = re.compile(r'/s/(\S+)/(\d+).html$')
 
@@ -71,6 +92,25 @@ class WaitingRequestHandler(httpd.BaseRequestHandler):
     html = HOME_PAGE.expand({'sessions': dirs})
     self.wfile.write(html)
 
+  def send_plugins_index(self):
+    self.send_response(200)
+    self.send_header('Content-Type', 'text/html')
+    self.end_headers()
+    
+    # Session are saved on disk; allow the user to choose one.
+
+    user_dir = os.path.join(self.user_dir, 'plugins')
+    package_dir = os.path.join(self.deploy_dir, 'plugins')
+
+    u = os.listdir(user_dir)
+    u.sort()
+
+    p = os.listdir(package_dir)
+    p.sort()
+
+    html = PLUGINS_PAGE.expand({'user': u, 'package': p})
+    self.wfile.write(html)
+
   def url_to_fs_path(self, url):
     """Translate a URL to a local file system path.
 
@@ -92,9 +132,6 @@ class WaitingRequestHandler(httpd.BaseRequestHandler):
     if first_part == 's':
       return os.path.join(self.user_dir, *parts)
 
-    # TODO:
-    # - serve /plugins/ as a debugging/registry page
-
     if first_part == 'plugins':
       # looking for ['plugins', <anything>, 'static'].
       # Note these can be files OR directories.  Directories will be listed.
@@ -115,6 +152,17 @@ class WaitingRequestHandler(httpd.BaseRequestHandler):
 
     if self.path == '/':
       self.send_webpipe_index()
+      return
+
+    if self.path == '/plugins':
+      # As is done in send_head
+      self.send_response(301)
+      self.send_header("Location", self.path + "/")
+      self.end_headers()
+      return
+
+    if self.path == '/plugins/':
+      self.send_plugins_index()
       return
 
     m = PATH_RE.match(self.path)
