@@ -16,11 +16,6 @@ class StagesTest(unittest.TestCase):
     q = Queue.Queue()
     r = webpipe.ReadStdin(q)
 
-  def testWriteFiles(self):
-    in_q = Queue.Queue()
-    out_q = Queue.Queue()
-    r = webpipe.WriteFiles(in_q, out_q, 'dir')
-
 
 class FunctionsTest(unittest.TestCase):
 
