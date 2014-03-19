@@ -93,15 +93,22 @@ class WaitingRequestHandler(httpd.BaseRequestHandler):
       return os.path.join(self.user_dir, *parts)
 
     # TODO:
-    # - only serve /plugins/*/static/*
     # - serve /plugins/ as a debugging/registry page
-    # - also look at the root ~/webpipe root.
-    #   - is this a flag?  --webpipe-dir?
-    #   user_plugins_dir?
 
     if first_part == 'plugins':
-      path = os.path.join(self.deploy_dir, *parts)
-      return path
+      # looking for ['plugins', <anything>, 'static'].
+      # Note these can be files OR directories.  Directories will be listed.
+      if len(parts) >= 3 and parts[2] == 'static':
+        deployed_res = os.path.join(self.deploy_dir, *parts)
+        user_res = os.path.join(self.user_dir, *parts)
+
+        # Return the one that exists, starting with the user dir.
+        if os.path.exists(user_res):
+          return user_res
+        if os.path.exists(deployed_res):
+          return deployed_res
+
+    return None
 
   def do_GET(self):
     """Serve a GET request."""
