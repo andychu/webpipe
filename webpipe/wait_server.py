@@ -53,8 +53,9 @@ class WaitingRequestHandler(httpd.BaseRequestHandler):
     cache instead of waiting.
   """
   server_version = "webpipe"
-  root_dir = None  # from BaseRequestHandler
-  deploy_dir = None
+  root_dir = None  # from BaseRequestHandler, not used
+  user_dir = None  # initialize to ~/webpipe
+  deploy_dir = None  # initialize to /<package>/webpipe
   waiters = None
 
   def send_webpipe_index(self):
@@ -64,7 +65,7 @@ class WaitingRequestHandler(httpd.BaseRequestHandler):
     
     # Session are saved on disk; allow the user to choose one.
 
-    scroll_dir = os.path.join(self.root_dir, 's')
+    scroll_dir = os.path.join(self.user_dir, 's')
     dirs = os.listdir(scroll_dir)
     dirs.sort(reverse=True)
     html = HOME_PAGE.expand({'sessions': dirs})
@@ -73,14 +74,13 @@ class WaitingRequestHandler(httpd.BaseRequestHandler):
   def url_to_fs_path(self, url):
     """Translate a URL to a local file system path.
 
-    By default, we just treat URLs as paths relative to self.root_dir.
+    By default, we just treat URLs as paths relative to self.user_dir.
 
     If it returns None, then a 404 is generated, without looking at disk.
 
     Called from send_head() (see SimpleHTTPServer).
 
-    NOTE: This is adapted from Python stdlib SimpleHTTPServer.py.  I just
-    changed os.getcwd() to self.root_dir.
+    NOTE: This is adapted from Python stdlib SimpleHTTPServer.py.
     """
     # Disallow path traversal with '..'
     parts = [p for p in url.split('/') if p and p not in ('.', '..')]
@@ -90,7 +90,7 @@ class WaitingRequestHandler(httpd.BaseRequestHandler):
     rest = parts[1:]
 
     if first_part == 's':
-      return os.path.join(self.root_dir, *parts)
+      return os.path.join(self.user_dir, *parts)
 
     # TODO:
     # - only serve /plugins/*/static/*

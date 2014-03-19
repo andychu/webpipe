@@ -246,7 +246,7 @@ def Serve(opts, waiter, spy_client):
   waiters = {session_name: waiter}
 
   handler_class = wait_server.WaitingRequestHandler
-  handler_class.root_dir = opts.out_dir
+  handler_class.user_dir = opts.out_dir
   handler_class.waiters = waiters
 
   s = httpd.ThreadedHTTPServer(('', opts.port), handler_class)
@@ -307,7 +307,7 @@ def Serve2(opts, waiter, deploy_dir, spy_client):
   waiters = {session_name: waiter}
 
   handler_class = wait_server.WaitingRequestHandler
-  handler_class.root_dir = opts.user_dir
+  handler_class.user_dir = opts.user_dir
   handler_class.deploy_dir = deploy_dir
   handler_class.waiters = waiters
 
