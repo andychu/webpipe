@@ -56,21 +56,19 @@ class BaseRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
   #
   # You copy and modify send_head -- it's not too big.
 
-  def translate_path(self, path):
-    """Translate a /-separated PATH to the local filename syntax.
+  def url_to_fs_path(self, url):
+    """Translate a URL to a local file system path.
+
+    By default, we just treat URLs as paths relative to self.root_dir.
+
+    If it returns None, then a 404 is generated, without looking at disk.
 
     Called from send_head() (see SimpleHTTPServer).
 
-    NOTE: This is copied from Python stdlib SimpleHTTPServer.py.  I just
+    NOTE: This is adapted from Python stdlib SimpleHTTPServer.py.  I just
     changed os.getcwd() to self.root_dir.
     """
-    # abandon query parameters
-    path = path.split('?',1)[0]
-    path = path.split('#',1)[0]
-    # eliminates double slashes, etc.
-    path = posixpath.normpath(urllib.unquote(path))
-
-    words = [p for p in path.split('/') if p]
+    words = [p for p in url.split('/') if p]
 
     path = self.root_dir  # note: class variable
 
@@ -103,7 +101,20 @@ class BaseRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     None, in which case the caller has nothing further to do.
 
     """
-    path = self.translate_path(self.path)
+    path = self.path
+    # Query params aren't relevant to looking up a path.
+    # NOTE: Fragment should never be sent by the browser.  Python stdlib
+    # originally had this.
+    path = path.split('?',1)[0]
+    path = path.split('#',1)[0]
+    # eliminates double slashes, etc.
+    path = posixpath.normpath(urllib.unquote(path))
+
+    path = self.url_to_fs_path(path)
+    if path is None:
+        self.send_error(404, "File not found")
+        return None
+
     f = None
     if os.path.isdir(path):
         if not self.path.endswith('/'):
