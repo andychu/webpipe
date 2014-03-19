@@ -43,27 +43,6 @@ def debug(msg, *args):
 
 
 class ReadStdin(object):
-  """Read file records from stdin and put them on a queue."""
-
-  def __init__(self, q):
-    """
-    Args:
-      q: Queue, can be None
-    """
-    self.q = q
-
-  def __call__(self):
-    while True:
-      # must be unbuffered
-      try:
-        record = tnet.load(sys.stdin)
-      except EOFError:
-        break
-
-      self.q.put(record)
-
-
-class ReadStdin2(object):
   """Read filenames from stdin and put them on a queue."""
 
   def __init__(self, q):
@@ -90,47 +69,6 @@ class ReadStdin2(object):
       line = line.rstrip()
       log('putting %r', line)
       self.q.put(line)
-
-
-class WriteFiles(object):
-  """Write files to a single session dir."""
-
-  # input message format:
-  # later: should be BFO format
-  # { dir: ... }
-  # need filenames and contents
-
-  def __init__(self, in_q, out_q, out_dir):
-    self.in_q = in_q
-    self.out_q = out_q
-    self.out_dir = out_dir
-
-  def __call__(self):
-    i = 1
-    while True:
-      #log('disk thread waiting for %d', i)
-      record = self.in_q.get()
-      #log('got %r', record)
-
-      files = record['files']
-
-      for fi in files:
-        path = os.path.join(self.out_dir, fi['path'])
-
-        # TODO: use DirMaker from tree-tools?
-        try:
-          os.makedirs(os.path.dirname(path))
-        except OSError, e:
-          if e.errno != errno.EEXIST:
-            # TODO: catch exceptions in other threads?
-            raise
-
-        with open(path, 'w') as f:
-          f.write(fi['contents'])
-      i += 1
-
-      self.out_q.put(i)  # notify consumer that we're ready to write
-      #log('put %r', i)
 
 
 class Notify(object):
@@ -203,63 +141,7 @@ def MakeSession(out_dir):
   return session, full_path
 
 
-def Serve(opts, waiter, spy_client):
-  # Pipeline:
-  # Read stdin messages -> Write to disk -> notify server
-
-  # TODO:
-  # Also support:
-  # filenames -> read-files -> (machine boundary) -> file2html -> write to
-  # disk -> notify server
-
-  q1 = Queue.Queue()
-  q2 = Queue.Queue()
-
-  # TODO: Add spy_client here; count the number of things on stdin?
-  r = ReadStdin(q1)
-  t1 = threading.Thread(target=r)
-  t1.setDaemon(True)  # So Ctrl-C works
-  t1.start()
-
-  if opts.session:
-    session_path = opts.session
-    session_name = os.path.basename(session_path)
-  else:
-    session_name, session_path = MakeSession(opts.out_dir)
-
-  w = WriteFiles(q1, q2, session_path)
-  t2 = threading.Thread(target=w)
-  t2.setDaemon(True)  # So Ctrl-C works
-  t2.start()
-
-  n = Notify(q2, waiter, spy_client)
-  t3 = threading.Thread(target=n)
-  t3.setDaemon(True)  # So Ctrl-C works
-  t3.start()
-
-  # TODO:
-  # - server should get root dir ~/webpipe/s
-  # - waiters is {"session", waiter}
-  # There's only one waiter I guess.  the rest of it is just served.
-
-  # Serve from the same port that WriteFiles is writing to.
-  waiters = {session_name: waiter}
-
-  handler_class = wait_server.WaitingRequestHandler
-  handler_class.user_dir = opts.out_dir
-  handler_class.waiters = waiters
-
-  s = httpd.ThreadedHTTPServer(('', opts.port), handler_class)
-
-  # TODO: add opts.hostname?
-  log('Serving at http://localhost:%d/  (Ctrl-C to quit)', opts.port)
-  s.serve_forever()
-
-  # NOTE: Could do webbrowser.open() after we serve.  But people can also just
-  # click the link we printed above, since most terminals will make them URLs.
-
-
-def Serve2(opts, waiter, deploy_dir, spy_client):
+def Serve(opts, waiter, deploy_dir, spy_client):
   # Pipeline:
   # Read stdin messages -> notify server
 
@@ -282,7 +164,7 @@ def Serve2(opts, waiter, deploy_dir, spy_client):
 
   q = Queue.Queue()
 
-  r = ReadStdin2(q)
+  r = ReadStdin(q)
   t1 = threading.Thread(target=r)
   t1.setDaemon(True)  # So Ctrl-C works
   t1.start()
@@ -303,7 +185,6 @@ def Serve2(opts, waiter, deploy_dir, spy_client):
   # - waiters is {"session", waiter}
   # There's only one waiter I guess.  the rest of it is just served.
 
-  # Serve from the same port that WriteFiles is writing to.
   waiters = {session_name: waiter}
 
   handler_class = wait_server.WaitingRequestHandler
@@ -375,14 +256,7 @@ def AppMain(argv, spy_client):
   # serve-rendered (or servehtml)
   # refresh
 
-  if action == 'serve':
-    try:
-      Serve(opts, waiter, spy_client)
-    except KeyboardInterrupt:
-      log('Stopped')
-      return waiter.Length()
-
-  elif action == 'serve2':
+  if action == 'serve2':  # TODO: rename to 'serve'
     # NOTE: serve from --out-dir, --session
     log('serve2')
     session = argv[2]
@@ -400,7 +274,7 @@ def AppMain(argv, spy_client):
       f.write(index_html)
 
     try:
-      Serve2(opts, waiter, deploy_dir, spy_client)
+      Serve(opts, waiter, deploy_dir, spy_client)
     except KeyboardInterrupt:
       log('Stopped')
       return waiter.Length()
