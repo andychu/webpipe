@@ -19,6 +19,7 @@ Blocker()
 
 import os
 import re
+import sys
 import threading
 
 from common import util
@@ -34,7 +35,7 @@ HOME_PAGE = jsontemplate.Template("""\
 <h3>webpipe index</h3>
 
 {.repeated section sessions}
-  <a href="{@|htmltag}">{@}</a> <br/>
+  <a href="/s/{@|htmltag}">{@}</a> <br/>
 {.end}
 """, default_formatter='html')
 
@@ -66,6 +67,34 @@ class WaitingRequestHandler(httpd.BaseRequestHandler):
     html = HOME_PAGE.expand({'sessions': dirs})
     self.wfile.write(html)
 
+  def url_to_fs_path(self, url):
+    """Translate a URL to a local file system path.
+
+    By default, we just treat URLs as paths relative to self.root_dir.
+
+    If it returns None, then a 404 is generated, without looking at disk.
+
+    Called from send_head() (see SimpleHTTPServer).
+
+    NOTE: This is adapted from Python stdlib SimpleHTTPServer.py.  I just
+    changed os.getcwd() to self.root_dir.
+    """
+    # Disallow path traversal with '..'
+    parts = [p for p in url.split('/') if p and p not in ('.', '..')]
+    if not parts:  # corresponds to /, which is already handled by send_webpipe_index
+      return None
+    first_part = parts[0]
+    rest = parts[1:]
+
+    if first_part == 's':
+      return os.path.join(self.root_dir, *rest)
+
+    if first_part == 'plugins':
+      this_dir = os.path.dirname(sys.argv[0])  # webpipe dir
+      plugins_dir = os.path.join(this_dir, '../plugins')
+      path = os.path.join(plugins_dir, *rest)
+      return path
+
   def do_GET(self):
     """Serve a GET request."""
 
@@ -91,8 +120,7 @@ class WaitingRequestHandler(httpd.BaseRequestHandler):
 
     # Serve static file.
 
-    # NOTE: translate_path is called in send_head.  Takes URL and changes it to
-    # a file system path.  Very hacky design.
+    # NOTE: url_to_fs_path is called in send_head.
     f = self.send_head()
 
     # f is None if the file doesn't exist, and send_error(404) was called.

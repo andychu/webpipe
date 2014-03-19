@@ -47,15 +47,6 @@ class BaseRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
   server_version = None
   root_dir = None
 
-  # TODO:
-  #
-  # Override translate_path in handlers.  It should call a function
-  # resolve_path.  I would like it if translate_path could return None, e.g.
-  # because we don't want to serve anything under plugins/ but not matching
-  # plugins/*/static.
-  #
-  # You copy and modify send_head -- it's not too big.
-
   def url_to_fs_path(self, url):
     """Translate a URL to a local file system path.
 
@@ -72,14 +63,7 @@ class BaseRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
     path = self.root_dir  # note: class variable
 
-    # TODO: move to app by putting in resolve_path.  Resolve multiple roots.
-    import sys
-    if words and words[0] == 'plugins':
-      plugins_dir = os.path.join(sys.argv[0], '../../plugins')
-      path = os.path.join(plugins_dir, *words[1:])
-      path = os.path.normpath(path)
-      return path
-
+    # TODO: This can be cleaned up.  Should just be os.path.join.
     for word in words:
       drive, word = os.path.splitdrive(word)
       head, word = os.path.split(word)
@@ -103,6 +87,7 @@ class BaseRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     """
     path = self.path
     # Query params aren't relevant to looking up a path.
+    #
     # NOTE: Fragment should never be sent by the browser.  Python stdlib
     # originally had this.
     path = path.split('?',1)[0]
@@ -146,5 +131,4 @@ class BaseRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     self.send_header("Last-Modified", self.date_time_string(fs.st_mtime))
     self.end_headers()
     return f
-
 
