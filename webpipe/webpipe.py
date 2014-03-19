@@ -259,7 +259,7 @@ def Serve(opts, waiter, spy_client):
   # click the link we printed above, since most terminals will make them URLs.
 
 
-def Serve2(opts, waiter, spy_client):
+def Serve2(opts, waiter, deploy_dir, spy_client):
   # Pipeline:
   # Read stdin messages -> notify server
 
@@ -307,7 +307,8 @@ def Serve2(opts, waiter, spy_client):
   waiters = {session_name: waiter}
 
   handler_class = wait_server.WaitingRequestHandler
-  handler_class.root_dir = opts.out_dir
+  handler_class.root_dir = opts.user_dir
+  handler_class.deploy_dir = deploy_dir
   handler_class.waiters = waiters
 
   s = httpd.ThreadedHTTPServer(('', opts.port), handler_class)
@@ -343,9 +344,9 @@ def CreateOptionsParser():
 
   # scrolls go in the 's' dir
   parser.add_option(
-      '--out-dir', dest='out_dir', type='str',
-      default=os.path.expanduser('~/webpipe/s'),
-      help='Base directory for scrolls')
+      '--user-dir', dest='user_dir', type='str',
+      default=os.path.expanduser('~/webpipe'),
+      help='Per-user directory for webpipe')
 
   # TODO:
   # - merge options from other modules?  from file2html?
@@ -388,7 +389,8 @@ def AppMain(argv, spy_client):
     opts.session = session
 
     # Write index.html in the session dir.
-    this_dir = os.path.dirname(sys.argv[0])
+    this_dir = os.path.dirname(sys.argv[0])  # webpipe subdir
+    deploy_dir = os.path.dirname(this_dir)  # root of package
     path = os.path.join(this_dir, 'index.html')
     with open(path) as f:
       index_html = f.read()
@@ -398,7 +400,7 @@ def AppMain(argv, spy_client):
       f.write(index_html)
 
     try:
-      Serve2(opts, waiter, spy_client)
+      Serve2(opts, waiter, deploy_dir, spy_client)
     except KeyboardInterrupt:
       log('Stopped')
       return waiter.Length()

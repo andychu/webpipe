@@ -40,8 +40,8 @@ HOME_PAGE = jsontemplate.Template("""\
 """, default_formatter='html')
 
 
-# /session/partnum.html
-PATH_RE = re.compile(r'/(\S+)/(\d+).html$')
+# /s//<session>/<partnum>.html
+PATH_RE = re.compile(r'/s/(\S+)/(\d+).html$')
 
 class WaitingRequestHandler(httpd.BaseRequestHandler):
   """
@@ -53,6 +53,8 @@ class WaitingRequestHandler(httpd.BaseRequestHandler):
     cache instead of waiting.
   """
   server_version = "webpipe"
+  root_dir = None  # from BaseRequestHandler
+  deploy_dir = None
   waiters = None
 
   def send_webpipe_index(self):
@@ -62,7 +64,8 @@ class WaitingRequestHandler(httpd.BaseRequestHandler):
     
     # Session are saved on disk; allow the user to choose one.
 
-    dirs = os.listdir(self.root_dir)
+    scroll_dir = os.path.join(self.root_dir, 's')
+    dirs = os.listdir(scroll_dir)
     dirs.sort(reverse=True)
     html = HOME_PAGE.expand({'sessions': dirs})
     self.wfile.write(html)
@@ -87,12 +90,17 @@ class WaitingRequestHandler(httpd.BaseRequestHandler):
     rest = parts[1:]
 
     if first_part == 's':
-      return os.path.join(self.root_dir, *rest)
+      return os.path.join(self.root_dir, *parts)
+
+    # TODO:
+    # - only serve /plugins/*/static/*
+    # - serve /plugins/ as a debugging/registry page
+    # - also look at the root ~/webpipe root.
+    #   - is this a flag?  --webpipe-dir?
+    #   user_plugins_dir?
 
     if first_part == 'plugins':
-      this_dir = os.path.dirname(sys.argv[0])  # webpipe dir
-      plugins_dir = os.path.join(this_dir, '../plugins')
-      path = os.path.join(plugins_dir, *rest)
+      path = os.path.join(self.deploy_dir, *parts)
       return path
 
   def do_GET(self):
