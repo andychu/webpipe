@@ -42,27 +42,51 @@ HOME_PAGE = jsontemplate.Template("""\
 
 # TODO: put file system paths here?  So people can easily find their plugins.
 PLUGINS_PAGE = jsontemplate.Template("""\
-<h3>webpipe Plugins</h3>
+<h2>webpipe Plugins</h2>
 
-<h2>User plugins installed in ~/webpipe</h2>
+<h3>User plugins installed in ~/webpipe</h3>
 
 <p><i>User plugins override packaged plugins.</i></p>
 
+<ul>
 {.repeated section user}
-  <a href="{@|htmltag}">{@}</a> <br/>
+  <li>{name} {.if test static} <a href="{name}/static/">static</a> {.end} </li>
 {.end}
+</ul>
 
-<h2>Packaged Plugins</h2>
+<h3>Packaged Plugins</h3>
 
+<ul>
 {.repeated section package}
-  <a href="{@|htmltag}">{@}</a> <br/>
+  <li>{name} {.if test static} <a href="{name}/static/">static</a> {.end} </li>
 {.end}
+</ul>
 
 """, default_formatter='html')
 
 
 # /s//<session>/<partnum>.html
 PATH_RE = re.compile(r'/s/(\S+)/(\d+).html$')
+
+
+def _ListPlugins(root_dir):
+  """
+  Returns a template data dictionary.  Plugins are directories.  Plugins with
+  'static' dirs are marked.
+  """
+  plugin_root = os.path.join(root_dir, 'plugins')
+  data = []
+  for name in os.listdir(plugin_root):
+    path = os.path.join(plugin_root, name)
+    if not os.path.isdir(path):
+      continue
+    p = os.path.join(path, 'static')
+    s = os.path.isdir(p)
+    # e.g. {name: csv, static: True}
+    data.append({'name': name, 'static': s})
+  data.sort(key=lambda d: d['name'])
+  return data
+
 
 class WaitingRequestHandler(httpd.BaseRequestHandler):
   """
@@ -99,14 +123,8 @@ class WaitingRequestHandler(httpd.BaseRequestHandler):
     
     # Session are saved on disk; allow the user to choose one.
 
-    user_dir = os.path.join(self.user_dir, 'plugins')
-    package_dir = os.path.join(self.deploy_dir, 'plugins')
-
-    u = os.listdir(user_dir)
-    u.sort()
-
-    p = os.listdir(package_dir)
-    p.sort()
+    u = _ListPlugins(self.user_dir)
+    p = _ListPlugins(self.deploy_dir)
 
     html = PLUGINS_PAGE.expand({'user': u, 'package': p})
     self.wfile.write(html)

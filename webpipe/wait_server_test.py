@@ -10,16 +10,14 @@ import wait_server  # module under test
 
 class WaitTest(unittest.TestCase):
 
-  def setUp(self):
-    pass
-
-  def tearDown(self):
-    pass
-
   def testSequenceWaiter(self):
     s = wait_server.SequenceWaiter()
     result = s.MaybeWait(2)
     self.assertEqual(wait_server.WAIT_TOO_BIG, result)
+
+  def testListPlugins(self):
+    # This takes the place of the package dir.
+    print wait_server._ListPlugins('.')
 
 
 if __name__ == '__main__':
