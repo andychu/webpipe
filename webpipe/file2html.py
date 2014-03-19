@@ -33,20 +33,7 @@ single process.
 Plugins
 -------
 
-TODO: define interface.
-
-3 args:
-
-$input $output_html $output_dir
-       5.html       5/
-
-5.html has to be at the root, not in 5/index.html, because of the relative
-<img> links.
-
-What abut pipe?  Instead of writing to output HTML file.  Can the plugin write
-to stdout?  It's going to be on disk anyway, so I guess there's no point.  The
-only time that's inefficient is what you are running file2html and server on
-different machines.  But then you could use tmpfs if it was really a big deal.
+See comments below for the interface.
 
 "Style Guide".  Things plugins should do:
 
