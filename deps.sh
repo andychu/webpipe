@@ -16,10 +16,13 @@ get-json-tree() {
 }
 
 install-user() {
-  local dest=~/webpipe/plugins/json/static
-  mkdir -p $dest
-  cp -v _tmp/json-tree/json-tree-master/jsontree.js $dest
-  tree $dest
+  local plugin=~/webpipe/plugins/json/
+  mkdir -p $plugin/static
+
+  local src=_tmp/json-tree/json-tree-master/
+  cp -v $src/jsontree.{js,css} $plugin/static
+  cp -v $src/example.html $plugin
+  tree $plugin
 }
 
 "$@"
