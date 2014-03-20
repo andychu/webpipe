@@ -73,14 +73,6 @@ class Error(Exception):
   pass
 
 
-PRE_TEMPLATE = """\
-<center>
-<pre>
-%s
-</pre>
-</center>
-"""
-
 # See http://datatables.net/usage/
 # CDN: http://www.asp.net/ajaxlibrary/CDNjQueryDataTables194.ashx
 
@@ -215,26 +207,8 @@ def GuessFileType(filename):
   return file_type
 
 
-def RenderTxt(orig_rel_path, unused_filename, contents):
-  # TODO: need a tool that converts this
-  b = cgi.escape(contents).strip()
-
-  # TODO: add raw link, with the filename.
-  # we don't really know the number though.
-  # <a href="filename.txt">filename.txt<a>
-  # <a href="i/filename.txt">filename.txt<a>
-  #
-  # if there is a "files", then the server can write it to "1/index.html".
-  # otherwise 1.html?
-  # then serve 1/
-
-  html = PRE_TEMPLATE % b
-  return html, None
-
-
 BUILTINS = {
     'csv': RenderCsv,
-    'txt': RenderTxt,
     }
 
 

@@ -30,3 +30,13 @@ base, _ = os.path.splitext(filename)      # eggs.c -> eggs
 print base' \
   $path
 }
+
+# Takes raw text on stdin, and outputs HTML safe text on stdout.  We always
+# escape & < > and ".  (Don't use single quotes for attributes!)
+
+# NOTE: sed probably makes multiple passes to do this, but so does Python's
+# cgi.escape.
+WP_HtmlEscape() {
+  sed 's|&|\&amp;|g; s|<|\&lt;|g; s|>|\&gt;|g; s|"|\&quot;|g'
+}
+

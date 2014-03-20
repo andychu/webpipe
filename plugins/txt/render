@@ -1,0 +1,25 @@
+#!/bin/sh
+
+readonly THIS_DIR=$(dirname $0)
+. $THIS_DIR/../webpipe-lib.sh
+
+main() {
+  local input=$1
+  local output=$2
+
+  # If the text is too big, show a preview?
+  # Show unicode properties, etc.
+
+  local html=$output.html
+
+  echo '<pre>' >$html
+
+  WP_HtmlEscape <$input >>$html
+
+  echo '</pre>' >>$html
+
+  echo $html
+}
+
+main "$@"
+
