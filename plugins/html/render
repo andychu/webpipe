@@ -1,0 +1,21 @@
+#!/bin/sh
+
+readonly THIS_DIR=$(dirname $0)
+. $THIS_DIR/../webpipe-lib.sh
+
+main() {
+  local input=$1
+  local output=$2
+
+  # TODO:
+  # - It would be nice to check the doctype and display it.  Maybe use W3C
+  # tools or something?
+  #
+  # If the HTML is too big, show a preview?
+
+  cp $input $output.html
+  echo $output.html
+}
+
+main "$@"
+

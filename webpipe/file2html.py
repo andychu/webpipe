@@ -215,22 +215,6 @@ def GuessFileType(filename):
   return file_type
 
 
-def RenderHtml(orig_rel_path, filename, contents):
-  # This is how users can "extend" webpipe.  They just write a tool
-  # that outputs HTML.
-  # But can they have separate files and hyperlinks to them?
-  #
-  # You probably need a JavaScript plugin.  Say you want to experiment with
-  # d3.js.
-
-  # TODO: have option for sanitizing?
-  # By default, the web roll server trusts all input.  It performs no
-  # validation whatsoever.  Security is the responsibility of the file2html
-  # process.
-  html = contents
-  return html, None
-
-
 def RenderTxt(orig_rel_path, unused_filename, contents):
   # TODO: need a tool that converts this
   b = cgi.escape(contents).strip()
@@ -250,7 +234,6 @@ def RenderTxt(orig_rel_path, unused_filename, contents):
 
 BUILTINS = {
     'csv': RenderCsv,
-    'html': RenderHtml,
     'txt': RenderTxt,
     }
 
