@@ -1,9 +1,12 @@
-// JSONTree 0.1.7
-function JSONTree(data) {
-	return divNode(jsValue(data), {'class': 'json-content'});
-}
+// JSONTree 
+//
+// Heavily restructured version of: https://github.com/lmenezes/json-tree
+// That that code had some issues with "JSONTree.create".  I changed it to just
+// use plain functions.
 
-JSONTree.prototype.create=function(data) {
+var JSONTree = function() {
+
+function createNodes(data) {
 	return divNode(jsValue(data), {'class': 'json-content'});
 }
 
@@ -21,7 +24,7 @@ var escapeMap = {	'&': '&amp;',
 					"'": '&#x27;',
 					'/': '&#x2F;' };
 
-JSONTree.prototype.escape=function(text) {
+var escape=function(text) {
     return text.replace(/[&<>'"]/g, function(t) {
         return escapeMap[t];
     });
@@ -47,7 +50,7 @@ var htmlNode=function(type, text, attrs) {
 	}
 /* icon for collapsing/expanding a json object/array */
 var collapseIcon=function(id) {
-	var attrs = {'onclick': "toggleVisible('collapse_json" + id + "')" };
+	var attrs = {'onclick': "JSONTree.toggleVisible('collapse_json" + id + "')" };
 	return spanNode(collapse_icon, attrs);
 }
 
@@ -130,3 +133,10 @@ var configure=function(collapse_icon,expand_icon) {
 var collapse_icon=spanNode('',{'class' : 'json-object-collapse'});
 
 var expand_icon=spanNode('',{'class' : 'json-object-expand'});
+
+// Public functions
+
+return {createNodes: createNodes, toggleVisible: toggleVisible};
+
+}();
+
