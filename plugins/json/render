@@ -10,15 +10,37 @@ main() {
   mkdir -p $output
   # original JSON file will be referenced.
   cp $input $output/
-  echo $output
+  cp $THIS_DIR/shell.html 
 
-  cp $THIS_DIR/shell.html $output/index.html
+  local filename=$(basename $input)
+  
+  cat >$output/index.html <<EOF
+<html>
+  <head>
+    <title>json $output</title>
+    <link href="/plugins/json/static/jsontree.css" rel="stylesheet">
+    <script src="/plugins/json/static/jsontree.js"></script>
+  </head>
 
-  cat >$output.html <<EOF
-<a href="$output">$output</a>
+  <body>
+    <div id="content"></div>
+  </body>
+
+  <script type="text/javascript">
+    JSONTree.getAndRender("$filename", document.getElementById("content"));
+  </script>
+
+</html>
 EOF
 
-  echo $output.html
+  echo $output
+
+  local html=$output.html
+  cat >$html <<EOF
+<a href="$output">navigate json</a>
+EOF
+
+  echo $html
 }
 
 main "$@"
