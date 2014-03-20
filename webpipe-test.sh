@@ -49,6 +49,20 @@ dot-demo() {
   cp plugins/dot/examples/cluster.dot $dest
 }
 
+markdown-demo() {
+  local dest=${1:-~/webpipe/input}
+  cat >$dest/foo.markdown <<EOF
+title
+=====
+
+This is *markdown* text.
+
+    def foo():
+      for i in range(10):
+        print i
+EOF
+}
+
 json-demo() {
   local dest=${1:-~/webpipe/input}
   cat >$dest/foo.json <<EOF

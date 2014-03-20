@@ -1,0 +1,24 @@
+#!/bin/sh
+
+readonly THIS_DIR=$(dirname $0)
+. $THIS_DIR/../webpipe-lib.sh
+
+checkDeps() {
+  local msg="markdown not found.  Run 'sudo apt-get install markdown'"
+  which markdown >/dev/null || die "$msg"
+}
+
+main() {
+  local input=$1
+  local output=$2
+
+  checkDeps
+
+  # TODO: Test size?
+  local html=$output.html
+  markdown <$input >$html
+  echo $html
+}
+
+main "$@"
+

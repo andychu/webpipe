@@ -336,17 +336,35 @@ def main(argv):
       exit_code = subprocess.call(argv, cwd=out_dir)
       if exit_code != 0:
         log('ERROR: %s exited with code %d', argv, exit_code)
+        with open(out_html_path, 'w') as f:
+          # TODO:
+          # - make a nicer template.  
+          # - show stderr
+          f.write('ERROR: %s exited with code %d' % (argv, exit_code))
+        print out_html_filename
+        counter += 1
+        continue
 
       # Check that the plugin actually create the file.
       if not os.path.exists(out_html_path):
-        log('Plugin error: %r not created' % out_html_path)
+        log('Plugin error: %r not created', out_html_path)
+        with open(out_html_path, 'w') as f:
+          f.write('Plugin error: %r not created' % out_html_path)
+        print out_html_filename
+
         # TODO: Remove this counter duplication.  Failing here would make it
         # hard to develop plugins.
         counter += 1
         continue
 
     else:
-      # TODO: use a chaining pattern instead of nested if-else
+      # TODO:
+      # - use a chaining pattern instead of nested if-else
+      # - use a similar: input and output
+
+      # import csv_plugin
+      # csv_plugin.main(argv, cwd=cwd)
+      # it writes files
 
       func = BUILTINS.get(file_type)
       if func:
