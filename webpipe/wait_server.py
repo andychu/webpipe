@@ -31,17 +31,22 @@ log = util.log
 
 
 
-HOME_PAGE = jsontemplate.Template("""\
-<h3>webpipe index</h3>
+# TODO: The "Directory Listing" page should let you go back up.
+HOME_PAGE = """\
+<h3>webpipe home</h3>
 
-{.repeated section sessions}
-  <a href="/s/{@|htmltag}">{@}</a> <br/>
-{.end}
-""", default_formatter='html')
+<p><a href="s/">scrolls</a></p>
+
+<p><a href="plugins/">plugins</a></p>
+"""
 
 
 # TODO: put file system paths here?  So people can easily find their plugins.
 PLUGINS_PAGE = jsontemplate.Template("""\
+<p align="right">
+  <a href="/">Home</a>
+<p>
+
 <h2>webpipe Plugins</h2>
 
 <h3>User plugins installed in ~/webpipe</h3>
@@ -108,13 +113,7 @@ class WaitingRequestHandler(httpd.BaseRequestHandler):
     self.send_header('Content-Type', 'text/html')
     self.end_headers()
     
-    # Session are saved on disk; allow the user to choose one.
-
-    scroll_dir = os.path.join(self.user_dir, 's')
-    dirs = os.listdir(scroll_dir)
-    dirs.sort(reverse=True)
-    html = HOME_PAGE.expand({'sessions': dirs})
-    self.wfile.write(html)
+    self.wfile.write(HOME_PAGE)
 
   def send_plugins_index(self):
     self.send_response(200)
