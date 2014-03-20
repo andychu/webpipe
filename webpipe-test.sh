@@ -49,6 +49,13 @@ dot-demo() {
   cp plugins/dot/examples/cluster.dot $dest
 }
 
+json-demo() {
+  local dest=${1:-~/webpipe/input}
+  cat >$dest/foo.json <<EOF
+{"a": 1, "b": [1,2,3], "c": {"d": [4,5,6]}}
+EOF
+}
+
 ansi-demo() {
   local dest=${1:-~/webpipe/input}
   cp testdata/typescript $dest

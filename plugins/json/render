@@ -1,0 +1,25 @@
+#!/bin/sh
+
+readonly THIS_DIR=$(dirname $0)
+. $THIS_DIR/../webpipe-lib.sh
+
+main() {
+  local input=$1
+  local output=$2
+
+  mkdir -p $output
+  # original JSON file will be referenced.
+  cp $input $output/
+  echo $output
+
+  cp $THIS_DIR/shell.html $output/index.html
+
+  cat >$output.html <<EOF
+<a href="$output">$output</a>
+EOF
+
+  echo $output.html
+}
+
+main "$@"
+

@@ -16,11 +16,11 @@ get-json-tree() {
 }
 
 install-user() {
-  local plugin=~/webpipe/plugins/json/
+  local plugin=plugins/json/
   mkdir -p $plugin/static
 
   local src=_tmp/json-tree/json-tree-master/
-  cp -v $src/jsontree.{js,css} $plugin/static
+  cp -v $src/jsontree.js $src/css/jsontree.css $plugin/static
   cp -v $src/example.html $plugin
   tree $plugin
 }
