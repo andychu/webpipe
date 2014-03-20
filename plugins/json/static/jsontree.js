@@ -141,13 +141,11 @@ var expand_icon = spanNode('', {'class' : 'json-object-expand'});
 var getAndRender = function(jsonUrl, elem) {
   var r = new XMLHttpRequest();
   r.open("GET", jsonUrl, true);
-  r.onreadystatechange = function () {
+
+  r.onreadystatechange = function() {
     if (r.readyState != 4 || r.status != 200) {
       return;
     }
-
-    //alert("Success: " + r.responseText);
-    console.log('success')
 
     // TODO: catch SyntaxError.  JSONP might not be valid -- we might want to
     // find the first { or [?
@@ -156,6 +154,8 @@ var getAndRender = function(jsonUrl, elem) {
     // "content" matches the ID we genreated in the shell script
     elem.innerHTML = JSONTree.createNodes(data);
   };
+
+  // TODO: handle XHR error
   r.send();
 }
 
