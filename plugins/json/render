@@ -38,6 +38,10 @@ EOF
 
   # TODO: Preview in the snippet.  Should give first 10 and
   # last 10 lines in here?  Should we use Python, or just head/tail?
+  # more stats
+  # - depth of tree?
+  # - histogram of node types?  (object: 10, array: 20, etc.)
+  # - histogram of object keys?
 
   local stats="$(wc $input)"
   # num lines, words, chars
