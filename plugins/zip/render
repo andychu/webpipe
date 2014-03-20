@@ -1,0 +1,26 @@
+#!/bin/sh
+
+readonly THIS_DIR=$(dirname $0)
+. $THIS_DIR/../webpipe-lib.sh
+
+checkDeps() {
+  local msg="zip not found.  Run 'sudo apt-get install zip'"
+  which zip >/dev/null || die "$msg"
+}
+
+main() {
+  local input=$1
+  local output=$2
+
+  checkDeps
+
+  local html=$output.html
+  echo '<pre>' >$html
+  unzip -l $input | WP_HtmlEscape >>$html
+  echo '<pre>' >>$html
+
+  echo $html
+}
+
+main "$@"
+
