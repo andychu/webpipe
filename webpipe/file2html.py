@@ -213,20 +213,22 @@ BUILTINS = {
 
 
 class Resources(object):
-  def __init__(self, base_dir=None):
-    self.base_dir = base_dir or os.path.dirname(sys.argv[0])
-    b = os.path.join(self.base_dir, '..', 'plugins')
-    self.bin_base = os.path.normpath(b)
+  def __init__(self, package_dir=None):
+    this_dir = os.path.dirname(sys.argv[0])
+    self.package_dir = package_dir or os.path.dirname(this_dir)
+    self.user_dir = os.path.expanduser('~/webpipe')
 
   def GetPluginBin(self, file_type):
     # plugins dir is parallel to webpipe python dir.
-    p = os.path.join(self.bin_base, file_type, 'render')
+    p = os.path.join(self.package_dir, 'plugins', file_type, 'render')
+    u = os.path.join(self.user_dir, 'plugins', file_type, 'render')
 
     # TODO: test if it's executable.  Show clear error if not.
     if os.path.exists(p):
       return p
-    else: 
-      return None
+    if os.path.exists(u):
+      return u
+    return None
 
 
 def main(argv):
