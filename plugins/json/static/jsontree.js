@@ -47,7 +47,7 @@ var htmlNode=function(type, text, attrs) {
 	}
 /* icon for collapsing/expanding a json object/array */
 var collapseIcon=function(id) {
-	var attrs = {'onclick': "this.toggleVisible('collapse_json" + id + "')" };
+	var attrs = {'onclick': "toggleVisible('collapse_json" + id + "')" };
 	return spanNode(collapse_icon, attrs);
 }
 
