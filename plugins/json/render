@@ -36,8 +36,15 @@ EOF
   echo $output
 
   local html=$output.html
+
+  # TODO: Preview in the snippet.  Should give first 10 and
+  # last 10 lines in here?  Should we use Python, or just head/tail and wc?
+  # could display: 1024 characters, 1323 lines.
+
   cat >$html <<EOF
-<a href="$output">navigate json</a>
+<a href="$output">navigate json</a> <br />
+
+<a href="$output/$filename">raw json</a> <br />
 EOF
 
   echo $html
