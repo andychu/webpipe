@@ -88,6 +88,8 @@ init() {
 
   # Do this last, since it dies.
   check-tools
+
+  log "wp: init done"
 }
 
 # People can run print-events | xrender to directly to render on a different
