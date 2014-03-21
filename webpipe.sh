@@ -8,6 +8,10 @@
 set -o nounset
 set -o pipefail
 
+#
+# Path stuff
+#
+
 # cross platform readlink -f
 realpath() {
   local path=$0
@@ -28,6 +32,10 @@ if test -z "$webpipe_dev"; then
   export PYTHONPATH=$THIS_DIR
 fi
 
+#
+# Utilities
+#
+
 log() {
   echo 1>&2 "$@"
 }
@@ -37,7 +45,7 @@ die() {
   exit 1
 }
 
-readonly INPUT_DIR=~/webpipe/input
+readonly WATCH_DIR=~/webpipe/watched
 
 check-tools() {
   local err="inotifywait not found.  Run 'sudo apt-get install inotify-tools'"
@@ -45,17 +53,19 @@ check-tools() {
 }
 
 #
-# Public functions
+# Public
 #
 
 # Set up the default dir to watch.
 init() {
-  mkdir --verbose -p $INPUT_DIR
+  mkdir --verbose -p $WATCH_DIR
   # Where user can install their own plugins
   mkdir --verbose -p ~/webpipe/plugins
-  # Where files from $INPUT_DIR are moved and renamed to, so they are HTML and
+  # Where files from $WATCH_DIR are moved and renamed to, so they are HTML and
   # shell safe.
   mkdir --verbose -p ~/webpipe/renamed
+
+  mkfifo ~/webpipe/input
 }
 
 # People can run print-events | xrender to directly to render on a different
@@ -63,7 +73,7 @@ init() {
 # pipeline.
 
 print-events() {
-  local input_dir=${1:-$INPUT_DIR}
+  local input_dir=${1:-$WATCH_DIR}
 
   # --quiet: only print events
   # --monitor: loop forever
@@ -102,7 +112,7 @@ serve() {
 # However, inotifywait seems more useful for "latch".
 
 run() {
-  local input_dir=$INPUT_DIR
+  local input_dir=$WATCH_DIR
 
   check-tools
 
@@ -112,10 +122,15 @@ run() {
   mkdir -p $session
 
   # NOTE: do we need the 'serve' action?
-  print-events $INPUT_DIR \
-    | xrender $INPUT_DIR $session \
+  print-events $WATCH_DIR \
+    | xrender $WATCH_DIR $session \
     | serve serve $session "$@"
 }
+
+# Other actions:
+# - sink (move from the stub?)
+# - show <files...>
+# - watch -- start the inotify daemon on watched
 
 help() {
   log "Usage: webpipe [ init | run | package-dir | help | version ]"
@@ -147,6 +162,8 @@ version() {
 }
 
 # Use this to find stub path?
+# TODO: Should there also be a user-dir thing?  I think that should always be
+# ~/webpipe.
 package-dir() {
   echo $THIS_DIR
 }

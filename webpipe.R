@@ -8,7 +8,7 @@
 # TODO:
 # - Can the user configure the dir?  Environment var?
 
-PLOT_DEST <- '~/webpipe/input/Rplot%03d.png'
+PLOT_DEST <- '~/webpipe/watched/Rplot%03d.png'
 
 # Wrap a function that writes to a graphic device so that it writes a .png to
 # the webpipe input directory.
