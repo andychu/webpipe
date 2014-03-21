@@ -71,15 +71,23 @@ init() {
 
   # Named pipe that receives paths relative to the sink dir.  We remove and
   # create the pipe to reset it?
+  # NOTE: We want at least two ways of showing files:
+  # - put something in the 'watched' dir
+  # - wp show <filename>
+  #
+  # A named pipe can't handle both.  You would need a Unix socket.
 
-  rm --verbose ~/webpipe/input
-  mkfifo ~/webpipe/input
-  local exit_code=$?
-  if test $exit_code -eq 0; then
-    log "Created ~/webpipe/input"
-  else
-    log "mkfifo error"
-  fi
+  #rm --verbose ~/webpipe/input
+  #mkfifo ~/webpipe/input
+  #local exit_code=$?
+  #if test $exit_code -eq 0; then
+  #  log "Created ~/webpipe/input"
+  #else
+  #  log "mkfifo error"
+  #fi
+
+  # Do this last, since it dies.
+  check-tools
 }
 
 # People can run print-events | xrender to directly to render on a different
@@ -145,6 +153,10 @@ run() {
 # - sink (move from the stub?)
 # - show <files...>
 # - watch -- start the inotify daemon on watched
+#
+# Individual actions (for advanced users):
+# - xrender
+# - serve
 
 help() {
   log "Usage: webpipe [ init | run | package-dir | help | version ]"
