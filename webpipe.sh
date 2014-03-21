@@ -58,14 +58,28 @@ check-tools() {
 
 # Set up the default dir to watch.
 init() {
+  # Where files that exist only for viewing (temp files) can be written.
+  mkdir --verbose -p ~/webpipe/sink
+
+  # Where files from the input dirs are moved and renamed to, so they are HTML
+  # and shell safe.
+  mkdir --verbose -p ~/webpipe/renamed
+
   mkdir --verbose -p $WATCH_DIR
   # Where user can install their own plugins
   mkdir --verbose -p ~/webpipe/plugins
-  # Where files from $WATCH_DIR are moved and renamed to, so they are HTML and
-  # shell safe.
-  mkdir --verbose -p ~/webpipe/renamed
 
+  # Named pipe that receives paths relative to the sink dir.  We remove and
+  # create the pipe to reset it?
+
+  rm --verbose ~/webpipe/input
   mkfifo ~/webpipe/input
+  local exit_code=$?
+  if test $exit_code -eq 0; then
+    log "Created ~/webpipe/input"
+  else
+    log "mkfifo error"
+  fi
 }
 
 # People can run print-events | xrender to directly to render on a different
