@@ -1,23 +1,23 @@
 #!/usr/bin/python -S
 """
-wait_server_test.py: Tests for wait_server.py
+handlers_test.py: Tests for handlers.py
 """
 
 import unittest
 
-import wait_server  # module under test
+import handlers  # module under test
 
 
 class WaitTest(unittest.TestCase):
 
   def testSequenceWaiter(self):
-    s = wait_server.SequenceWaiter()
+    s = handlers.SequenceWaiter()
     result = s.MaybeWait(2)
-    self.assertEqual(wait_server.WAIT_TOO_BIG, result)
+    self.assertEqual(handlers.WAIT_TOO_BIG, result)
 
   def testListPlugins(self):
     # This takes the place of the package dir.
-    print wait_server._ListPlugins('.')
+    print handlers._ListPlugins('.')
 
 
 if __name__ == '__main__':
