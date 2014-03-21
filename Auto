@@ -23,7 +23,7 @@ manifest() {
 
   # TODO: Use deps in _tmp
   # TODO: build basis package
-  py-deps webpipe.webpipe webpipe.file2html
+  py-deps webpipe.serve webpipe.xrender
   ls webpipe/*.html webpipe.R webpipe.sh
 }
 
