@@ -88,25 +88,11 @@ server() {
 
 # Run the whole pipeline.
 #
-# TODO: should the input dir be a flag?
-# Right now people have to do:
+# TODO:
+# - Add flags that are common: --user-dir, --port (for server), etc.
+# - What about rendering flags?
 #
-# $ webpipe run '' --port 8888
-
-run() {
-  local input_dir=${1:-$INPUT_DIR}
-  shift
-
-  check-tools
-
-  export PYTHONUNBUFFERED=1
-
-  # TODO: determine session here.  Latest dir in ~/webpipe/s/ or
-  # ~/webpipe/session.
-  print-events $input_dir \
-    | file2html $input_dir \
-    | server serve "$@"
-}
+# $ webpipe run --port 8888
 
 # TODO:
 # - file2html can read from a named pipe ~/webpipe/input
@@ -115,28 +101,19 @@ run() {
 # - You can have a ~/webpipe/watched dir for inotifywait if you really need it.
 # However, inotifywait seems more useful for "latch".
 
-run2() {
-  local input_dir=${1:-$INPUT_DIR}
-  shift
+run() {
+  local input_dir=$INPUT_DIR
 
   check-tools
 
   export PYTHONUNBUFFERED=1
 
-  # NOTE: Could recover state here too.
-  # file2html has to know what filenames to write/generate.  Serve has to know
-  # which one to block on.  Or I guess serve could recover it too by looking at
-  # the file system.  But there is a race condition there.  Because
-
-  #local session=~/webpipe/s/webpipe-test
   local session=~/webpipe/s/$(date +%Y-%m-%d)
-  log "session $session"
-  # Right now, it has to exist.  I guess the shell wrappers should be
-  # responsible for making it.
   mkdir -p $session
-  print-events $input_dir \
-    | file2html $input_dir $session \
-    | server serve2 $session
+
+  print-events $INPUT_DIR \
+    | file2html $INPUT_DIR $session \
+    | server serve2 $session "$@"
 }
 
 help() {
