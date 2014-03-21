@@ -1,32 +1,32 @@
 #!/usr/bin/python -S
 """
-webpipe_test.py: Tests for webpipe.py
+serve_test.py: Tests for serve.py
 """
 
 import os
 import Queue
 import unittest
 
-import webpipe
+import serve
 
 
 class StagesTest(unittest.TestCase):
 
   def testReadStdin(self):
     q = Queue.Queue()
-    r = webpipe.ReadStdin(q)
+    r = serve.ReadStdin(q)
 
 
 class FunctionsTest(unittest.TestCase):
 
   def testSuffixGen(self):
-    s = webpipe.SuffixGen()
+    s = serve.SuffixGen()
     suffixes = [s.next() for _ in range(100)]
     print suffixes
     print sorted(suffixes)
 
   def testMakeSession(self):
-    s = webpipe.MakeSession(os.path.expanduser('~/webpipe/s'))
+    s = serve.MakeSession(os.path.expanduser('~/serve/s'))
     print s
 
 

@@ -22,8 +22,7 @@ from common import httpd
 from common import util
 from common import spy
 
-import file2html  # run in process
-import wait_server
+import handlers
 
 # outside
 import tnet
@@ -187,7 +186,7 @@ def Serve(opts, waiter, deploy_dir, spy_client):
 
   waiters = {session_name: waiter}
 
-  handler_class = wait_server.WaitingRequestHandler
+  handler_class = handlers.WaitingRequestHandler
   handler_class.user_dir = opts.user_dir
   handler_class.deploy_dir = deploy_dir
   handler_class.waiters = waiters
@@ -221,17 +220,11 @@ def CreateOptionsParser():
       '--num-threads', dest='num_threads', type='int', default=5,
       help='Number of server threads, i.e. simultaneous connections.')
 
-  # argument to "file2html" is an input dir.  This is the output dir.
-
-  # scrolls go in the 's' dir
+  # scrolls go in the 's' dir, plugins in the 'plugins' dir
   parser.add_option(
       '--user-dir', dest='user_dir', type='str',
       default=os.path.expanduser('~/webpipe'),
       help='Per-user directory for webpipe')
-
-  # TODO:
-  # - merge options from other modules?  from file2html?
-  # - --stages flag?
 
   return parser
 
@@ -249,10 +242,9 @@ def AppMain(argv, spy_client):
   if opts.verbose:
     _verbose = True
 
-  waiter = wait_server.SequenceWaiter()
+  waiter = handlers.SequenceWaiter()
 
   # Other actions:
-  # render (or should they just use file2html?)
   # serve-rendered (or servehtml)
   # refresh
 
