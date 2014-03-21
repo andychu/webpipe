@@ -256,9 +256,9 @@ def AppMain(argv, spy_client):
   # serve-rendered (or servehtml)
   # refresh
 
-  if action == 'serve2':  # TODO: rename to 'serve'
-    # NOTE: serve from --out-dir, --session
-    log('serve2')
+  if action == 'serve':  # TODO: rename to 'serve'
+    # TODO: clean up this usage.  I guess these should be flags.  Perhaps
+    # optionally as positional arguments.
     session = argv[2]
     opts.session = session
 

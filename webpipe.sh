@@ -113,7 +113,7 @@ run() {
 
   print-events $INPUT_DIR \
     | file2html $INPUT_DIR $session \
-    | server serve2 $session "$@"
+    | server serve $session "$@"
 }
 
 help() {
