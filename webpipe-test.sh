@@ -5,8 +5,8 @@
 
 set -o nounset
 
-file2html() {
-  ./webpipe-dev.sh file2html "$@"
+xrender() {
+  ./webpipe-dev.sh xrender "$@"
 }
 
 serve() {
@@ -105,18 +105,18 @@ write-demo() {
 # Tests
 #
 
-test-file2html() {
+test-xrender() {
   cp testdata/typescript ~/webpipe/input
 
   # TODO: These files don't exist
-  file2html ~/webpipe/input ~/webpipe/s/webpipe-test <<EOF
+  xrender ~/webpipe/input ~/webpipe/s/webpipe-test <<EOF
 Rplot001.png
 test.csv
 typescript
 EOF
 }
 
-test-serve2() {
+test-serve() {
   # Test it without a renderer.
   local stub=$PWD/webpipe-stub.sh
   local dev=$PWD/webpipe-dev.sh
@@ -124,7 +124,7 @@ test-serve2() {
   # line like '1.html'
   local session=~/webpipe/s/webpipe-test
   echo '<i>one</i>' > $session/1.html
-  { echo '2:{}'; echo 1.html; } | $dev server serve2 $session
+  { echo '2:{}'; echo 1.html; } | $dev serve serve $session
 }
 
 # not fatal

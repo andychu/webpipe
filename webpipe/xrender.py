@@ -1,6 +1,6 @@
 #!/usr/bin/python
 """
-file2html.py
+xrender.py
 
 A filter that reads filenames from stdin, and prints HTML directories on
 stdout.
@@ -16,7 +16,7 @@ Next:
   - a configurable prefix, like "hostname; whoami;" etc. would be useful.
 - .grep -- grep results
   - But then do we have to copy a ton of files over?
-  - file2html needs have access to the original directory.
+  - xrender needs have access to the original directory.
   - and the command
 
 Ideas:
@@ -132,9 +132,9 @@ $.ajax({
 
 
 if sys.stderr.isatty():
-  PREFIX = '\033[36m' + 'file2html:' + '\033[0;0m'
+  PREFIX = '\033[36m' + 'xrender:' + '\033[0;0m'
 else:
-  PREFIX = 'file2html:'
+  PREFIX = 'xrender:'
 
 def log(msg, *args):
   if args:
@@ -326,7 +326,7 @@ def main(argv):
       # stderr with: 1>&2.  stderr could show up in debug output on the web
       # page (probably only if the exit code is 1?)
       #
-      # In the error case, file2html.py should write 3.html, along with a log
+      # In the error case, xrender.py should write 3.html, along with a log
       # file?  The html should preview it, but only if it's long.  Use the .log
       # viewer.
       #
@@ -403,7 +403,7 @@ if __name__ == '__main__':
   try:
     sys.exit(main(sys.argv))
   except KeyboardInterrupt:
-    print >>sys.stderr, 'file2html: Stopped'
+    print >>sys.stderr, 'xrender: Stopped'
     sys.exit(0)
   except Error, e:
     print >> sys.stderr, e.args[0]
