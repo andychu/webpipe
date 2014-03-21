@@ -118,7 +118,7 @@ run() {
 }
 
 help() {
-  log "Usage: webpipe [ init | run | help | version ]"
+  log "Usage: webpipe [ init | run | package-dir | help | version ]"
 }
 
 recv() {
@@ -141,7 +141,14 @@ stub-path() {
 }
 
 version() {
-  realpath $0
+  # TODO: Show the actual version?  For now just show the package-dir.
+  # assuming that has the version.
+  package-dir
+}
+
+# Use this to find stub path?
+package-dir() {
+  echo $THIS_DIR
 }
 
 
