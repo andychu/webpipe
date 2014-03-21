@@ -18,9 +18,9 @@ See [doc/webpipe.html]() for instructions on how to use it.
 Developing
 ----------
 
-Use the `webpipe-dev.sh` wrapper for `webpipe.sh`:
+Use the `wp-dev.sh` wrapper for `wp.sh`:
 
-    $ ./webpipe-dev.sh run
+    $ ./wp-dev.sh run
 
 This script relies on a couple dependencies existing in hard-coded paths.
 Fetch them as follows:

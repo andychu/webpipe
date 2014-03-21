@@ -119,7 +119,7 @@ EOF
 test-serve() {
   # Test it without a renderer.
   local stub=$PWD/webpipe-stub.sh
-  local dev=$PWD/webpipe-dev.sh
+  local dev=$PWD/wp-dev.sh
   # TODO: It expects a message with "files" on stdin.  It could just take a
   # line like '1.html'
   local session=~/webpipe/s/webpipe-test
@@ -129,18 +129,18 @@ test-serve() {
 
 # not fatal
 test-recv-bad-fields() {
-  echo -n '0:}8:1:a,1:b,}' | ./webpipe-dev.sh recv ~/webpipe/watched
+  echo -n '0:}8:1:a,1:b,}' | ./wp-dev.sh recv ~/webpipe/watched
   echo $?
 }
 
 # fatal, because the stream could be messed up
 test-recv-bad-message() {
-  echo -n 'abc' | ./webpipe-dev.sh recv ~/webpipe/watched
+  echo -n 'abc' | ./wp-dev.sh recv ~/webpipe/watched
   echo $?
 }
 
 test-recv-empty() {
-  echo -n '' | ./webpipe-dev.sh recv ~/webpipe/watched
+  echo -n '' | ./wp-dev.sh recv ~/webpipe/watched
   echo $?
 }
 
@@ -163,7 +163,7 @@ test-send-recv() {
   rm $out
   echo webpipe-stub.sh \
     | ./webpipe-stub.sh send \
-    | ./webpipe-dev.sh recv ~/webpipe/watched
+    | ./wp-dev.sh recv ~/webpipe/watched
   ls -al $out
   diff webpipe-stub.sh $out
   echo $?

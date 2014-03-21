@@ -1,9 +1,9 @@
 #!/bin/bash
 #
 # Usage:
-#   ./webpipe-dev.sh <function name>
+#   ./wp-dev.sh <function name>
 
-# This wrapper just sets PYTHONPATH and then WEBPIPE_DEV, so that webpipe.sh
+# This wrapper just sets PYTHONPATH and then WEBPIPE_DEV, so that wp.sh
 # won't set PYTHONPATH.
 
 main() {

@@ -3,7 +3,7 @@
 # User facing executables for webpipe.
 #
 # Usage:
-#   ./webpipe.sh <function name>
+#   ./wp.sh <function name>
 
 set -o nounset
 set -o pipefail
