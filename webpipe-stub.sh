@@ -86,6 +86,8 @@ sink() {
   cat > ~/webpipe/input/$basename.$ext
   # TODO: later, write filename FIFO ~/webpipe/input.
   # That can go in ~/webpipe/sink or something.
+  # This is better because file system events are unreliable.  > in bash seems
+  # to generate both close and close_write events.
 }
 
 "$@"
