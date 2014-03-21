@@ -58,7 +58,7 @@ init() {
   mkdir --verbose -p ~/webpipe/renamed
 }
 
-# People can run print-events | file2html to directly to render on a different
+# People can run print-events | xrender to directly to render on a different
 # host.  For now we keep them separate, so we have an explicit and flexible
 # pipeline.
 
@@ -77,13 +77,13 @@ print-events() {
 }
 
 # render files to HTML.
-file2html() {
-  $THIS_DIR/webpipe/file2html.py "$@"
+xrender() {
+  $THIS_DIR/webpipe/xrender.py "$@"
 }
 
 # serve HTML and static files.
-server() {
-  $THIS_DIR/webpipe/webpipe.py "$@"
+serve() {
+  $THIS_DIR/webpipe/serve.py "$@"
 }
 
 # Run the whole pipeline.
@@ -95,7 +95,7 @@ server() {
 # $ webpipe run --port 8888
 
 # TODO:
-# - file2html can read from a named pipe ~/webpipe/input
+# - xrender can read from a named pipe ~/webpipe/input
 # - webpipe.R can write to the fifo directly.  It knows what filename it is
 # going to write.
 # - You can have a ~/webpipe/watched dir for inotifywait if you really need it.
@@ -111,9 +111,10 @@ run() {
   local session=~/webpipe/s/$(date +%Y-%m-%d)
   mkdir -p $session
 
+  # NOTE: do we need the 'serve' action?
   print-events $INPUT_DIR \
-    | file2html $INPUT_DIR $session \
-    | server serve $session "$@"
+    | xrender $INPUT_DIR $session \
+    | serve serve $session "$@"
 }
 
 help() {
