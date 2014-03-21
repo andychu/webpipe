@@ -76,4 +76,16 @@ send() {
   done
 }
 
+# Example:
+#   ls | wp sink         # txt file
+#   ps aux | wp sink ps  # file type
+
+sink() {
+  local ext=${1:-txt}
+  local basename=$$  # use PID for now.
+  cat > ~/webpipe/input/$basename.$ext
+  # TODO: later, write filename FIFO ~/webpipe/input.
+  # That can go in ~/webpipe/sink or something.
+}
+
 "$@"

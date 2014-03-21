@@ -108,6 +108,13 @@ run() {
     | server serve "$@"
 }
 
+# TODO:
+# - file2html can read from a named pipe ~/webpipe/input
+# - webpipe.R can write to the fifo directly.  It knows what filename it is
+# going to write.
+# - You can have a ~/webpipe/watched dir for inotifywait if you really need it.
+# However, inotifywait seems more useful for "latch".
+
 run2() {
   local input_dir=${1:-$INPUT_DIR}
   shift
