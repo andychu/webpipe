@@ -33,23 +33,16 @@ Build() {
 
 
 run-py-tests() {
-  ls *_test.py | awk '{ print "./" $0 }' | sh -x -e
+  local dir=$1
+  ls $dir/*_test.py | awk '{ print "./" $0 }' | sh -x -e
 }
 
 Test() {
   set -o errexit
 
-  pushd webpipe
-  run-py-tests
-  popd
-
-  pushd common
-  run-py-tests
-  popd
-
-  pushd latch
-  run-py-tests
-  popd
+  run-py-tests webpipe
+  run-py-tests common
+  run-py-tests latch
 
   echo PASS
 }
