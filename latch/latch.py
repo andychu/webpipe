@@ -19,7 +19,7 @@ from common import spy
 
 import templates
 
-log = util.log
+log = util.Logger(util.ANSI_BLUE)
 
 
 class Error(Exception):
