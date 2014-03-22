@@ -126,7 +126,7 @@ bytes</p>
 wp_num_lines = os.getenv('WP_NUM_LINES', 5)
 
 # TODO: avoid loading the entire thing in memory?
-def ParseAndRender(f):
+def CsvDataDict(f):
   """
   Turn CSV into an HTML table.
 
@@ -174,7 +174,7 @@ def main(argv):
   full_html = os.path.join(output, 'full.html')
   with open(full_html, 'w') as outfile:
     with open(input_path) as infile:
-      data_dict = ParseAndRender(infile)
+      data_dict = CsvDataDict(infile)
       data_dict['num_bytes'] = num_bytes
       data_dict['output'] = output
       data_dict['basename'] = basename
