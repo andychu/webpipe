@@ -71,16 +71,45 @@ $.ajax({
 """, default_formatter='html')
 
 
+def Commas(n):
+  return '{:,}'.format(n)
+
+
 PREVIEW_TEMPLATE = jsontemplate.Template("""\
 <p>{basename} - {num_rows} rows, {num_bytes} bytes</p>
+
+<table align="center">
+  <thead>
+    <tr> {.repeated section thead} <th>{@}</th> {.end} </tr>
+  </thead>
+  <tbody>
+    {.repeated section head}
+      <tr> {.repeated section @} <td>{@}</td> {.end} </tr>
+    {.end}
+
+    <tr>
+      <td colspan="{num_cols}" style="text-align: center">
+        ...
+      </td>
+    </tr>
+
+    {.repeated section tail}
+      <tr> {.repeated section @} <td>{@}</td> {.end} </tr>
+    {.end}
+
+  </tbody>
+</table>
+
 
 <p><a href="{output}/full.html">Browse CSV</a></p>
 
 <p><a href="{output}/{basename}">Download Original CSV</a></p>
 
-""", default_formatter='html')
+""", default_formatter='html', more_formatters={'commas': Commas})
 
 
+# User setting for how many lines of head/tail they want to see.
+wp_num_lines = os.getenv('WP_NUM_LINES', 5)
 
 # TODO: avoid loading the entire thing in memory?
 def ParseAndRender(f):
@@ -90,7 +119,8 @@ def ParseAndRender(f):
   TODO: maximum number of rows.
   """
   c = csv.reader(f)
-  d = {'rows': []}
+  rows = []
+  d = {'rows': rows}
 
   num_rows = 0
   for i, row in enumerate(c):
@@ -98,9 +128,14 @@ def ParseAndRender(f):
     if i == 0:
       d['thead'] = row
     else:
-      d['rows'].append(row)
+      rows.append(row)
     num_rows += 1
-  return TABLE_TEMPLATE.expand(d), num_rows
+
+  d['head'] = head = rows[ : wp_num_lines]
+  d['tail'] = rows[-wp_num_lines : ]
+  d['num_rows'] = num_rows
+
+  return d
 
 
 def main(argv):
@@ -121,25 +156,22 @@ def main(argv):
   full_html = os.path.join(output, 'full.html')
   with open(full_html, 'w') as f:
     with open(input_path) as infile:
-      h, num_rows = ParseAndRender(infile)
-    f.write(h)
+      data_dict = ParseAndRender(infile)
+    f.write(TABLE_TEMPLATE.expand(data_dict))
 
   print output  # finished the dir
 
-  # This
+  del data_dict['rows']  # done with this big stuff
+  data_dict['num_bytes'] = num_bytes
+  data_dict['output'] = output
+  data_dict['basename'] = basename
+  # So we can have a colspan
+  data_dict['num_cols'] = len(data_dict['thead'])
 
   html = output + '.html'
-
   with open(html, 'w') as f:
-    d = {
-        # TODO: Make this a default formatter
-        'num_rows': '{:,}'.format(num_rows),
-        'num_bytes': '{:,}'.format(num_bytes),
-        'output': output,
-        'basename': basename,
-        }
     # TODO: check how many rows, and write head/tail, or full thing.
-    f.write(PREVIEW_TEMPLATE.expand(d))
+    f.write(PREVIEW_TEMPLATE.expand(data_dict))
 
   print html  # wrote html
 
