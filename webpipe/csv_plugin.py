@@ -18,7 +18,10 @@ class Error(Exception):
 # See http://datatables.net/usage/
 # CDN: http://www.asp.net/ajaxlibrary/CDNjQueryDataTables194.ashx
 #
-# TODO: We can put this in the /static dir
+# TODO:
+# - consider putting row numbers next to each row, in grey.  It will make it
+# clearer.
+# - We can put this in the /static/ dir
 
 # TODO:
 # - generate a different table ID for each one, and then style only that?
@@ -83,25 +86,32 @@ PREVIEW_TEMPLATE = jsontemplate.Template("""\
     <tr> {.repeated section thead} <th>{@}</th> {.end} </tr>
   </thead>
   <tbody>
-    {.repeated section head}
-      <tr> {.repeated section @} <td>{@}</td> {.end} </tr>
-    {.end}
+    # show either a preview, or full rows
 
-    <tr>
-      <td colspan="{num_cols}" style="text-align: center">
-        ...
-      </td>
-    </tr>
+    {.if test head}
+      {.repeated section head}
+        <tr> {.repeated section @} <td>{@}</td> {.end} </tr>
+      {.end}
 
-    {.repeated section tail}
-      <tr> {.repeated section @} <td>{@}</td> {.end} </tr>
+      <tr>
+        <td colspan="{num_cols}" style="text-align: center; font-style: italic;">
+          ... <a href="{output}/full.html">{num_omitted} rows omitted</a>
+        </td>
+      </tr>
+
+      {.repeated section tail}
+        <tr> {.repeated section @} <td>{@}</td> {.end} </tr>
+      {.end}
+
+    {.or}
+      {.repeated section rows}
+        <tr> {.repeated section @} <td>{@}</td> {.end} </tr>
+      {.end}
+
     {.end}
 
   </tbody>
 </table>
-
-
-<p><a href="{output}/full.html">Browse CSV</a></p>
 
 <p><a href="{output}/{basename}">Download Original CSV</a></p>
 
@@ -131,8 +141,12 @@ def ParseAndRender(f):
       rows.append(row)
     num_rows += 1
 
-  d['head'] = head = rows[ : wp_num_lines]
-  d['tail'] = rows[-wp_num_lines : ]
+  # wp_num_lines is 5, then we should show in full anything less than 15 rows
+  if len(rows) >= wp_num_lines * 3:
+    d['num_omitted'] = num_rows - (wp_num_lines * 2)
+    d['head'] = head = rows[ : wp_num_lines]
+    d['tail'] = rows[-wp_num_lines : ]
+
   d['num_rows'] = num_rows
 
   return d
@@ -161,7 +175,6 @@ def main(argv):
 
   print output  # finished the dir
 
-  del data_dict['rows']  # done with this big stuff
   data_dict['num_bytes'] = num_bytes
   data_dict['output'] = output
   data_dict['basename'] = basename
