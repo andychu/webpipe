@@ -39,49 +39,45 @@ def Commas(n):
 
 FORMATTERS = {'commas': Commas}
 
+# TODO:
+# - data table should just be normal script tag.
+# - all assets should be loaded from the server?  Except maybe jQuery.
+
 TABLE_TEMPLATE = jsontemplate.Template("""\
+<html>
+  <head>
+    <script type="text/javascript"
+      src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js">
+    </script>
+    <script type="text/javascript"
+      src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js">
+    </script>
 
-<link rel="stylesheet" type="text/css"
-      href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css" />
+    <link rel="stylesheet" type="text/css"
+          href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css" />
+  </head>
 
-<script type="text/javascript">
-var dtjs="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js";
+  <body>
+    <p><code>{basename}</code> - {num_rows|commas} rows, {num_bytes|commas}
+    bytes</p>
 
-//$.getScript(dtjs, function() {
-//  // NOTE: Is this inefficient?  When you have a lot of tables, it's doing
-//  // everything.  Another approach is to generate a unique ID.  But user
-//  // scripts might not have that benefit?
-//
-//  $('.data-table').dataTable();
-//});
+    <table class="data-table" align="center">
+      <thead>
+        <tr> {.repeated section thead} <th>{@}</th> {.end} </tr>
+      </thead>
+      <tbody>
+        {.repeated section rows}
+          <tr> {.repeated section @} <td>{@}</td> {.end} </tr>
+        {.end}
+      </tbody>
+    </table>
+  </body>
 
-// Using Chrome dev tools, we can that the JS becomes a cache hit, while
-// $.getScript() explicitly breaks caches.
-
-$.ajax({
-  url: dtjs,
-  dataType: "script",
-  cache: true,  // avoid loading every time
-  success: function() {
+  <script type="text/javascript">
     $('.data-table').dataTable();
-  }
-});
+  </script>
 
-</script>
-
-<p><code>{basename}</code> - {num_rows|commas} rows, {num_bytes|commas}
-bytes</p>
-
-<table class="data-table" align="center" style="text-align: right;" width="50%">
-  <thead>
-    <tr> {.repeated section thead} <th>{@}</th> {.end} </tr>
-  </thead>
-  <tbody>
-    {.repeated section rows}
-      <tr> {.repeated section @} <td>{@}</td> {.end} </tr>
-    {.end}
-  </tbody>
-</table>
+</html>
 """, default_formatter='html', more_formatters=FORMATTERS)
 
 
@@ -155,7 +151,7 @@ def ParseAndRender(f):
     d['head'] = head = rows[ : wp_num_lines]
     d['tail'] = rows[-wp_num_lines : ]
 
-  d['num_rows'] = num_rows
+  d['num_rows'] = num_rows - 1  # omit one that we counted as the header
 
   return d
 
