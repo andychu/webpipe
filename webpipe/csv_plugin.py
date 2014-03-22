@@ -21,6 +21,8 @@ class Error(Exception):
 # TODO:
 # - consider putting row numbers next to each row, in grey.  It will make it
 # clearer.
+# - refactor template to remove duplication
+# - could you use R to show histograms of the rows?
 # - We can put this in the /static/ dir
 
 # TODO:
@@ -79,14 +81,14 @@ def Commas(n):
 
 
 PREVIEW_TEMPLATE = jsontemplate.Template("""\
-<p>{basename} - {num_rows} rows, {num_bytes} bytes</p>
+<p><code>{basename}</code> - {num_rows|commas} rows, {num_bytes|commas} bytes</p>
 
 <table align="center">
   <thead>
     <tr> {.repeated section thead} <th>{@}</th> {.end} </tr>
   </thead>
   <tbody>
-    # show either a preview, or full rows
+    {# show either a preview, or full rows}
 
     {.if test head}
       {.repeated section head}
@@ -95,7 +97,7 @@ PREVIEW_TEMPLATE = jsontemplate.Template("""\
 
       <tr>
         <td colspan="{num_cols}" style="text-align: center; font-style: italic;">
-          ... <a href="{output}/full.html">{num_omitted} rows omitted</a>
+          ... <a href="{output}/full.html">{num_omitted|commas} rows omitted</a>
         </td>
       </tr>
 
