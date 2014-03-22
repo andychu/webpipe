@@ -66,10 +66,6 @@ $.ajax({
     {.end}
   </tbody>
 </table>
-
-<p>
-  <a href="{orig_url|htmltag}">{orig_anchor}</a>
-</p>
 """, default_formatter='html')
 
 
@@ -84,15 +80,15 @@ PREVIEW_TEMPLATE = jsontemplate.Template("""\
 
 
 
-def RenderCsv(orig_rel_path, filename, contents):
+# TODO: avoid loading the entire thing in memory?
+def ParseAndRender(f):
   """
   Turn CSV into an HTML table.
 
   TODO: maximum number of rows.
   """
-  lines = contents.splitlines()
-  c = csv.reader(lines)
-  d = {'rows': [], 'orig_url': orig_rel_path, 'orig_anchor': filename}
+  c = csv.reader(f)
+  d = {'rows': []}
 
   for i, row in enumerate(c):
     #print 'R', row
@@ -100,9 +96,7 @@ def RenderCsv(orig_rel_path, filename, contents):
       d['thead'] = row
     else:
       d['rows'].append(row)
-  #print d
-  return TABLE_TEMPLATE.expand(d), None
-
+  return TABLE_TEMPLATE.expand(d)
 
 def main(argv):
   """Returns an exit code."""
@@ -119,10 +113,11 @@ def main(argv):
 
   full_html = os.path.join(output, 'full.html')
   with open(full_html, 'w') as f:
-    # TODO: write the full table here.  With JavaScript.
-    f.write('hi')
+    with open(input_path) as infile:
+      h = ParseAndRender(infile)
+    f.write(h)
 
-  print output  # finished the dirthe dir
+  print output  # finished the dir
 
   # This
 
