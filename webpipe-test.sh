@@ -44,6 +44,11 @@ name,age
 EOF
 }
 
+#  http://hci.stanford.edu/jheer/workshop/data/
+big-csv() {
+  ln --verbose --force -s $PWD/testdata/census_marriage.csv ~/webpipe/watched
+}
+
 dot-demo() {
   local dest=${1:-~/webpipe/watched}
   cp plugins/dot/examples/cluster.dot $dest
