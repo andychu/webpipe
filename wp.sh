@@ -53,6 +53,14 @@ check-tools() {
 }
 
 #
+# Private for now
+#
+
+csv-plugin() {
+  $THIS_DIR/webpipe/csv_plugin.py "$@"
+}
+
+#
 # Public
 #
 

@@ -6,6 +6,8 @@ This is in process in xrender.py until we work out packaging issues.
 """
 
 import csv
+import os
+import shutil
 import sys
 
 import jsontemplate
@@ -96,7 +98,24 @@ def RenderCsv(orig_rel_path, filename, contents):
 
 def main(argv):
   """Returns an exit code."""
-  print 'Hello from csv_plugin.py'
+
+  # Assume we're in the output dir
+  input_path, output = argv[1:]
+
+  os.mkdir(output)
+  orig = os.path.join(output, os.path.basename(input_path))
+
+  shutil.copy(input_path, orig)
+
+  print output  # finished the dirthe dir
+
+  html = output + '.html'
+
+  with open(html, 'w') as f:
+    f.write('hi')
+
+  print html  # wrote html
+
   return 0
 
 
