@@ -73,6 +73,14 @@ $.ajax({
 """, default_formatter='html')
 
 
+PREVIEW_TEMPLATE = jsontemplate.Template("""\
+<p>{basename} - {num_rows} rows</p>
+
+<p><a href="{output}/full.html">Browse CSV</a></p>
+
+<p><a href="{output}/{basename}">Download Original CSV</a></p>
+
+""", default_formatter='html')
 
 
 
@@ -103,16 +111,31 @@ def main(argv):
   input_path, output = argv[1:]
 
   os.mkdir(output)
-  orig = os.path.join(output, os.path.basename(input_path))
+  basename = os.path.basename(input_path)
+  orig = os.path.join(output, basename)
 
+  # Copy the original
   shutil.copy(input_path, orig)
 
+  full_html = os.path.join(output, 'full.html')
+  with open(full_html, 'w') as f:
+    # TODO: write the full table here.  With JavaScript.
+    f.write('hi')
+
   print output  # finished the dirthe dir
+
+  # This
 
   html = output + '.html'
 
   with open(html, 'w') as f:
-    f.write('hi')
+    d = {
+        'num_rows': 5,
+        'output': output,
+        'basename': basename,
+        }
+    # TODO: check how many rows, and write head/tail, or full thing.
+    f.write(PREVIEW_TEMPLATE.expand(d))
 
   print html  # wrote html
 
