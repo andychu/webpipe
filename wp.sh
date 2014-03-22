@@ -106,7 +106,7 @@ print-events() {
   # close_write: when a file is closed after writing
   # create: creating a symlink (ln -sf of a dir alway does DELETE then CREATE)
 
-  log "webpipe: Watching $input_dir"
+  log "wp: Watching $input_dir"
   inotifywait --monitor --quiet -e close_write,create $input_dir --format '%f'
 }
 

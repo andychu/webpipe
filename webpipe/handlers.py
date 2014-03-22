@@ -27,7 +27,7 @@ from common import httpd
 
 import jsontemplate
 
-log = util.log
+log = util.Logger(util.ANSI_BLUE)
 
 
 

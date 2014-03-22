@@ -65,6 +65,8 @@ import re
 import subprocess
 import sys
 
+from common import util
+
 import jsontemplate
 import tnet
 
@@ -131,15 +133,7 @@ $.ajax({
 """, default_formatter='html')
 
 
-if sys.stderr.isatty():
-  PREFIX = '\033[36m' + 'xrender:' + '\033[0;0m'
-else:
-  PREFIX = 'xrender:'
-
-def log(msg, *args):
-  if args:
-    msg = msg % args
-  print >>sys.stderr, PREFIX, msg
+log = util.Logger(util.ANSI_GREEN)
 
 
 BAD_RE = re.compile(r'[^a-zA-Z0-9_\-]')

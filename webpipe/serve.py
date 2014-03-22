@@ -27,7 +27,7 @@ import handlers
 # outside
 import tnet
 
-log = util.log
+log = util.Logger(util.ANSI_BLUE)
 
 
 class Error(Exception):
@@ -52,13 +52,6 @@ class ReadStdin(object):
     self.q = q
 
   def __call__(self):
-    log('stdin 2')
-    # TODO: read header?
-    # if it doesn't start with 'lines:' or '[lines]' or 
-    # protocol:
-    # readline first... if line starts with '3:', then you need to read header
-    # as JSON?  or tnet?
-
     while True:
       # must be unbuffered
       line = sys.stdin.readline()
@@ -66,7 +59,6 @@ class ReadStdin(object):
         break
 
       line = line.rstrip()
-      log('putting %r', line)
       self.q.put(line)
 
 
