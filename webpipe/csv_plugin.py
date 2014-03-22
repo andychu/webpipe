@@ -17,6 +17,8 @@ class Error(Exception):
 
 # See http://datatables.net/usage/
 # CDN: http://www.asp.net/ajaxlibrary/CDNjQueryDataTables194.ashx
+#
+# TODO: We can put this in the /static dir
 
 # TODO:
 # - generate a different table ID for each one, and then style only that?
@@ -90,13 +92,16 @@ def ParseAndRender(f):
   c = csv.reader(f)
   d = {'rows': []}
 
+  num_rows = 0
   for i, row in enumerate(c):
     #print 'R', row
     if i == 0:
       d['thead'] = row
     else:
       d['rows'].append(row)
-  return TABLE_TEMPLATE.expand(d)
+    num_rows += 1
+  return TABLE_TEMPLATE.expand(d), num_rows
+
 
 def main(argv):
   """Returns an exit code."""
@@ -114,7 +119,7 @@ def main(argv):
   full_html = os.path.join(output, 'full.html')
   with open(full_html, 'w') as f:
     with open(input_path) as infile:
-      h = ParseAndRender(infile)
+      h, num_rows = ParseAndRender(infile)
     f.write(h)
 
   print output  # finished the dir
@@ -125,7 +130,7 @@ def main(argv):
 
   with open(html, 'w') as f:
     d = {
-        'num_rows': 5,
+        'num_rows': num_rows,
         'output': output,
         'basename': basename,
         }
@@ -143,4 +148,3 @@ if __name__ == '__main__':
   except Error, e:
     print >> sys.stderr, e.args[0]
     sys.exit(1)
-

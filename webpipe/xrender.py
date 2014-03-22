@@ -123,7 +123,7 @@ def GuessFileType(filename):
 
 
 BUILTINS = {
-    'csv': csv_plugin.RenderCsv,
+    #'csv': csv_plugin.RenderCsv,
     }
 
 
