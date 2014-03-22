@@ -33,6 +33,12 @@ class Error(Exception):
 # - don't want every plugin to hard code jquery.getScript
 #   - would be nicer to present <elem js="http://" css="http://">
 
+def Commas(n):
+  return '{:,}'.format(n)
+
+
+FORMATTERS = {'commas': Commas}
+
 TABLE_TEMPLATE = jsontemplate.Template("""\
 
 <link rel="stylesheet" type="text/css"
@@ -63,7 +69,10 @@ $.ajax({
 
 </script>
 
-<table class="data-table" align="center">
+<p><code>{basename}</code> - {num_rows|commas} rows, {num_bytes|commas}
+bytes</p>
+
+<table class="data-table" align="center" style="text-align: right;" width="50%">
   <thead>
     <tr> {.repeated section thead} <th>{@}</th> {.end} </tr>
   </thead>
@@ -73,17 +82,14 @@ $.ajax({
     {.end}
   </tbody>
 </table>
-""", default_formatter='html')
-
-
-def Commas(n):
-  return '{:,}'.format(n)
+""", default_formatter='html', more_formatters=FORMATTERS)
 
 
 PREVIEW_TEMPLATE = jsontemplate.Template("""\
-<p><code>{basename}</code> - {num_rows|commas} rows, {num_bytes|commas} bytes</p>
+<p><code>{basename}</code> - {num_rows|commas} rows, {num_bytes|commas}
+bytes</p>
 
-<table align="center">
+<table align="center" style="text-align: right;" width="50%">
   <thead>
     <tr> {.repeated section thead} <th>{@}</th> {.end} </tr>
   </thead>
@@ -117,7 +123,7 @@ PREVIEW_TEMPLATE = jsontemplate.Template("""\
 
 <p><a href="{output}/{basename}">Download Original CSV</a></p>
 
-""", default_formatter='html', more_formatters={'commas': Commas})
+""", default_formatter='html', more_formatters=FORMATTERS)
 
 
 # User setting for how many lines of head/tail they want to see.
@@ -170,18 +176,18 @@ def main(argv):
   shutil.copy(input_path, orig)
 
   full_html = os.path.join(output, 'full.html')
-  with open(full_html, 'w') as f:
+  with open(full_html, 'w') as outfile:
     with open(input_path) as infile:
       data_dict = ParseAndRender(infile)
-    f.write(TABLE_TEMPLATE.expand(data_dict))
+      data_dict['num_bytes'] = num_bytes
+      data_dict['output'] = output
+      data_dict['basename'] = basename
+      # So we can have a colspan
+      data_dict['num_cols'] = len(data_dict['thead'])
+
+    outfile.write(TABLE_TEMPLATE.expand(data_dict))
 
   print output  # finished the dir
-
-  data_dict['num_bytes'] = num_bytes
-  data_dict['output'] = output
-  data_dict['basename'] = basename
-  # So we can have a colspan
-  data_dict['num_cols'] = len(data_dict['thead'])
 
   html = output + '.html'
   with open(html, 'w') as f:
