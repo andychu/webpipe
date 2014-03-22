@@ -72,7 +72,7 @@ $.ajax({
 
 
 PREVIEW_TEMPLATE = jsontemplate.Template("""\
-<p>{basename} - {num_rows} rows</p>
+<p>{basename} - {num_rows} rows, {num_bytes} bytes</p>
 
 <p><a href="{output}/full.html">Browse CSV</a></p>
 
@@ -112,6 +112,8 @@ def main(argv):
   os.mkdir(output)
   basename = os.path.basename(input_path)
   orig = os.path.join(output, basename)
+  
+  num_bytes = os.path.getsize(input_path)
 
   # Copy the original
   shutil.copy(input_path, orig)
@@ -130,7 +132,9 @@ def main(argv):
 
   with open(html, 'w') as f:
     d = {
-        'num_rows': num_rows,
+        # TODO: Make this a default formatter
+        'num_rows': '{:,}'.format(num_rows),
+        'num_bytes': '{:,}'.format(num_bytes),
         'output': output,
         'basename': basename,
         }
