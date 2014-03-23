@@ -1,5 +1,6 @@
 <html>
   <head>
+    <!-- TODO: scrape scroll name from URL -->
     <title>webpipe</title>
 
     <script type="text/javascript"
@@ -10,7 +11,7 @@
       function waitForPart(i) {
         $('.roll-status').text('Waiting for part ' + i + ' ...');
 
-        // NOTE: must be a URL relative (to /my-session/)
+        // URL relative to scroll
         var partUrl = i + '.html';
 
         // NOTE: To be extendable, the response could be JSON:
@@ -18,53 +19,50 @@
         // But we're not doing that so it works with a static web server.
 
         $.ajax({
-            url: partUrl,
-            type: 'GET',
-            success: function(data){
-                $('.roll-status').text("got response " + i);
+          url: partUrl,
+          type: 'GET',
+          success: function(data){
+            $('.roll-status').text("got response " + i);
 
-                // TODO: How to make it roll to the bottom?
+            $('#roll').append('<p>');
+            $('#roll').append(data);
+            $('#roll').append('</p>');
+            var anchor = i + '.html';
+            var linkStr = '<p align="right"><a href="' + partUrl + '">'
+                          + anchor + '</a></p>';
+            $('#roll').append(linkStr);
+            $('#roll').append('<hr />');
 
-                $('#roll').append('<p>');
-                $('#roll').append(data);
-                $('#roll').append('</p>');
-                var anchor = i + '.html';
-                var linkStr = '<p align="right"><a href="' + partUrl + '">'
-                              + anchor + '</a></p>';
-                $('#roll').append(linkStr);
-                $('#roll').append('<hr />');
+            // http://stackoverflow.com/questions/4249353/jquery-scroll-to-bottom-of-the-page
+            $("html, body").animate({ scrollTop: $(document).height() }, 500);
 
-                // http://stackoverflow.com/questions/4249353/jquery-scroll-to-bottom-of-the-page
-                $("html, body").animate({ scrollTop: $(document).height() }, 500);
-
-                waitForPart(i+1);
-            },
-            error: function(jqXhr, textStatus, errorThrown) {
-              var msg;
-              if (textStatus === 'error') {
-                // Not sure if textStatus is error in other conditions.
-                msg = 'connection lost';
-              } else {
-                msg = textStatus + ' ' + errorThrown;
-              }
-
-              // Show error from the server.
-              $('.roll-status').text('error getting ' + partUrl + ': ' + msg);
+            waitForPart(i+1);
+          },
+          error: function(jqXhr, textStatus, errorThrown) {
+            var msg;
+            if (textStatus === 'error') {
+              // Not sure if textStatus is error in other conditions.
+              msg = 'connection lost';
+            } else {
+              msg = textStatus + ' ' + errorThrown;
             }
+
+            // Show error from the server.
+            $('.roll-status').text('error getting ' + partUrl + ': ' + msg);
+          }
         });
       }
 
-    waitForPart(1);
+      waitForPart(1);
+    </script>
 
-  </script>
-
-  <style>
-    .roll-status {
-      background-color: #F0F0F0;
-    }
-  </style>
-
+    <style>
+      .roll-status {
+        background-color: #F0F0F0;
+      }
+    </style>
   </head>
+
   <body>
     <p>
       <a href="..">back</a>
@@ -80,4 +78,3 @@
 
   </body>
 </html>
-
