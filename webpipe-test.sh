@@ -179,7 +179,7 @@ test-send-recv() {
 #
 
 publish-demo() {
-  webpipe/publish.py ~/webpipe/s/2014-03-23/1 dreamhost
+  webpipe/publish.py ~/webpipe/s/2014-03-22/1 dreamhost
 }
 
 
