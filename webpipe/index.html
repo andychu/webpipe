@@ -39,16 +39,26 @@
             waitForPart(i+1);
           },
           error: function(jqXhr, textStatus, errorThrown) {
+            // TODO: change to different colors when server is down and when
+            // you get a 404.
             var msg;
-            if (textStatus === 'error') {
-              // Not sure if textStatus is error in other conditions.
-              msg = 'connection lost';
-            } else {
-              msg = textStatus + ' ' + errorThrown;
+            if (jqXhr.status === 404) {
+              // This happens on a scroll with no waiter.  It will just get a 404.
+              msg = 'Done (no more items)';
+            } else if (jqXhr.status === 0) {
+              var errorString;
+              if (textStatus === 'error') {
+                // When the server goes down, jqXhr doesn't seem to provide
+                // anything that descriptive.
+                errorString = 'connection lost';
+              } else {
+                errorString = textStatus + ' ' + errorThrown;
+              }
+              msg = 'error getting ' + partUrl + ': ' + errorString;
             }
 
             // Show error from the server.
-            $('.roll-status').text('error getting ' + partUrl + ': ' + msg);
+            $('.roll-status').text(msg);
           }
         });
       }
