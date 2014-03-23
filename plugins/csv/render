@@ -1,0 +1,5 @@
+#!/bin/sh
+# 
+# This is just so we can call keep the .py extension.
+
+exec $(dirname $0)/render.py "$@"
