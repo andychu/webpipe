@@ -15,10 +15,6 @@ name,age
 
 class FunctionsTest(unittest.TestCase):
 
-  def testRenderCsv(self):
-    html, orig = xrender.RenderCsv('dir/foo.csv', 'foo.csv', CSV)
-    print html
-
   def testGuessFileType(self):
     self.assertEqual('png', xrender.GuessFileType('Rplot001.png'))
     self.assertEqual('ansi', xrender.GuessFileType('typescript'))
