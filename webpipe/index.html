@@ -2,13 +2,13 @@
   <head>
     <title>webpipe</title>
 
-    <script type='text/javascript'
+    <script type="text/javascript"
             src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js">
     </script>
 
     <script type="text/javascript">
       function waitForPart(i) {
-        //$('#roll-status').text("Waiting for change");
+        $('.roll-status').text('Waiting for part ' + i + ' ...');
 
         // NOTE: must be a URL relative (to /my-session/)
         var partUrl = i + '.html';
@@ -21,7 +21,7 @@
             url: partUrl,
             type: 'GET',
             success: function(data){
-                $('#roll-status').text("got response " + i);
+                $('.roll-status').text("got response " + i);
 
                 // TODO: How to make it roll to the bottom?
 
@@ -41,8 +41,8 @@
             },
             error: function(jqXhr, textStatus, errorThrown) {
               // Show error from the server.
-              $('#roll-status').text(
-                "error contacting " + partUrl + ": " + jqXhr.responseText);
+              $('.roll-status').text(
+                'error contacting ' + partUrl + ': ' + jqXhr.responseText);
             }
         });
       }
@@ -52,7 +52,7 @@
   </script>
 
   <style>
-    #roll-status {
+    .roll-status {
       background-color: #F0F0F0;
     }
   </style>
@@ -65,12 +65,11 @@
 
     <h3>webpipe session</h3>
 
-    <!-- timer would be cool here -->
-    <p id="roll-status">Waiting for part...</p>
-    <hr />
-
     <div id="roll">
     </div>
+
+    <!-- timer would be cool here -->
+    <p class="roll-status">Waiting for part...</p>
 
   </body>
 </html>
