@@ -40,9 +40,16 @@
                 waitForPart(i+1);
             },
             error: function(jqXhr, textStatus, errorThrown) {
+              var msg;
+              if (textStatus === 'error') {
+                // Not sure if textStatus is error in other conditions.
+                msg = 'connection lost';
+              } else {
+                msg = textStatus + ' ' + errorThrown;
+              }
+
               // Show error from the server.
-              $('.roll-status').text(
-                'error contacting ' + partUrl + ': ' + jqXhr.responseText);
+              $('.roll-status').text('error getting ' + partUrl + ': ' + msg);
             }
         });
       }
