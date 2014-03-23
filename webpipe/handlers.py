@@ -105,7 +105,7 @@ class WaitingRequestHandler(httpd.BaseRequestHandler):
   server_version = "webpipe"
   root_dir = None  # from BaseRequestHandler, not used
   user_dir = None  # initialize to ~/webpipe
-  deploy_dir = None  # initialize to /<package>/webpipe
+  package_dir = None  # initialize to /<package>/webpipe
   waiters = None
 
   def send_webpipe_index(self):
@@ -123,7 +123,7 @@ class WaitingRequestHandler(httpd.BaseRequestHandler):
     # Session are saved on disk; allow the user to choose one.
 
     u = _ListPlugins(self.user_dir)
-    p = _ListPlugins(self.deploy_dir)
+    p = _ListPlugins(self.package_dir)
 
     html = PLUGINS_PAGE.expand({'user': u, 'package': p})
     self.wfile.write(html)
@@ -153,7 +153,7 @@ class WaitingRequestHandler(httpd.BaseRequestHandler):
       # looking for ['plugins', <anything>, 'static'].
       # Note these can be files OR directories.  Directories will be listed.
       if len(parts) >= 3 and parts[2] == 'static':
-        deployed_res = os.path.join(self.deploy_dir, *parts)
+        deployed_res = os.path.join(self.package_dir, *parts)
         user_res = os.path.join(self.user_dir, *parts)
 
         # Return the one that exists, starting with the user dir.

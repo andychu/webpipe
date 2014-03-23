@@ -25,7 +25,7 @@ def main(argv):
 
   # can be either absolute or relative to ~/webpipe/s
   entry_path = argv[1]
-  # name of a plugin in ~/webpipe/publish or $deploy_dir/publish
+  # name of a plugin in ~/webpipe/publish or $package_dir/publish
   dest = argv[2]
 
   # TODO: Share Resources class in xrender.py

@@ -132,7 +132,7 @@ def MakeSession(out_dir):
   return session, full_path
 
 
-def Serve(opts, waiter, deploy_dir, spy_client):
+def Serve(opts, waiter, package_dir, spy_client):
   # Pipeline:
   # Read stdin messages -> notify server
 
@@ -180,7 +180,7 @@ def Serve(opts, waiter, deploy_dir, spy_client):
 
   handler_class = handlers.WaitingRequestHandler
   handler_class.user_dir = opts.user_dir
-  handler_class.deploy_dir = deploy_dir
+  handler_class.package_dir = package_dir
   handler_class.waiters = waiters
 
   s = httpd.ThreadedHTTPServer(('', opts.port), handler_class)
@@ -248,7 +248,7 @@ def AppMain(argv, spy_client):
 
     # Write index.html in the session dir.
     this_dir = os.path.dirname(sys.argv[0])  # webpipe subdir
-    deploy_dir = os.path.dirname(this_dir)  # root of package
+    package_dir = os.path.dirname(this_dir)  # root of package
     path = os.path.join(this_dir, 'index.html')
     with open(path) as f:
       index_html = f.read()
@@ -258,7 +258,7 @@ def AppMain(argv, spy_client):
       f.write(index_html)
 
     try:
-      Serve(opts, waiter, deploy_dir, spy_client)
+      Serve(opts, waiter, package_dir, spy_client)
     except KeyboardInterrupt:
       log('Stopped')
       return waiter.Length()
