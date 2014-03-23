@@ -174,4 +174,13 @@ test-send-recv() {
   echo $?
 }
 
+#
+# Publishing
+#
+
+publish-demo() {
+  webpipe/publish.py ~/webpipe/s/2014-03-23/1 dreamhost
+}
+
+
 "$@"
