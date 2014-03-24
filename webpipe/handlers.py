@@ -31,14 +31,39 @@ log = util.Logger(util.ANSI_BLUE)
 
 
 
-# TODO: The "Directory Listing" page should let you go back up.
-HOME_PAGE = """\
-<h3>webpipe home</h3>
+# TODO:
+# - The "Directory Listing" page should let you go back up.
+# - common CSS for all pages.  put "plugins" div to the side.
+# - show live scrolls
 
-<p><a href="s/">scrolls</a></p>
+HOME_PAGE = jsontemplate.Template("""\
+<html>
+  <head>
+    <title>json $output</title>
+    <link href="/static/webpipe.css" rel="stylesheet">
+  </head>
+  <body>
+    <h2>webpipe</h2>
 
-<p><a href="plugins/">plugins</a></p>
-"""
+    <div id="scrolls">
+      <h4>Scrolls</h4>
+
+      {.repeated section scrolls}
+        <a href="s/{@|htmltag}">{@}</a> <br/>
+      {.end}
+
+      <p>
+        (<a href="s/">browse</a>)
+      </p>
+    </div>
+
+    <div id="links">
+      <p><a href="plugins/">plugins</a></p>
+    </div>
+
+  </body>
+</html>
+""", default_formatter='html')
 
 
 # TODO: put file system paths here?  So people can easily find their plugins.
@@ -66,7 +91,6 @@ PLUGINS_PAGE = jsontemplate.Template("""\
   <li>{name} {.if test static} <a href="{name}/static/">static</a> {.end} </li>
 {.end}
 </ul>
-
 """, default_formatter='html')
 
 
@@ -113,7 +137,12 @@ class WaitingRequestHandler(httpd.BaseRequestHandler):
     self.send_header('Content-Type', 'text/html')
     self.end_headers()
     
-    self.wfile.write(HOME_PAGE)
+    s_root = os.path.join(self.user_dir, 's')
+    scrolls = os.listdir(s_root)
+    scrolls.sort(reverse=True)
+
+    h = HOME_PAGE.expand({'scrolls': scrolls})
+    self.wfile.write(h)
 
   def send_plugins_index(self):
     self.send_response(200)
