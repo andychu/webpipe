@@ -187,6 +187,9 @@ class WaitingRequestHandler(httpd.BaseRequestHandler):
     first_part = parts[0]
     rest = parts[1:]
 
+    if first_part == 'static':
+      return os.path.join(self.package_dir, *parts)
+
     if first_part == 's':
       return os.path.join(self.user_dir, *parts)
 
