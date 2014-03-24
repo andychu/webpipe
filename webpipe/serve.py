@@ -171,11 +171,13 @@ def Serve(opts, scroll_path, waiter, package_dir, spy_client):
   handler_class.user_dir = opts.user_dir
   handler_class.package_dir = package_dir
   handler_class.waiters = {scroll_name: waiter}
+  handler_class.active_scroll = scroll_name
 
   s = httpd.ThreadedHTTPServer(('', opts.port), handler_class)
 
   # TODO: add opts.hostname?
-  log('Serving at http://localhost:%d/  (Ctrl-C to quit)', opts.port)
+  log('Serving at http://localhost:%d/s/%s  (Ctrl-C to quit)', opts.port,
+      scroll_name)
   s.serve_forever()
 
   # NOTE: Could do webbrowser.open() after we serve.  But people can also just

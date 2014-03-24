@@ -46,7 +46,12 @@ HOME_PAGE = jsontemplate.Template("""\
     <h2>webpipe</h2>
 
     <div id="scrolls">
-      <h4>Scrolls</h4>
+
+      <p>
+        Active Scroll: <a href="s/{active_scroll|htmltag}">{active_scroll}</a>
+      </p>
+
+      <h4>Old Scrolls</h4>
 
       {.repeated section scrolls}
         <a href="s/{@|htmltag}">{@}</a> <br/>
@@ -131,6 +136,7 @@ class WaitingRequestHandler(httpd.BaseRequestHandler):
   user_dir = None  # initialize to ~/webpipe
   package_dir = None  # initialize to /<package>/webpipe
   waiters = None
+  active_scroll = None
 
   def send_webpipe_index(self):
     self.send_response(200)
@@ -141,7 +147,13 @@ class WaitingRequestHandler(httpd.BaseRequestHandler):
     scrolls = os.listdir(s_root)
     scrolls.sort(reverse=True)
 
-    h = HOME_PAGE.expand({'scrolls': scrolls})
+    # Show the active one separately
+    try:
+      scrolls.remove(self.active_scroll)
+    except ValueError:
+      pass
+
+    h = HOME_PAGE.expand({'scrolls': scrolls, 'active_scroll': self.active_scroll})
     self.wfile.write(h)
 
   def send_plugins_index(self):
