@@ -7,6 +7,7 @@ Implement publishing plugins.
 """
 
 import os
+import re
 import subprocess
 import sys
 
@@ -17,6 +18,33 @@ class Error(Exception):
 
 
 log = util.Logger(util.ANSI_BLUE)
+
+
+# ../../../plugins/ because a scroll is 3 levels up from the root.
+DEP_RE = re.compile(r'\.\./\.\./\.\./(plugins/\S+/static)/')
+
+def ScanForStaticDeps(root_dir, rel_path):
+  d = os.path.join(root_dir, rel_path)
+
+  all_deps = []
+
+  for name in os.listdir(d):
+    path = os.path.join(d, name)
+    if not path.endswith('.html'):
+      continue
+    log('Scanning %s for dependencies', path)
+
+    # Search in the first 10 KB, since <script> and <link> tags should be in
+    # the header.  Note also that there could be multiple deps per line.
+    with open(path) as f:
+      # open it, 
+      head = f.read(10000)
+    file_deps = DEP_RE.findall(head)
+    log('Found deps %s', file_deps)
+    all_deps.extend(file_deps)
+
+  # Make it unique
+  return sorted(set(all_deps))
 
 
 class Publisher(object):
@@ -39,14 +67,13 @@ class Publisher(object):
     return None
 
   def Run(self, plugin_path, rel_path):
-
-    # TODO: 
-    # send over preview, dir, and then scan .html in the dir for static resources
-    # ../../../plugins/
+    # TODO: this finds relative paths.  We have to resolve them to p or u.
+    deps = ScanForStaticDeps(self.user_dir, rel_path)
 
     # First 
     argv = [plugin_path, self.user_dir, rel_path + '.html', self.user_dir, rel_path]
-    print argv
+    argv.extend(deps)
+    log('Running %s', argv)
     subprocess.call(argv)
 
 
