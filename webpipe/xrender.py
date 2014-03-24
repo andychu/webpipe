@@ -67,7 +67,6 @@ import sys
 import tnet
 
 from common import util
-from webpipe import csv_plugin
 
 
 class Error(Exception):
