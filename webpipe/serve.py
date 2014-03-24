@@ -215,7 +215,7 @@ def CreateOptionsParser():
   # scrolls go in the 's' dir, plugins in the 'plugins' dir
   parser.add_option(
       '--user-dir', dest='user_dir', type='str',
-      default=os.path.expanduser('~/webpipe'),
+      default=util.GetUserDir(),
       help='Per-user directory for webpipe')
 
   return parser
@@ -247,9 +247,8 @@ def AppMain(argv, spy_client):
     opts.session = session
 
     # Write index.html in the session dir.
-    this_dir = os.path.dirname(sys.argv[0])  # webpipe subdir
-    package_dir = os.path.dirname(this_dir)  # root of package
-    path = os.path.join(this_dir, 'index.html')
+    package_dir = util.GetPackageDir()
+    path = os.path.join(package_dir, 'webpipe/index.html')
     with open(path) as f:
       index_html = f.read()
 

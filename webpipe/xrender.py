@@ -127,6 +127,10 @@ BUILTINS = {
     }
 
 
+# TODO: Move this to util/resources or something
+# find rendering plugins, publishing plugins, etc.
+# used in publish.py, xrender.py, handlers.py
+
 class Resources(object):
   def __init__(self, package_dir=None):
     this_dir = os.path.dirname(sys.argv[0])

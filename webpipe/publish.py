@@ -33,6 +33,10 @@ def main(argv):
   user_dir = os.path.expanduser('~/webpipe')
   plugin_path = os.path.join(user_dir, 'publish', dest)
 
+  # TODO: 
+  # send over preview, dir, and then scan .html in the dir for static resources
+  # ../../../plugins/
+
   argv = [plugin_path, entry_path]
   print argv
   subprocess.call(argv)

@@ -25,3 +25,13 @@ class Logger(object):
     if args:
       msg = msg % args
     print >>sys.stderr, self.prefix, msg
+
+
+def GetPackageDir():
+  this_dir = os.path.dirname(sys.argv[0])  # webpipe subdir
+  return os.path.dirname(this_dir)  # root of package
+
+
+def GetUserDir():
+  return os.path.expanduser('~/webpipe')
+
