@@ -67,9 +67,10 @@ class Publisher(object):
     return None
 
   def Run(self, plugin_path, rel_path):
-    # TODO: this finds relative paths.  We have to resolve them to p or u.
+    # This finds relative paths.
     static_deps = ScanForStaticDeps(self.user_dir, rel_path)
 
+    # Now find the root, using the same logic that the server uses (in handlers.py).
     pairs = []
     for dep in static_deps:
       # Resolve it to the right one.  Right now we just test if the 'static'
@@ -84,9 +85,11 @@ class Publisher(object):
         pairs.append(self.package_dir)
         pairs.append(dep)
 
-    # First 
+    # Send the .html file, and the dir.
     argv = [plugin_path, self.user_dir, rel_path + '.html', self.user_dir, rel_path]
+    # Now the static deps.
     argv.extend(pairs)
+
     log('Running %s', argv)
     subprocess.call(argv)
 

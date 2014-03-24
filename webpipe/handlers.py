@@ -153,14 +153,14 @@ class WaitingRequestHandler(httpd.BaseRequestHandler):
       # looking for ['plugins', <anything>, 'static'].
       # Note these can be files OR directories.  Directories will be listed.
       if len(parts) >= 3 and parts[2] == 'static':
-        deployed_res = os.path.join(self.package_dir, *parts)
+        packaged_res = os.path.join(self.package_dir, *parts)
         user_res = os.path.join(self.user_dir, *parts)
 
         # Return the one that exists, starting with the user dir.
         if os.path.exists(user_res):
           return user_res
-        if os.path.exists(deployed_res):
-          return deployed_res
+        if os.path.exists(packaged_res):
+          return packaged_res
 
     return None
 
