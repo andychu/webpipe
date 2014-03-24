@@ -10,9 +10,16 @@ import os
 import subprocess
 import sys
 
+from common import util
 
 class Error(Exception):
   pass
+
+
+class Publisher(object):
+  def __init__(self):
+    self.package_dir = util.GetPackageDir()
+    self.user_dir = util.GetUserDir()
 
 
 def main(argv):
@@ -22,6 +29,7 @@ def main(argv):
   #
   # could you publish an entire scroll?
   # 
+
 
   # can be either absolute or relative to ~/webpipe/s
   entry_path = argv[1]

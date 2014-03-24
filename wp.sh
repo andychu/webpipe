@@ -159,10 +159,15 @@ run() {
     | serve serve $session "$@"
 }
 
+publish() {
+  $THIS_DIR/webpipe/publish.py "$@"
+}
+
 # Other actions:
 # - sink (move from the stub?)
 # - show <files...>
 # - watch -- start the inotify daemon on watched
+# - publish -- publish a part.  Can also be done through the web UI.
 #
 # Individual actions (for advanced users):
 # - xrender

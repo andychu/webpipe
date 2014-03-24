@@ -133,9 +133,8 @@ BUILTINS = {
 
 class Resources(object):
   def __init__(self, package_dir=None):
-    this_dir = os.path.dirname(sys.argv[0])
-    self.package_dir = package_dir or os.path.dirname(this_dir)
-    self.user_dir = os.path.expanduser('~/webpipe')
+    self.package_dir = util.GetPackageDir()
+    self.user_dir = util.GetUserDir()
 
   def GetPluginBin(self, file_type):
     # plugins dir is parallel to webpipe python dir.
