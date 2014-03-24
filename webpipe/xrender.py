@@ -138,14 +138,14 @@ class Resources(object):
 
   def GetPluginBin(self, file_type):
     # plugins dir is parallel to webpipe python dir.
-    p = os.path.join(self.package_dir, 'plugins', file_type, 'render')
     u = os.path.join(self.user_dir, 'plugins', file_type, 'render')
+    p = os.path.join(self.package_dir, 'plugins', file_type, 'render')
 
     # TODO: test if it's executable.  Show clear error if not.
-    if os.path.exists(p):
-      return p
     if os.path.exists(u):
       return u
+    if os.path.exists(p):
+      return p
     return None
 
 

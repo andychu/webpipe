@@ -55,24 +55,38 @@ class Publisher(object):
 
   def GetPublisher(self, name):
     # plugins dir is parallel to webpipe python dir.
-    p = os.path.join(self.package_dir, 'publish', name)
     u = os.path.join(self.user_dir, 'publish', name)
+    p = os.path.join(self.package_dir, 'publish', name)
 
     # TODO: test if it's executable.  Show clear error if not.
-    if os.path.exists(p):
-      return p
     if os.path.exists(u):
       return u
+    if os.path.exists(p):
+      return p
     log("Couldn't find %s or %s", p, u)
     return None
 
   def Run(self, plugin_path, rel_path):
     # TODO: this finds relative paths.  We have to resolve them to p or u.
-    deps = ScanForStaticDeps(self.user_dir, rel_path)
+    static_deps = ScanForStaticDeps(self.user_dir, rel_path)
+
+    pairs = []
+    for dep in static_deps:
+      # Resolve it to the right one.  Right now we just test if the 'static'
+      # directory exists, not anything inside.
+      u = os.path.join(self.user_dir, dep)
+      if os.path.exists(u):
+        pairs.append(self.user_dir)
+        pairs.append(dep)
+
+      p = os.path.join(self.package_dir, dep)
+      if os.path.exists(p):
+        pairs.append(self.package_dir)
+        pairs.append(dep)
 
     # First 
     argv = [plugin_path, self.user_dir, rel_path + '.html', self.user_dir, rel_path]
-    argv.extend(deps)
+    argv.extend(pairs)
     log('Running %s', argv)
     subprocess.call(argv)
 
