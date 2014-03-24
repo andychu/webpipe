@@ -75,6 +75,12 @@ json-demo() {
 EOF
 }
 
+# TODO: fold this into the repo
+treemap-demo() {
+  local dest=${1:-~/webpipe/watched}
+  ~/hg/treemap/run.sh find-with-format-string '%s %p\n' . | tee $dest/demo.treemap
+}
+
 ansi-demo() {
   local dest=${1:-~/webpipe/watched}
   cp testdata/typescript $dest

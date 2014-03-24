@@ -1,0 +1,78 @@
+#!/bin/sh
+
+readonly THIS_DIR=$(dirname $0)
+. $THIS_DIR/../webpipe-lib.sh
+
+# TODO: build this into the repo
+treesum() {
+  ~/hg/treemap/treesum.py "$@"
+}
+
+main() {
+  local input=$1
+  local output=$2
+
+  mkdir -p $output
+
+  # Original treemap file, for reference.  Not used in the visualization.
+  cp $input $output/
+
+  local filename=$(basename $input)
+  local json_path=$output/$filename.json
+
+  # Transform
+
+  treesum build <$input >$json_path
+  
+  # NOTE: /plugins/ is 3 level up from a scroll entry, which is in
+  # /s/2014-03-22/1/index.html
+
+  cat >$output/index.html <<EOF
+<html>
+  <head>
+    <title>treemap $output</title>
+    <link href="../../../plugins/treemap/static/webtreemap.css" rel="stylesheet">
+    <script src="../../../plugins/treemap/static/webtreemap.js"></script>
+  </head>
+
+  <body>
+    <div id="content"></div>
+  </body>
+
+  <p>test</p>
+
+  <script type="text/javascript">
+    JSONTree.getAndRender("$filename", document.getElementById("content"));
+  </script>
+
+</html>
+EOF
+
+  echo $output
+
+  local html=$output.html
+
+  # TODO: Preview in the snippet.  Should give first 10 and
+  # last 10 lines in here?  Should we use Python, or just head/tail?
+  # more stats
+  # - depth of tree?
+  # - histogram of node types?  (object: 10, array: 20, etc.)
+  # - histogram of object keys?
+
+  local numLines="$(wc -l $input | awk '{print $1}')"
+
+  cat >$html <<EOF
+<p> $filename: $numLines lines</p>
+
+<a href="$output">navigate treemap</a> <br />
+
+<a href="$output/$filename">original data</a> <br />
+
+<a href="$json_path">raw JSON</a> <br />
+EOF
+
+  echo $html
+}
+
+main "$@"
+
