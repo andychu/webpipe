@@ -3,7 +3,6 @@
 publish.py
 
 Implement publishing plugins.
-
 """
 
 import os
@@ -101,10 +100,18 @@ def main(argv):
   #
   # Could you publish an entire scroll?
 
-  # can be either absolute or relative to ~/webpipe/s
-  entry_path = argv[1]
-  # name of a plugin in ~/webpipe/publish or $package_dir/publish
-  dest = argv[2]
+  try:
+    # can be either absolute or relative to ~/webpipe/s
+    entry_path = argv[1]
+    # name of a plugin in ~/webpipe/publish or $package_dir/publish
+    dest = argv[2]
+  except IndexError:
+    raise Error("""\
+usage: wp publish <entry> <dest>
+Example:
+  wp publish ~/webpipe/s/2014-01-01/5 myhost
+""")
+
 
   # change entry_path to relative URL
   parts = entry_path.split('/')[-3:]  # split off the parts s/2014-03-23/1
@@ -124,5 +131,5 @@ if __name__ == '__main__':
   try:
     sys.exit(main(sys.argv))
   except Error, e:
-    print >> sys.stderr, e.args[0]
+    print >>sys.stderr, e.args[0]
     sys.exit(1)
