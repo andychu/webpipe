@@ -179,7 +179,7 @@ test-send-recv() {
 #
 
 publish-demo() {
-  ./wp-dev.sh publish ~/webpipe/s/2014-03-22/1 dreamhost
+  ./wp-dev.sh publish ~/webpipe/s/2014-03-23/5 dreamhost
 }
 
 
