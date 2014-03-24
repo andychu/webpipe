@@ -132,7 +132,7 @@ def MakeSession(out_dir):
   return session, full_path
 
 
-def Serve(opts, waiter, package_dir, spy_client):
+def Serve(opts, scroll_path, waiter, package_dir, spy_client):
   # Pipeline:
   # Read stdin messages -> notify server
 
@@ -160,28 +160,17 @@ def Serve(opts, waiter, package_dir, spy_client):
   t1.setDaemon(True)  # So Ctrl-C works
   t1.start()
 
-  if opts.session:
-    session_path = opts.session
-    session_name = os.path.basename(session_path)
-  else:
-    session_name, session_path = MakeSession(opts.out_dir)
-
   n = Notify(q, waiter, spy_client)
   t2 = threading.Thread(target=n)
   t2.setDaemon(True)  # So Ctrl-C works
   t2.start()
 
-  # TODO:
-  # - server should get root dir ~/webpipe/s
-  # - waiters is {"session", waiter}
-  # There's only one waiter I guess.  the rest of it is just served.
-
-  waiters = {session_name: waiter}
+  scroll_name = os.path.basename(scroll_path)
 
   handler_class = handlers.WaitingRequestHandler
   handler_class.user_dir = opts.user_dir
   handler_class.package_dir = package_dir
-  handler_class.waiters = waiters
+  handler_class.waiters = {scroll_name: waiter}
 
   s = httpd.ThreadedHTTPServer(('', opts.port), handler_class)
 
@@ -234,17 +223,12 @@ def AppMain(argv, spy_client):
   if opts.verbose:
     _verbose = True
 
-  waiter = handlers.SequenceWaiter()
-
   # Other actions:
   # serve-rendered (or servehtml)
   # refresh
 
   if action == 'serve':  # TODO: rename to 'serve'
-    # TODO: clean up this usage.  I guess these should be flags.  Perhaps
-    # optionally as positional arguments.
-    session = argv[2]
-    opts.session = session
+    scroll_path = argv[2]
 
     # Write index.html in the session dir.
     package_dir = util.GetPackageDir()
@@ -252,12 +236,13 @@ def AppMain(argv, spy_client):
     with open(path) as f:
       index_html = f.read()
 
-    out_path = os.path.join(session, 'index.html')
+    out_path = os.path.join(scroll_path, 'index.html')
     with open(out_path, 'w') as f:
       f.write(index_html)
 
+    waiter = handlers.SequenceWaiter()
     try:
-      Serve(opts, waiter, package_dir, spy_client)
+      Serve(opts, scroll_path, waiter, package_dir, spy_client)
     except KeyboardInterrupt:
       log('Stopped')
       return waiter.Length()
