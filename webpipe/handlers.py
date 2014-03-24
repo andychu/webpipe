@@ -33,8 +33,7 @@ log = util.Logger(util.ANSI_BLUE)
 
 # TODO:
 # - The "Directory Listing" page should let you go back up.
-# - common CSS for all pages.  put "plugins" div to the side.
-# - show live scrolls
+# - link to help text?
 
 HOME_PAGE = jsontemplate.Template("""\
 <html>
@@ -43,6 +42,11 @@ HOME_PAGE = jsontemplate.Template("""\
     <link href="/static/webpipe.css" rel="stylesheet">
   </head>
   <body>
+    <p align="right">
+      <a href="plugins/">plugins</a>
+      - <a href="/">home</a>
+    <p>
+
     <h2>webpipe</h2>
 
     <div id="scrolls">
@@ -62,10 +66,6 @@ HOME_PAGE = jsontemplate.Template("""\
       </p>
     </div>
 
-    <div id="links">
-      <p><a href="plugins/">plugins</a></p>
-    </div>
-
   </body>
 </html>
 """, default_formatter='html')
@@ -74,7 +74,7 @@ HOME_PAGE = jsontemplate.Template("""\
 # TODO: put file system paths here?  So people can easily find their plugins.
 PLUGINS_PAGE = jsontemplate.Template("""\
 <p align="right">
-  <a href="/">Home</a>
+  <a href="/">home</a>
 <p>
 
 <h2>webpipe Plugins</h2>
