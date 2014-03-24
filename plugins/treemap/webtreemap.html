@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<title>Treemap: __NAME__</title>
+<script src="__JSON_PATH__"></script>
+<link rel=stylesheet href="../../../plugins/treemap/static/webtreemap.css">
+<style>
+body {
+  font-family: sans-serif;
+  font-size: 0.8em;
+  margin: 2ex 4ex;
+}
+
+tt, pre {
+  font-family: WebKitWorkaround, monospace;
+}
+
+h1, h2 {
+  font-weight: normal;
+}
+h2 {
+  margin-top: 4ex;
+}
+
+#map {
+  width: 800px;
+  height: 600px;
+
+  position: relative;
+  cursor: pointer;
+  -webkit-user-select: none;
+}
+
+#p-button {
+  /*text-align: center;*/
+}
+</style>
+
+<!-- TODO: use style -->
+<p style="text-align: right">
+  <a href="..">Treemaps</a>
+</p>
+
+<h1>Treemap: __NAME__</h1>
+
+<p>The size of a box is proportional to the size of the node it represents.
+Click on a box to zoom in.</p>
+
+<p id="p-button">
+  <button id="root-button">Root</button>
+  <button id="up-button">Up</button>
+</p>
+
+<!-- TODO: put this on top left, with button on the right? -->
+<p id="status"></p>
+
+<div id="map"></div>
+
+
+<script src="../../../plugins/treemap/static/webtreemap.js"></script>
+
+<script>
+  var statusNode = document.getElementById('status');
+
+  // Draw the treemap inside the 'map' element.
+  var map = document.getElementById('map');
+  var options = {
+    maxLevel: 2,
+  }
+  var t = new TreeMap(map, kTree, statusNode, options);
+
+  var button = document.getElementById('root-button');
+  button.addEventListener('click', function() {
+    t.focusRoot();
+  });
+
+  var button = document.getElementById('up-button');
+  button.addEventListener('click', function() {
+    t.focusUp();
+  });
+
+</script>

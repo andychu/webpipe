@@ -81,6 +81,11 @@ treemap-demo() {
   ~/hg/treemap/run.sh find-with-format-string '%s %p\n' . | tee $dest/demo.treemap
 }
 
+treemap-plugin() {
+  local dest=${1:-~/webpipe/watched}
+  plugins/treemap/render $dest/demo.treemap 3
+}
+
 ansi-demo() {
   local dest=${1:-~/webpipe/watched}
   cp testdata/typescript $dest

@@ -8,25 +8,7 @@ treesum() {
   ~/hg/treemap/treesum.py "$@"
 }
 
-main() {
-  local input=$1
-  local output=$2
-
-  mkdir -p $output
-
-  # Original treemap file, for reference.  Not used in the visualization.
-  cp $input $output/
-
-  local filename=$(basename $input)
-  local json_path=$output/$filename.json
-
-  # Transform
-
-  treesum build <$input >$json_path
-  
-  # NOTE: /plugins/ is 3 level up from a scroll entry, which is in
-  # /s/2014-03-22/1/index.html
-
+old() {
   cat >$output/index.html <<EOF
 <html>
   <head>
@@ -47,6 +29,30 @@ main() {
 
 </html>
 EOF
+}
+
+main() {
+  local input=$1
+  local output=$2
+
+  mkdir -p $output
+
+  # Original treemap file, for reference.  Not used in the visualization.
+  cp $input $output/
+
+  local filename=$(basename $input)
+  local json_path=$output/$filename.json
+
+  # Transform
+
+  treesum build <$input >$json_path
+  
+  # NOTE: /plugins/ is 3 level up from a scroll entry, which is in
+  # /s/2014-03-22/1/index.html
+
+  # Use this html as a template.  TODO: It is safe, but we should guarantee it.
+  sed "s|__NAME__|$filename|g; s|__JSON_PATH__|$json_path|g" \
+    <$THIS_DIR/webtreemap.html >$output/index.html
 
   echo $output
 
