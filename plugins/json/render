@@ -13,12 +13,15 @@ main() {
 
   local filename=$(basename $input)
   
+  # NOTE: /plugins/ is 3 level up from a scroll entry, which is in
+  # /s/2014-03-22/1/index.html
+
   cat >$output/index.html <<EOF
 <html>
   <head>
     <title>json $output</title>
-    <link href="/plugins/json/static/jsontree.css" rel="stylesheet">
-    <script src="/plugins/json/static/jsontree.js"></script>
+    <link href="../../../plugins/json/static/jsontree.css" rel="stylesheet">
+    <script src="../../../plugins/json/static/jsontree.js"></script>
   </head>
 
   <body>
