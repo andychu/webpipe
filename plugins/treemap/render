@@ -41,17 +41,19 @@ main() {
   cp $input $output/
 
   local filename=$(basename $input)
-  local json_path=$output/$filename.json
+  local json_name=${filename}.json
+  local json_path=$output/$json_name
 
   # Transform
 
-  treesum build <$input >$json_path
+  echo 'var kTree = ' > $json_path
+  treesum build <$input >>$json_path
   
   # NOTE: /plugins/ is 3 level up from a scroll entry, which is in
   # /s/2014-03-22/1/index.html
 
   # Use this html as a template.  TODO: It is safe, but we should guarantee it.
-  sed "s|__NAME__|$filename|g; s|__JSON_PATH__|$json_path|g" \
+  sed "s|__NAME__|$filename|g; s|__JSON_NAME__|$json_name|g" \
     <$THIS_DIR/webtreemap.html >$output/index.html
 
   echo $output
