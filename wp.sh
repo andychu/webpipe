@@ -174,7 +174,7 @@ publish() {
 # - serve
 
 help() {
-  log "Usage: webpipe [ init | run | package-dir | help | version ]"
+  cat $THIS_DIR/doc/wp-help.txt
 }
 
 recv() {

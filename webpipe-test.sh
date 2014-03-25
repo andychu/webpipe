@@ -5,6 +5,10 @@
 
 set -o nounset
 
+#
+# Components
+#
+
 xrender() {
   ./wp-dev.sh xrender "$@"
 }
@@ -192,6 +196,5 @@ test-send-recv() {
 publish-demo() {
   ./wp-dev.sh publish ~/webpipe/s/2014-03-23/5 dreamhost
 }
-
 
 "$@"

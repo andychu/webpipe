@@ -1,0 +1,2 @@
+Usage: webpipe [ init | run | publish | package-dir | help | version ]
+
