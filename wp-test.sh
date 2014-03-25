@@ -15,7 +15,15 @@ wp() {
 #
 
 test-help() {
+  # No actions is help too
+  wp | check_grep 'help' -
   wp help | check_grep 'help' -
+  wp --help | check_grep 'help' -
+}
+
+test-invalid-action() {
+  wp zzz
+  check $? -eq 1
 }
 
 taste-main "$@"

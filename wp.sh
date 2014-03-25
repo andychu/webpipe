@@ -188,7 +188,7 @@ recv() {
 
 # So people can do scp $(webpipe stub-path) user@example.org:bin
 stub-path() {
-  local path=$THIS_DIR/webpipe-stub.sh
+  local path=$THIS_DIR/wp-stub.sh
   if test -f $path; then
     echo $path
   else
@@ -209,5 +209,19 @@ package-dir() {
   echo $THIS_DIR
 }
 
+if test $# -eq 0; then
+  help
+  exit 0
+fi
 
-"$@"
+case $1 in 
+  help|init|run|package-dir|publish|stub-path|version)
+    "$@"
+    ;;
+  --help|-h)
+    help
+    ;;
+  *)
+    die "wp: Invalid action '$1'"
+esac
+
