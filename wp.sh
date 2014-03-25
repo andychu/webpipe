@@ -215,7 +215,12 @@ if test $# -eq 0; then
 fi
 
 case $1 in 
+  # generally public ones
   help|init|run|package-dir|publish|stub-path|version)
+    "$@"
+    ;;
+  # advanced ones
+  recv|serve|xrender)
     "$@"
     ;;
   --help|-h)

@@ -1,2 +1,15 @@
-Usage: webpipe [ init | run | publish | package-dir | help | version ]
+Usage: wp [ init | run | publish | package-dir | help | version ]
+
+wp init
+  Initialize the ~/webpipe directory.  Run before using
+
+wp run
+  Run the terminal -> browser pipeline.  There will be a rendering process and
+  a server process.
+
+wp publish <entry> <dest>
+  Publish an entry in a scroll.  <dest> is the name of a publishing plugin.
+
+wp package-dir
+  Print the wp installation directory.
 
