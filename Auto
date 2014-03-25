@@ -14,6 +14,12 @@ readonly THIS_DIR=$(readlink -f $(dirname $0))
 
 export PYTHONPATH=$THIS_DIR:~/hg/tnet/python:~/hg/json-template/python
 
+# Now do the data directory, but make sure to only get the stuff we want.  Not
+# examples, testdata, .swp files, etc.
+plugins-manifest() {
+  find plugins -name render -o -name \*.js -o -name \*.css -o -name \*.html
+}
+
 manifest() {
   # TODO: create a versioning scheme.  We are just using this for the build
   # stamp (timestamp, host)
@@ -25,6 +31,8 @@ manifest() {
   # TODO: build basis package
   py-deps webpipe.serve webpipe.xrender
   ls webpipe/*.html webpipe.R wp.sh 
+
+  plugins-manifest
 }
 
 Build() {
