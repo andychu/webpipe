@@ -23,7 +23,13 @@ log = util.Logger(util.ANSI_BLUE)
 DEP_RE = re.compile(r'\.\./\.\./\.\./(plugins/\S+/static)/')
 
 def ScanForStaticDeps(root_dir, rel_path):
+  # TODO: Also scan the 1.html entry.
+
   d = os.path.join(root_dir, rel_path)
+
+  # Some plugins don't even create this dir.
+  if not os.path.exists(d):
+    return []
 
   all_deps = []
 
@@ -66,10 +72,10 @@ class Publisher(object):
     return None
 
   def Run(self, plugin_path, rel_path):
-    # This finds relative paths.
     static_deps = ScanForStaticDeps(self.user_dir, rel_path)
 
-    # Now find the root, using the same logic that the server uses (in handlers.py).
+    # Now find the root, using the same logic that the server uses (in
+    # handlers.py).
     pairs = []
     for dep in static_deps:
       # Resolve it to the right one.  Right now we just test if the 'static'
