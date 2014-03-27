@@ -91,7 +91,12 @@ class Publisher(object):
         pairs.append(dep)
 
     # Send the .html file, and the dir.
-    argv = [plugin_path, self.user_dir, rel_path + '.html', self.user_dir, rel_path]
+    argv = [plugin_path, self.user_dir, rel_path + '.html']
+
+    entry_dir = os.path.join(self.user_dir, rel_path)
+    if os.path.exists(entry_dir):
+      argv.extend([self.user_dir, rel_path])
+
     # Now the static deps.
     argv.extend(pairs)
 
