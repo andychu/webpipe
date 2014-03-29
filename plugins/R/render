@@ -1,0 +1,50 @@
+#!/bin/sh
+#
+# Plugin that calls pygmentize to highlight R source files.
+#
+# TODO: how to choose a plugin that would provide a function outline with
+# hyperlinks?
+
+readonly THIS_DIR=$(dirname $0)
+. $THIS_DIR/../webpipe-lib.sh
+
+checkDeps() {
+  local msg="pygmentize not found.  Run 'sudo apt-get install python-pygments'"
+  which pygmentize >/dev/null || die $msg
+}
+
+main() {
+  local input=$1
+  local output=$2
+
+  checkDeps
+
+  # fail if pygmentize fails, etc.
+  set -o errexit
+
+  mkdir -p $output
+
+  local inputFilename=$(basename $input)
+  local origOut=$output/$inputFilename
+
+  cp $input $origOut
+
+  echo $output  # finished writing directory
+
+  local html=${output}.html
+
+  # Generate HTML.  Note that without the 'full' options, there will be no color.
+  # Unfortunately that produces
+  pygmentize -f html -O full,style=emacs $input >>$html
+
+  # This is bad
+  cat >>$html <<EOF
+<p>
+  <a href="$origOut">Download $inputFilename</a>
+</p>
+EOF
+
+  echo $html
+}
+
+main "$@"
