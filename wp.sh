@@ -212,6 +212,12 @@ publish() {
   $THIS_DIR/webpipe/publish.py "$@"
 }
 
+# set up reverse tunnel for receiving files.
+wp-ssh() {
+  log "webpipe: Setting up SSH reverse tunnel from remote port 8987 to localhost port 8987."
+  ssh -R 8987:localhost:8987 "$@"
+}
+
 # Other actions:
 # - sink (move from the stub?)
 # - show <files...>
@@ -266,6 +272,11 @@ case $1 in
   # generally public ones
   help|init|run|package-dir|publish|stub-path|version)
     "$@"
+    ;;
+  ssh)
+    # need to special case this to avoid recursion
+    shift
+    wp-ssh "$@"
     ;;
   # advanced ones
   recv|serve|xrender)
