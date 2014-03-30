@@ -58,21 +58,23 @@ def main(argv):
 
   # TODO: use readline for the header instead.
   # Expected {"stream": "tnet", "description": "dict metadata, bytes data"}
-  try:
-    header = g.next()
-  except StopIteration:
-    log('Expected header')
-    return 0
 
-  if isinstance(header, bool):
-    return 0 if header else 1
+  if 0:  # note: header disabled for now
+    try:
+      header = g.next()
+    except StopIteration:
+      log('Expected header')
+      return 0
 
-  if not isinstance(header, dict):
-    log('Invalid header: %r', header)
-    return 1
+    if isinstance(header, bool):
+      return 0 if header else 1
 
-  # For now, don't do anything with it.
-  log('header: %s', header)
+    if not isinstance(header, dict):
+      log('Invalid header: %r', header)
+      return 1
+
+    # For now, don't do anything with it.
+    log('header: %s', header)
 
   while True:
 

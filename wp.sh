@@ -73,7 +73,7 @@ init() {
   # and shell safe.
   mkdir --verbose -p \
     ~/webpipe/renamed \
-    $INPUT_DIR \
+    $INPUT_DIR/sink \
     $WATCH_DIR \
     ~/webpipe/plugins
   # Where user can install their own plugins
@@ -166,8 +166,6 @@ nc-listen() {
 }
 
 # TODO:
-# - use ~/webpipe/input again.  Both local and remote
-# - get rid of header from send?  because you just do "wps show" or "wps sink".
 # - test local send-recv
 # - test wp scp-stub; wp ssh; wps send remotely
 
@@ -187,35 +185,20 @@ run2() {
     | serve serve $session "$@"
 }
 
+show() {
+  local filename=$1
+  # TODO: factor
+  echo $PWD/$filename | nc localhost 8988
+}
+
 # Sink for local render.
 # Example:
 #   ls | wp sink
 sink() {
-  local tempfile=~/webpipe/sink/$$.txt
+  # Use process ID for now.  It's OK if it's overwritten.
+  local tempfile=$INPUT_DIR/sink/$$.txt
   cat > $tempfile
   echo $tempfile | nc localhost 8988
-}
-
-# Run it locally, including
-sendrecv-demo() {
-  # send listens to the watch dir, then recv writes here
-  local buf_dir=~/webpipe/buf
-
-  check-tools
-
-  mkdir -p $buf_dir
-
-  export PYTHONUNBUFFERED=1
-
-  local session=~/webpipe/s/$(date +%Y-%m-%d-sendrecv)
-  mkdir -p $session
-
-  # NOTE: do we need the 'serve' action?
-  print-events $WATCH_DIR \
-    | $THIS_DIR/wp-stub.sh send $WATCH_DIR \
-    | recv $buf_dir \
-    | xrender $buf_dir $session \
-    | serve serve $session "$@"
 }
 
 publish() {
@@ -246,12 +229,10 @@ recv() {
   $THIS_DIR/webpipe/recv.py "$@"
 }
 
-# NOTE: wp-stub send senders the {} header now.  Do we need that?  Now that
-# there is a process for every send, probably not.
 run-recv() {
   log "recv loop"
-  nc-listen 8987 \
-    | recv ~/webpipe/buf \
+  nc-listen 8988 \
+    | recv ~/webpipe/input \
     | while read line; do echo $line | nc localhost 8987; done
 }
 
@@ -294,7 +275,7 @@ fi
 
 case $1 in 
   # generally public ones
-  help|init|run|run-recv|package-dir|publish|stub-path|scp-stub|version)
+  help|init|run|run-recv|package-dir|publish|show|sink|stub-path|scp-stub|version)
     "$@"
     ;;
   ssh)
