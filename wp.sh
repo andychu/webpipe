@@ -236,6 +236,8 @@ recv() {
   $THIS_DIR/webpipe/recv.py "$@"
 }
 
+# NOTE: wp-stub send senders the {} header now.  Do we need that?  Now that
+# there is a process for every send, probably not.
 run-recv() {
   log "recv loop"
   nc-listen 8987 \
@@ -255,6 +257,11 @@ stub-path() {
   else
     die "Invalid installation; $path doesn't exist"
   fi
+}
+
+scp-stub() {
+  local path=$(stub-path)
+  scp $path "$@"
 }
 
 version() {
@@ -277,7 +284,7 @@ fi
 
 case $1 in 
   # generally public ones
-  help|init|run|run-recv|package-dir|publish|stub-path|version)
+  help|init|run|run-recv|package-dir|publish|stub-path|scp-stub|version)
     "$@"
     ;;
   ssh)
