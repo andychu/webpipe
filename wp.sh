@@ -45,6 +45,9 @@ die() {
   exit 1
 }
 
+readonly INPUT_DIR=~/webpipe/input
+# is watched necessary anymore?  no reason most people can't shell out to nc.
+# but it is still possible.
 readonly WATCH_DIR=~/webpipe/watched
 
 check-tools() {
@@ -66,16 +69,14 @@ csv-plugin() {
 
 # Set up the default dir to watch.
 init() {
-  # Where files that exist only for viewing (temp files) can be written.
-  mkdir --verbose -p ~/webpipe/sink
-
   # Where files from the input dirs are moved and renamed to, so they are HTML
   # and shell safe.
-  mkdir --verbose -p ~/webpipe/renamed
-
-  mkdir --verbose -p $WATCH_DIR
+  mkdir --verbose -p \
+    ~/webpipe/renamed \
+    $INPUT_DIR \
+    $WATCH_DIR \
+    ~/webpipe/plugins
   # Where user can install their own plugins
-  mkdir --verbose -p ~/webpipe/plugins
 
   # Named pipe that receives paths relative to the sink dir.  We remove and
   # create the pipe to reset it?
@@ -164,6 +165,12 @@ nc-listen() {
   nc -v -k -l localhost $port </dev/stdin 
 }
 
+# TODO:
+# - use ~/webpipe/input again.  Both local and remote
+# - get rid of header from send?  because you just do "wps show" or "wps sink".
+# - test local send-recv
+# - test wp scp-stub; wp ssh; wps send remotely
+
 run2() {
   check-tools
 
@@ -172,8 +179,11 @@ run2() {
   local session=~/webpipe/s/$(date +%Y-%m-%d)
   mkdir -p $session
 
+  # TODO: use ~/webpipe/sink?
+  # and then recv loop can write to sink
+
   nc-listen 8988 \
-    | xrender $WATCH_DIR $session \
+    | xrender $INPUT_DIR $session \
     | serve serve $session "$@"
 }
 
