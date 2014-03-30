@@ -227,7 +227,6 @@ recv() {
 }
 
 run-recv() {
-  log "recv loop"
   nc-listen 8987 \
     | recv ~/webpipe/input \
     | while read line; do echo $line | nc localhost 8988; done

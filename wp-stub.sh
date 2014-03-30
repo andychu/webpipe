@@ -95,6 +95,11 @@ sendfile() {
   tnetEncodeFile "$path" "$hostname" "$size"
 }
 
+show() {
+  local path=$1
+  sendfile "$path" | nc localhost 8987
+}
+
 # Example:
 #   ls | wp sink         # txt file
 #   ps aux | wp sink ps  # file type
@@ -102,7 +107,13 @@ sendfile() {
 sink() {
   local ext=${1:-txt}
   local basename=$$  # use PID for now.
-  cat > ~/webpipe/input/$basename.$ext
+
+  # NOTE: weird sh quirk: ~ isn't expended if you do this all on one line?
+  local tempfile
+  tempfile=~/webpipe/input/$basename.$ext
+  cat > $tempfile
+  sendfile $tempfile | nc localhost 8987
+
   # TODO: later, write filename FIFO ~/webpipe/input.
   # That can go in ~/webpipe/sink or something.
   # This is better because file system events are unreliable.  > in bash seems
