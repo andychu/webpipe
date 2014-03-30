@@ -320,7 +320,7 @@ if __name__ == '__main__':
   try:
     sys.exit(main(sys.argv))
   except KeyboardInterrupt:
-    print >>sys.stderr, 'xrender: Stopped'
+    log('Stopped')
     sys.exit(0)
   except Error, e:
     print >> sys.stderr, e.args[0]
