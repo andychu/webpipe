@@ -177,9 +177,6 @@ run2() {
   local session=~/webpipe/s/$(date +%Y-%m-%d)
   mkdir -p $session
 
-  # TODO: use ~/webpipe/sink?
-  # and then recv loop can write to sink
-
   nc-listen 8988 \
     | xrender $INPUT_DIR $session \
     | serve serve $session "$@"
@@ -231,9 +228,9 @@ recv() {
 
 run-recv() {
   log "recv loop"
-  nc-listen 8988 \
+  nc-listen 8987 \
     | recv ~/webpipe/input \
-    | while read line; do echo $line | nc localhost 8987; done
+    | while read line; do echo $line | nc localhost 8988; done
 }
 
 #

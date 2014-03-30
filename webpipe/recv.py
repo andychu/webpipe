@@ -14,6 +14,8 @@ stdout.
 import os
 import sys
 
+from common import util
+
 # outside
 import tnet
 
@@ -22,10 +24,8 @@ class Error(Exception):
   pass
 
 
-def log(msg, *args):
-  if args:
-    msg = msg % args
-  print >>sys.stderr, 'recv: ' + msg
+# TODO: change color so it's not the same as renderer
+log = util.Logger(util.ANSI_GREEN)
 
 
 # Wrapper around tnet.laod
@@ -53,6 +53,7 @@ def main(argv):
   """Returns an exit code."""
 
   base_dir = argv[1]
+  log('base_dir: %s', base_dir)
 
   g = GenRecords(sys.stdin)
 
@@ -126,6 +127,8 @@ def main(argv):
     path = os.path.join(base_dir, filename)
     with open(path, 'w') as f:
       f.write(body)
+
+    log('Wrote %s', path)
 
     basename = os.path.basename(filename)
     # Now the file is in base_dir, so just print the basename.

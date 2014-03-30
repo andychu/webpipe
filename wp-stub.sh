@@ -28,9 +28,12 @@ log() {
 
 # minimal custom TNET encoder.  Avoid dependencies on Python, C, etc.
 tnetEncodeFile() {
-  local filename="$1"
+  local path="$1"
   local hostname="$2"
   local size="$3"
+
+  # only send filename, not full path.  Later we could send it as a "comment".
+  local filename=$(basename $path)
 
   # { file: example.txt, body: foobar }
 
@@ -42,7 +45,7 @@ tnetEncodeFile() {
   echo -n "${#meta}:$meta}"
 
   echo -n "$size:"
-  cat $filename
+  cat $path
   echo -n ,
 }
 
@@ -68,14 +71,14 @@ send() {
 
   sendHeader
 
-  while read filename; do
+  while read path; do
     local size
-    size=$(stat --printf '%s' $filename)  # stat should be portable?
+    size=$(stat --printf '%s' $path)  # stat should be portable?
     local exit_code=$?
     if test $exit_code -eq 0; then
-      tnetEncodeFile "$filename" "$hostname" "$size"
+      tnetEncodeFile "$path" "$hostname" "$size"
     else
-      log "stat error, ignoring $filename"
+      log "stat error, ignoring $path"
     fi
   done
 }
@@ -85,10 +88,11 @@ send() {
 # $ wps show foo.txt
 
 sendfile() {
-  local filename=$1
-  local size=$(stat --printf '%s' $filename)  # stat should be portable?
+  local path=$1
+  local size=$(stat --printf '%s' $path)  # stat should be portable?
   local hostname=$(hostname)
-  tnetEncodeFile "$filename" "$hostname" "$size"
+  filename=$
+  tnetEncodeFile "$path" "$hostname" "$size"
 }
 
 # Example:
