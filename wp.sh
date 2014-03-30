@@ -158,9 +158,10 @@ run() {
 }
 
 nc-listen() {
+  local port=$1
   # -k: keep listening after one connection
   # -l listen
-  nc -v -k -l localhost 8988 </dev/stdin 
+  nc -v -k -l localhost $port </dev/stdin 
 }
 
 run2() {
@@ -171,7 +172,7 @@ run2() {
   local session=~/webpipe/s/$(date +%Y-%m-%d)
   mkdir -p $session
 
-  nc-listen \
+  nc-listen 8988 \
     | xrender $WATCH_DIR $session \
     | serve serve $session "$@"
 }
@@ -205,7 +206,6 @@ sendrecv-demo() {
     | recv $buf_dir \
     | xrender $buf_dir $session \
     | serve serve $session "$@"
-
 }
 
 publish() {
@@ -234,6 +234,13 @@ help() {
 recv() {
   export PYTHONUNBUFFERED=1
   $THIS_DIR/webpipe/recv.py "$@"
+}
+
+run-recv() {
+  log "recv loop"
+  nc-listen 8987 \
+    | recv ~/webpipe/buf \
+    | while read line; do echo $line | nc localhost 8987; done
 }
 
 #
@@ -270,7 +277,7 @@ fi
 
 case $1 in 
   # generally public ones
-  help|init|run|package-dir|publish|stub-path|version)
+  help|init|run|run-recv|package-dir|publish|stub-path|version)
     "$@"
     ;;
   ssh)
@@ -291,7 +298,7 @@ case $1 in
     ;;
   *)
     # uncomment to run internal functions
-    #"$@"
+    "$@"
     die "wp: Invalid action '$1'"
     ;;
 esac
