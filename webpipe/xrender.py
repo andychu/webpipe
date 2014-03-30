@@ -121,11 +121,6 @@ def GuessFileType(filename):
   return file_type
 
 
-BUILTINS = {
-    #'csv': csv_plugin.RenderCsv,
-    }
-
-
 # TODO: Move this to util/resources or something
 # find rendering plugins, publishing plugins, etc.
 # used in publish.py, xrender.py, handlers.py
@@ -260,7 +255,6 @@ def main(argv):
           # - make a nicer template.  
           # - show stderr
           f.write('ERROR: %s exited with code %d' % (argv, exit_code))
-        print out_html_filename
         counter += 1
         continue
 
@@ -269,7 +263,6 @@ def main(argv):
         log('Plugin error: %r not created', out_html_path)
         with open(out_html_path, 'w') as f:
           f.write('Plugin error: %r not created' % out_html_path)
-        print out_html_filename
 
         # TODO: Remove this counter duplication.  Failing here would make it
         # hard to develop plugins.
@@ -277,39 +270,8 @@ def main(argv):
         continue
 
     else:
-      # TODO:
-      # - use a chaining pattern instead of nested if-else
-      # - use a similar: input and output
-
-      # import csv_plugin
-      # csv_plugin.main(argv, cwd=cwd)
-      # it writes files
-
-      func = BUILTINS.get(file_type)
-      if func:
-        html, orig = func(orig_rel_path, filename, contents)
-        if orig:
-          orig_out_path = os.path.join(out_dir, orig_rel_path)
-
-          try:
-            os.makedirs(os.path.dirname(orig_out_path))
-          except OSError, e:
-            if e.errno != errno.EEXIST:
-              raise
-
-          with open(orig_out_path, 'w') as f:
-            f.write(orig)
-          # Print the directory, because we wrote a file there.
-          print '%d/' % counter
-
-        with open(out_html_path, 'w') as f:
-          f.write(html)
-        # This triggers the server
-        print out_html_filename
-
-      else:
-        log('No builtin renderer for %r; ignored', filename)
-        continue
+      log('No renderer for %r; ignored', filename)
+      continue
 
     counter += 1
 
