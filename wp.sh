@@ -157,6 +157,34 @@ run() {
     | serve serve $session "$@"
 }
 
+nc-listen() {
+  # -k: keep listening after one connection
+  # -l listen
+  nc -v -k -l localhost 8988 </dev/stdin 
+}
+
+run2() {
+  check-tools
+
+  export PYTHONUNBUFFERED=1
+
+  local session=~/webpipe/s/$(date +%Y-%m-%d)
+  mkdir -p $session
+
+  nc-listen \
+    | xrender $WATCH_DIR $session \
+    | serve serve $session "$@"
+}
+
+# Sink for local render.
+# Example:
+#   ls | wp sink
+sink() {
+  local tempfile=~/webpipe/sink/$$.txt
+  cat > $tempfile
+  echo $tempfile | nc localhost 8988
+}
+
 # Run it locally, including
 sendrecv-demo() {
   # send listens to the watch dir, then recv writes here
@@ -251,6 +279,9 @@ case $1 in
     help
     ;;
   *)
+    # uncomment to run internal functions
+    #"$@"
     die "wp: Invalid action '$1'"
+    ;;
 esac
 

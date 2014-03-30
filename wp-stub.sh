@@ -80,6 +80,17 @@ send() {
   done
 }
 
+# TODO: This should be:
+# $ ls | wps sink
+# $ wps show foo.txt
+
+sendfile() {
+  local filename=$1
+  local size=$(stat --printf '%s' $filename)  # stat should be portable?
+  local hostname=$(hostname)
+  tnetEncodeFile "$filename" "$hostname" "$size"
+}
+
 # Example:
 #   ls | wp sink         # txt file
 #   ps aux | wp sink ps  # file type
