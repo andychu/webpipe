@@ -57,6 +57,10 @@ sendHeader() {
 # - send body as separate message
 
 send() {
+  local base_dir=$1  # base dir for relative filenames
+  cd $base_dir
+  log "send: changed working directory to $base_dir"
+
   # Add hostname prefix to every filename.
   # TODO: make this a tag instead in the metadata message?
   local hostname

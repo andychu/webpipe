@@ -144,8 +144,6 @@ serve() {
 # However, inotifywait seems more useful for "latch".
 
 run() {
-  local input_dir=$WATCH_DIR
-
   check-tools
 
   export PYTHONUNBUFFERED=1
@@ -157,6 +155,29 @@ run() {
   print-events $WATCH_DIR \
     | xrender $WATCH_DIR $session \
     | serve serve $session "$@"
+}
+
+# Run it locally, including
+sendrecv-demo() {
+  # send listens to the watch dir, then recv writes here
+  local buf_dir=~/webpipe/buf
+
+  check-tools
+
+  mkdir -p $buf_dir
+
+  export PYTHONUNBUFFERED=1
+
+  local session=~/webpipe/s/$(date +%Y-%m-%d-sendrecv)
+  mkdir -p $session
+
+  # NOTE: do we need the 'serve' action?
+  print-events $WATCH_DIR \
+    | $THIS_DIR/wp-stub.sh send $WATCH_DIR \
+    | recv $buf_dir \
+    | xrender $buf_dir $session \
+    | serve serve $session "$@"
+
 }
 
 publish() {
@@ -220,6 +241,10 @@ case $1 in
     ;;
   # advanced ones
   recv|serve|xrender)
+    "$@"
+    ;;
+  # demo
+  sendrecv-demo)
     "$@"
     ;;
   --help|-h)
