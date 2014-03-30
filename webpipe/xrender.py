@@ -105,8 +105,13 @@ def CleanFilename(filename):
 #
 # Also: aliases like htm, html, etc. are detected
 
-def GuessFileType(filename):
-  filename, ext = os.path.splitext(filename)
+def GuessFileType(input_path):
+  """
+  Args:
+    input_path: could be relative or absolute
+  """
+  basename = os.path.basename(input_path)
+  filename, ext = os.path.splitext(basename)
   if ext == '':
     # The 'script' command defaults to a file called 'typescript'.  We assume
     # the terminal is ansi, so we use the ansi plugin to handle it.
@@ -201,9 +206,6 @@ def main(argv):
     # TODO: handle errors
     with open(input_path) as f:
       contents = f.read()
-
-    orig_rel_path = '%d/%s' % (counter, filename)
-    orig = None  # original contents
 
     file_type = GuessFileType(filename)
     log('file type: %s', file_type)

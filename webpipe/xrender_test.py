@@ -18,6 +18,7 @@ class FunctionsTest(unittest.TestCase):
   def testGuessFileType(self):
     self.assertEqual('png', xrender.GuessFileType('Rplot001.png'))
     self.assertEqual('ansi', xrender.GuessFileType('typescript'))
+    self.assertEqual('ansi', xrender.GuessFileType('/tmp/typescript'))
 
   def testCleanFilename(self):
     print xrender.CleanFilename('foo-bar_baz')
