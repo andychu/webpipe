@@ -159,15 +159,27 @@ nc-listen() {
 }
 
 # TODO:
-# - test wp scp-stub; wp ssh; wps send remotely
+# - rationalize wp show/sink, wps show/sink
+# - edit webpipe.R to call out to nc
+# - then rename run -> run2
 
 run2() {
+  local sessionName=${1:-}
   check-tools
 
-  export PYTHONUNBUFFERED=1
+  local stamp=$(date +%Y-%m-%d)
+  if test -z "$sessionName"; then
+    sessionName=$stamp
+  else
+    # Special syntax: + prepends the current date.  For example:
+    # run +foo  ==>  session name is 2014-03-30-foo
+    sessionName=$(echo $sessionName | sed s/+/$stamp-/)
+  fi
 
-  local session=~/webpipe/s/$(date +%Y-%m-%d)
+  local session=~/webpipe/s/$sessionName
   mkdir -p $session
+
+  export PYTHONUNBUFFERED=1
 
   nc-listen 8988 \
     | xrender $INPUT_DIR $session \
