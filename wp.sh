@@ -137,13 +137,6 @@ serve() {
 #
 # $ webpipe run --port 8888
 
-# TODO:
-# - xrender can read from a named pipe ~/webpipe/input
-# - webpipe.R can write to the fifo directly.  It knows what filename it is
-# going to write.
-# - You can have a ~/webpipe/watched dir for inotifywait if you really need it.
-# However, inotifywait seems more useful for "latch".
-
 run() {
   check-tools
 
@@ -162,11 +155,10 @@ nc-listen() {
   local port=$1
   # -k: keep listening after one connection
   # -l listen
-  nc -v -k -l localhost $port </dev/stdin 
+  nc -v -k -l localhost $port </dev/null
 }
 
 # TODO:
-# - test local send-recv
 # - test wp scp-stub; wp ssh; wps send remotely
 
 run2() {
