@@ -171,7 +171,7 @@ run2() {
   if test -z "$sessionName"; then
     sessionName=$stamp
   else
-    # Special syntax: + prepends the current date.  For example:
+    # Special syntax: + prepends the current date.
     # run +foo  ==>  session name is 2014-03-30-foo
     sessionName=$(echo $sessionName | sed s/+/$stamp-/)
   fi
