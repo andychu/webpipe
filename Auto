@@ -32,6 +32,9 @@ manifest() {
   py-deps webpipe.serve webpipe.xrender
   ls webpipe/*.html webpipe.R wp.sh 
 
+  # docs are used for help
+  ls doc/wp-help*.txt
+
   plugins-manifest
 }
 
