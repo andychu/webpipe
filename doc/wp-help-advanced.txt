@@ -1,0 +1,11 @@
+Advanced 'wp' actions:
+
+scp-stub
+  scp the wp-stub.sh file to a host.  The stub can be used to send files.
+  Example: wp scp-stub user@example.com:/tmp
+
+ssh
+  ssh to a host, opening a reverse tunnel.  For copying files.
+  Example: wp ssh user@example.com
+
+(NOTE: These features are experimental, and the documentation is incomplete.)

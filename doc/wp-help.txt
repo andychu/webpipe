@@ -1,4 +1,4 @@
-Usage: wp [ init | run | publish | package-dir | help | version ]
+Usage: wp [ init | run | show | sink | publish | help | version ]
 
 wp init
   Initialize the ~/webpipe directory.  Run before using
@@ -16,6 +16,6 @@ wp sink
 wp publish <entry> <dest>
   Publish an entry in a scroll.  <dest> is the name of a publishing plugin.
 
-wp package-dir
-  Print the wp installation directory.
-
+wp help
+  Show this help.  More help at: 'wp help advanced'
+  

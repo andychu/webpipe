@@ -195,7 +195,15 @@ wp-ssh() {
 # - serve
 
 help() {
-  cat $THIS_DIR/doc/wp-help.txt
+  local topic=${1:-}
+  case "$topic" in
+    advanced)
+      cat $THIS_DIR/doc/wp-help-advanced.txt
+      ;;
+    *)
+      cat $THIS_DIR/doc/wp-help.txt
+      ;;
+  esac
 }
 
 recv() {
