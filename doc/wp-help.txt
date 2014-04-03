@@ -7,6 +7,12 @@ wp run
   Run the terminal -> browser pipeline.  There will be a rendering process and
   a server process.
 
+wp show [file ...]
+  Show a file in the browser.
+
+wp sink
+  Show stdin in the browser, e.g. 'ls -l | wp sink'.
+
 wp publish <entry> <dest>
   Publish an entry in a scroll.  <dest> is the name of a publishing plugin.
 
