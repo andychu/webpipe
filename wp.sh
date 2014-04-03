@@ -129,6 +129,13 @@ serve() {
   $THIS_DIR/webpipe/serve.py "$@"
 }
 
+nc-listen() {
+  local port=$1
+  # -k: keep listening after one connection
+  # -l listen
+  nc -v -k -l localhost $port </dev/null
+}
+
 # Run the whole pipeline.
 #
 # TODO:
@@ -138,32 +145,6 @@ serve() {
 # $ webpipe run --port 8888
 
 run() {
-  check-tools
-
-  export PYTHONUNBUFFERED=1
-
-  local session=~/webpipe/s/$(date +%Y-%m-%d)
-  mkdir -p $session
-
-  # NOTE: do we need the 'serve' action?
-  print-events $WATCH_DIR \
-    | xrender $WATCH_DIR $session \
-    | serve serve $session "$@"
-}
-
-nc-listen() {
-  local port=$1
-  # -k: keep listening after one connection
-  # -l listen
-  nc -v -k -l localhost $port </dev/null
-}
-
-# TODO:
-# - rationalize wp show/sink, wps show/sink
-# - edit webpipe.R to call out to nc
-# - then rename run -> run2
-
-run2() {
   local sessionName=${1:-}
   check-tools
 
