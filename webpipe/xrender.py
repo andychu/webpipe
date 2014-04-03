@@ -204,8 +204,13 @@ def main(argv):
       continue
 
     # TODO: handle errors
-    with open(input_path) as f:
-      contents = f.read()
+    try:
+      with open(input_path) as f:
+        contents = f.read()
+    except IOError, e:
+      # e.g. file doesn't exist.  Just log and ignore for now.
+      log('%s', e)
+      continue
 
     file_type = GuessFileType(filename)
     log('file type: %s', file_type)

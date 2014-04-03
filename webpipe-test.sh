@@ -126,13 +126,16 @@ write-demo() {
 #
 
 test-xrender() {
-  cp testdata/typescript ~/webpipe/watched
+  xrender ~/webpipe/input ~/webpipe/s/webpipe-test <<EOF
+$PWD/plugins/txt/testdata/example.txt
+$PWD/plugins/html/testdata/example.html
+EOF
 
-  # TODO: These files don't exist
-  xrender ~/webpipe/watched ~/webpipe/s/webpipe-test <<EOF
-Rplot001.png
-test.csv
-typescript
+  # Make sure a nonexistent file doesn't stop the loop
+  xrender ~/webpipe/input ~/webpipe/s/webpipe-test <<EOF
+$PWD/plugins/txt/testdata/example.txt
+nonexistent
+$PWD/plugins/html/testdata/example.html
 EOF
 }
 
