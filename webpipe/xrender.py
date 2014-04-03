@@ -209,6 +209,7 @@ def main(argv):
         contents = f.read()
     except IOError, e:
       # e.g. file doesn't exist.  Just log and ignore for now.
+      # Someone could type 'wp show nonexistent'.
       log('%s', e)
       continue
 
