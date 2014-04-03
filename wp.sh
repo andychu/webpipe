@@ -51,16 +51,8 @@ readonly INPUT_DIR=~/webpipe/input
 readonly WATCH_DIR=~/webpipe/watched
 
 check-tools() {
-  local err="inotifywait not found.  Run 'sudo apt-get install inotify-tools'"
-  which inotifywait >/dev/null || die "$err"
-}
-
-#
-# Private for now
-#
-
-csv-plugin() {
-  $THIS_DIR/webpipe/csv_plugin.py "$@"
+  local err="'nc' not found.  Run 'sudo apt-get install netcat'?"
+  which nc >/dev/null || die "$err"
 }
 
 #
@@ -277,7 +269,7 @@ case $1 in
     ;;
   *)
     # uncomment to run internal functions
-    "$@"
+    #"$@"
     die "wp: Invalid action '$1'"
     ;;
 esac

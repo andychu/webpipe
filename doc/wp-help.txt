@@ -8,7 +8,7 @@ wp run
   a server process.
 
 wp show [file ...]
-  Show a file in the browser.
+  Show files in the browser.
 
 wp sink
   Show stdin in the browser, e.g. 'ls -l | wp sink'.
