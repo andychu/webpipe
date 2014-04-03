@@ -168,9 +168,9 @@ run() {
 }
 
 show() {
-  local filename=$1
-  # TODO: factor
-  echo $PWD/$filename | nc localhost 8988
+  for filename in "$@"; do
+    echo "$PWD/$filename" | nc localhost 8988
+  done
 }
 
 # Sink for local render.

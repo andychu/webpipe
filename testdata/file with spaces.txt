@@ -1,0 +1,1 @@
+Can we view a file with spaces?  Shell quoting has to be correct.
