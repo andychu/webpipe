@@ -274,7 +274,8 @@ def main(argv):
         continue
 
       # Record how long rendering plugin takes.
-      spy_client.SendRecord('xrender-plugin', {'pluginPath': plugin_bin, 'elapsed': elapsed})
+      d = {'pluginPath': plugin_bin, 'exitCode': exit_code, 'elapsed': elapsed}
+      spy_client.SendRecord('xrender-plugin', d)
 
       # Check that the plugin actually create the file.
       if not os.path.exists(out_html_path):
