@@ -169,8 +169,9 @@ show() {
 # Example:
 #   ls | wp sink
 sink() {
+  local ext=${1:-txt}  # e.g. dot graph
   # Use process ID for now.  It's OK if it's overwritten.
-  local tempfile=$INPUT_DIR/sink/$$.txt
+  local tempfile=$INPUT_DIR/sink/$$.$ext
   cat > $tempfile
   echo $tempfile | nc localhost 8988
 }

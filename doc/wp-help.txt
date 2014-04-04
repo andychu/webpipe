@@ -7,10 +7,10 @@ wp run
   Run the terminal -> browser pipeline.  There will be a rendering process and
   a server process.
 
-wp show [file ...]
+wp show file...
   Show files in the browser.
 
-wp sink
+wp sink [ext]
   Show stdin in the browser, e.g. 'ls -l | wp sink'.
 
 wp publish <entry> <dest>
