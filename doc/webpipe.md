@@ -2,8 +2,8 @@ webpipe
 =======
 
 webpipe is server and a set of tools which bridge the Unix shell and the web.
-You create files in a terminal (using [R][], a shell script, etc.), and they
-will be rendered immediately in your browser.
+You create files in a terminal (using [R][], bash, etc.), and they will be
+rendered immediately in your browser.
 
 It gets rid of the `Alt-Tab F5` dance when creating content.
 
@@ -12,20 +12,13 @@ It gets rid of the `Alt-Tab F5` dance when creating content.
 Setup
 -----
 
-On a Debian/Ubuntu system, do:
+(Optionally) Put `wp` in your `PATH`:
 
-    $ sudo apt-get install inotify-tools
+    $ ln -s /path/to/webpipe/wp.sh ~/bin/wp
 
-This installs the `inotifywait` tool, which notifies the server when a new file
-appears.
+Do one-time initialization of your `~/webpipe` dir:
 
-(Optionally) put webpipe in your `PATH`:
-
-    $ ln -s /path/to/webpipe/webpipe.sh ~/bin/webpipe
-
-Then do one-time initialization of your `~/webpipe` dir:
-
-    $ webpipe init
+    $ wp init
 
 Create a convenience symlink for the R library:
 
@@ -38,12 +31,12 @@ R Plots
 The initial motivation for webpipe was to show R plots in a browser, avoiding
 the remote X11 protocol in favor of HTTP.
 
-First start the notifier and the server:
+First start the renderer and server:
 
-    $ webpipe run
+    $ wp run
 
-This creates a new "session", e.g. `2014-02-17`.  It listens for files in the
-`~/webpipe/input` directory, and then renders them to HTML in the
+This creates a new "session", e.g. `2014-04-03`.  Files can be put in the
+`~/webpipe/input` directory, and then they are rendered to HTML in the
 `~/webpipe/s/2014-02-17` directory.
   
 Visit http://localhost:8989/ in your browser.
@@ -55,6 +48,7 @@ Then in R, make a plot using the the wrapper functions in `webpipe.R`:
     > source('~/webpipe/webpipe.R')
     >
     > web.plot(1:10)
+    > web.hist(rnorm(10))
     
 Instead of opening up an desktop window, the plot will be pushed to your
 browser via AJAX.
@@ -64,6 +58,38 @@ ggplot works easily as well:
     > library(ggplot2)
     > p = ggplot(mtcars, aes(wt, mpg)) + geom_point()
     > web.plot(p)
+
+Shell Usage
+-----------
+
+You can also display files from the shell:
+
+    $ wp show mydata.csv
+
+Or you can pipe stdin to the browser with the `sink` action:
+
+    $ ls -l | wp sink
+
+Use `wp help` to see more actions.
+
+
+File Types
+----------
+
+The renderer process is called `xrender`, which shells out to various plugins.
+It understands `.png` files, plain text, HTML, and CSV files.  (TODO: document
+the full list)
+
+Publishing
+----------
+
+TODO ...
+
+
+Advanced Usage
+--------------
+
+TODO ...
 
 
 <!--
@@ -75,21 +101,6 @@ Advanced usage?
   -->
 
  
-<!-- TODO: animated screenshot -->
-
-
-File Types
-----------
-
-There renderer module is called `file2html`.  Right now it understands .png
-files, plain text, HTML, and CSV files.
-
-The goal is to add other file types, e.g. graphviz dot format.
-
-Advanced Usage
---------------
-
-TODO ...
 
 <!--
 
@@ -145,7 +156,7 @@ usage:
 Known Issues
 ------------
 
-- Error message on a session that is not "live" is a little ugly.
+- There is too much debug spew on the terminal.
 
 Feedback
 --------
