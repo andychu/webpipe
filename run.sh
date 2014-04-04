@@ -28,8 +28,9 @@ usage-send() {
 }
 
 usage-config() {
-  echo localhost:8988 > webpipe/usage-address.txt
-  echo localhost:8988 > latch/usage-address.txt
+  local addr='localhost:19999'
+  echo $addr > webpipe/usage-address.txt
+  echo $addr > latch/usage-address.txt
 }
 
 #
