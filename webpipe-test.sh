@@ -26,62 +26,9 @@ serve() {
 # Demo files
 #
 
-html-demo() {
-  cat <<EOF
-<p>HTML</p>
-<ul>
-  <li> <b>Bold</b> </li>
-  <li> <i>Italic</i> </li>
-  <li> <code>Code</code> </li>
-</ul>
-EOF
-}
-
-txt-demo() {
-  cat <<EOF
-This a plain text file.  <tags> & stuff aren't special.
-Line two.
-Line three.
-EOF
-}
-
-csv-demo() {
-  cat <<EOF
-name,age
-<carol>,10
-<dave>,20
-EOF
-}
-
 #  http://hci.stanford.edu/jheer/workshop/data/
 big-csv() {
   ln --verbose --force -s $PWD/testdata/census_marriage.csv ~/webpipe/input
-}
-
-dot-demo() {
-  local dest=${1:-~/webpipe/input}
-  cp plugins/dot/examples/cluster.dot $dest
-}
-
-markdown-demo() {
-  local dest=${1:-~/webpipe/input}
-  cat >$dest/foo.markdown <<EOF
-title
-=====
-
-This is *markdown* text.
-
-    def foo():
-      for i in range(10):
-        print i
-EOF
-}
-
-json-demo() {
-  local dest=${1:-~/webpipe/input}
-  cat >$dest/foo.json <<EOF
-{"a": 1, "b": [1,2,3], "c": {"d": [4,5,6]}}
-EOF
 }
 
 # TODO: fold this into the repo
@@ -95,37 +42,35 @@ treemap-plugin() {
   plugins/treemap/render $dest/demo.treemap 3
 }
 
-ansi-demo() {
-  local dest=${1:-~/webpipe/input}
-  cp testdata/typescript $dest
-}
-
 write-demo() {
   local dest=~/webpipe/input
   set -x
 
-  sleep 1
+  # TODO: generate png testdata
   touch $dest/Rplot001.png
-
   sleep 1
-  html-demo > $dest/test.html
-  wp show $dest/test.html
 
+  wp show plugins/html/testdata/tiny.html
   sleep 1
-  txt-demo > $dest/test.txt
-  wp show $dest/test.txt
 
+  wp show plugins/txt/testdata/tiny.txt
   sleep 1
-  csv-demo > $dest/test.csv
 
+  wp show plugins/markdown/testdata/tiny.markdown
   sleep 1
-  ansi-demo $dest
 
+  wp show plugins/csv/testdata/tiny.csv
   sleep 1
-  dot-demo $dest
 
+  # TODO: typescript should be its own file type.  People might want to use a
+  # different plugin.  Need aliases.
+  wp show plugins/ansi/testdata/typescript
   sleep 1
-  echo 'file with unknown extension' > $dest/other.other
+
+  wp show testdata/file.unknown
+  sleep 1
+
+  wp show plugins/dot/examples/cluster.dot
 }
 
 #

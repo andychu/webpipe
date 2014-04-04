@@ -1,0 +1,112 @@
+.webtreemap-node {
+  /* Required attributes. */
+  position: absolute;
+  overflow: hidden;   /* To hide overlong captions. */
+  background: white;  /* Nodes must be opaque for zIndex layering. */
+  border: solid 1px black;  /* Calculations assume 1px border. */
+
+  /* Optional: CSS animation. */
+  -webkit-transition: top    0.3s,
+                      left   0.3s,
+                      width  0.3s,
+                      height 0.3s;
+
+  /* PATCH: added -moz-transition.  Disabled because Firefox is slow with a lot
+     of DOM nodes. */
+                      /*
+  -moz-transition:    top    0.3s,
+                      left   0.3s,
+                      width  0.3s,
+                      height 0.3s;
+                      */
+}
+
+/* Optional: highlight nodes on mouseover. */
+.webtreemap-node:hover {
+  /* background: #eee; */
+  /* This doesn't work, because the children become gray too.  Probably could
+   * play with zIndex to get this working.
+   *
+   * The opposite, starting opacity at 0.2, and then raising to 0.8 here, works
+   * to some degree.  But then you see hidden DOM elements in the background?
+   * Maybe you need a white block between visible and invisible?
+   *
+   * */
+  /* opacity: 0.5; */
+}
+
+/* Optional: Different borders depending on level. */
+.webtreemap-level0 {
+  border: solid 1px #444;
+  background-color: #F39DD4;
+}
+
+.webtreemap-level1 {
+  border: solid 1px #666;
+  background-color: #F8F087;
+}
+.webtreemap-level2 {
+  border: solid 1px #888;
+  background-color: #B7E3C0;
+}
+.webtreemap-level3 {
+  border: solid 1px #aaa;
+  background-color: #B8D0DD;
+}
+.webtreemap-level4 {
+  border: solid 1px #ccc;
+  background-color: #DBBAE5;
+}
+
+.webtreemap-level5 {
+  border: solid 1px #ddd;
+  background-color: lightgray;
+}
+
+.webtreemap-level6 {
+  border: solid 1px #eee;
+  background-color: olive;
+}
+
+/* highlight on hover */
+
+.webtreemap-level0:hover {
+  background-color: red;
+}
+
+.webtreemap-level1:hover {
+  background-color: yellow;
+}
+
+.webtreemap-level2:hover {
+  background-color: lightgreen;
+}
+
+.webtreemap-level3:hover {
+  background-color: lightblue;
+}
+
+.webtreemap-level4:hover {
+  background-color: #A666AC;
+}
+
+.webtreemap-level5:hover {
+  background-color: lightslategray;
+}
+
+.webtreemap-level6:hover {
+  background-color: olivedrab;
+}
+
+/* Optional: styling on node captions. */
+.webtreemap-caption {
+  font-family: sans-serif;
+  font-size: 11px;
+  padding: 2px;
+  text-align: center;
+}
+
+/* Optional: styling on captions on mouse hover. */
+/*.webtreemap-node:hover > .webtreemap-caption {
+  text-decoration: underline;
+}*/

@@ -1,0 +1,10 @@
+Script started on Fri 04 Apr 2014 12:39:11 PM PDT
+$ ls
+Auto	deps.sh  doc.sh  latch.sh  NOTES    README.md  static	 _tmp	     webpipe	webpipe-test.sh  wp.sh	     wp-test.sh
+common	doc	 latch	 Makefile  plugins  run.sh     testdata  typescript  webpipe.R	wp-dev.sh	 wp-stub.sh
+$ ls --color
+[0m[01;32mAuto[0m    [01;32mdeps.sh[0m  [01;32mdoc.sh[0m  [01;32mlatch.sh[0m  NOTES    README.md  [01;34mstatic[0m    [01;34m_tmp[0m        [01;34mwebpipe[0m    [01;32mwebpipe-test.sh[0m  [01;32mwp.sh[0m       [01;32mwp-test.sh[0m
+[01;34mcommon[0m  [01;34mdoc[0m      [01;34mlatch[0m   Makefile  [01;34mplugins[0m  [01;32mrun.sh[0m     [01;34mtestdata[0m  typescript  webpipe.R  [01;32mwp-dev.sh[0m        [01;32mwp-stub.sh[0m
+$ exit
+
+Script done on Fri 04 Apr 2014 12:39:15 PM PDT

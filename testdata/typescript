@@ -1,0 +1,10 @@
+Script started on Sat 15 Mar 2014 06:36:21 PM PDT
+andy@homer:~/git/webpipe$ ls
+[0m[01;32mAuto[0m       [01;34mcommon[0m     [01;34mlatch[0m     [01;34mtestdata[0m        [01;32mwebpipe-stub.sh[0m
+Makefile   diff.ansi  [01;32mlatch.sh[0m  typescript      [01;32mwebpipe-test.sh[0m
+README.md  [01;34mdoc[0m        [01;34mplugins[0m   [01;34mwebpipe[0m         webpipe.R
+[01;34m_tmp[0m       [01;32mdoc.sh[0m     [01;32mrun.sh[0m    [01;32mwebpipe-dev.sh[0m  [01;32mwebpipe.sh[0m
+andy@homer:~/git/webpipe$ exit
+exit
+
+Script done on Sat 15 Mar 2014 06:36:30 PM PDT
