@@ -31,7 +31,9 @@ big-csv() {
   ln --verbose --force -s $PWD/testdata/census_marriage.csv ~/webpipe/input
 }
 
-# TODO: fold this into the repo
+# TODO: need a client to generate this data file.
+#
+# fs-treemap
 treemap-testdata() {
   ~/hg/treemap/run.sh find-with-format-string '%s %p\n' . \
     | tee plugins/treemap/testdata/tiny.treemap
@@ -47,27 +49,22 @@ treemap-plugin() {
   plugins/treemap/render $dest/demo.treemap 3
 }
 
+write-tiny() {
+  for p in html txt markdown csv json treemap zip; do
+    echo $p
+    wp show plugins/$p/testdata/tiny.$p
+    sleep 0.5
+  done
+}
+
 write-demo() {
   local dest=~/webpipe/input
   set -x
 
+  write-tiny
+
   # TODO: generate png testdata
   touch $dest/Rplot001.png
-  sleep 1
-
-  wp show plugins/html/testdata/tiny.html
-  sleep 1
-
-  wp show plugins/txt/testdata/tiny.txt
-  sleep 1
-
-  wp show plugins/markdown/testdata/tiny.markdown
-  sleep 1
-
-  wp show plugins/csv/testdata/tiny.csv
-  sleep 1
-
-  wp show plugins/json/testdata/tiny.json
   sleep 1
 
   # TODO: typescript should be its own file type.  People might want to use a
@@ -78,16 +75,8 @@ write-demo() {
   wp show plugins/dot/examples/cluster.dot
   sleep 1
 
-  wp show plugins/treemap/testdata/tiny.treemap
-  sleep 1
-
-  # archives
-  wp show plugins/zip/testdata/tiny.zip
-  sleep 1
-
   wp show testdata/file.unknown
   sleep 1
-
 }
 
 #
