@@ -19,6 +19,7 @@ make-dict() {
   pin --title-tag=h1 $body_filename
 }
 
+# Build main docs
 main() {
   local in=$1
   local out=$2
@@ -37,6 +38,26 @@ main() {
   ls -al $out
 }
 
-main "$@"
+# Generate a named snippet for each plugin type.  Then join them into an HTML
+# doc.
+gallery() {
+  local base=$PWD/_tmp/gallery  # absolute path
+  rm -rf $base/out  # so it's numbered from 1
+  mkdir -p $base/in $base/out
 
-#"$@"
+  for p in txt html; do
+    local plugin=$PWD/plugins/$p/render 
+    local in=$PWD/plugins/$p/testdata/tiny.$p
+    # NOTE: we are not providing a number
+    local out=$base/out/$p
+
+    # plugins are written to be in the output dir.
+    pushd $base/out
+    $plugin $in $out
+    popd
+  done
+
+  ls -al $base/out
+}
+
+"$@"

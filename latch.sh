@@ -73,6 +73,9 @@ _monitor-vim() {
 
 readonly LATCH_HOST=localhost:8990
 
+# Usage:
+# ./doc.sh rebuild <build cmd> <files to watch>...
+
 rebuild() {
   local build_cmd=$1
   shift

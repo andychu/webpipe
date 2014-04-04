@@ -3,6 +3,8 @@
 readonly THIS_DIR=$(dirname $0)
 . $THIS_DIR/../webpipe-lib.sh
 
+set -o errexit
+
 main() {
   local input=$1
   local output=$2

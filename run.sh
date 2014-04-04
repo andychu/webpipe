@@ -51,7 +51,7 @@ ansi() {
 # for doc.sh, use Makefile perhaps?
 
 latch-demo() {
-  ./latch.sh rebuild ./doc.sh README.md doc/*.md
+  ./latch.sh rebuild './doc.sh main' README.md doc/*.md
 }
 
 "$@"
