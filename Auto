@@ -35,6 +35,10 @@ manifest() {
   # docs are used for help
   ls doc/wp-help*.txt
 
+  # Include lib, but not test.  TODO: Should this be an environment variable?
+  # $WEBPIPE_LIB_DIR?
+  ls plugins/webpipe-lib.sh
+
   plugins-manifest
 }
 
