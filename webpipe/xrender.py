@@ -63,10 +63,12 @@ import os
 import re
 import subprocess
 import sys
+import time
 
 import tnet
 
 from common import util
+from common import spy
 
 
 class Error(Exception):
@@ -162,6 +164,7 @@ def main(argv):
   # get any other options with it.
   # - output is pointer to files/dirs written.
 
+  spy_client = spy.GetClientFromConfig()
   res = Resources()
 
   entries = os.listdir(out_dir)
@@ -255,7 +258,11 @@ def main(argv):
 
       argv = [plugin_bin, input_path, str(counter)]
       log('argv: %s cwd %s', argv, out_dir)
+
+      start_time = time.time()
       exit_code = subprocess.call(argv, cwd=out_dir)
+      elapsed = time.time() - start_time
+
       if exit_code != 0:
         log('ERROR: %s exited with code %d', argv, exit_code)
         with open(out_html_path, 'w') as f:
@@ -265,6 +272,9 @@ def main(argv):
           f.write('ERROR: %s exited with code %d' % (argv, exit_code))
         counter += 1
         continue
+
+      # Record how long rendering plugin takes.
+      spy_client.SendRecord('xrender-plugin', {'pluginPath': plugin_bin, 'elapsed': elapsed})
 
       # Check that the plugin actually create the file.
       if not os.path.exists(out_html_path):

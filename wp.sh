@@ -156,7 +156,7 @@ run() {
 
   nc-listen 8988 \
     | xrender $INPUT_DIR $session \
-    | serve serve $session "$@"
+    | serve serve $session
 }
 
 # Like run, but just test latency.
