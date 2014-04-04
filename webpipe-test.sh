@@ -9,6 +9,11 @@ set -o nounset
 # Components
 #
 
+# client
+wp() {
+  ./wp-dev.sh "$@"
+}
+
 xrender() {
   ./wp-dev.sh xrender "$@"
 }
@@ -50,16 +55,16 @@ EOF
 
 #  http://hci.stanford.edu/jheer/workshop/data/
 big-csv() {
-  ln --verbose --force -s $PWD/testdata/census_marriage.csv ~/webpipe/watched
+  ln --verbose --force -s $PWD/testdata/census_marriage.csv ~/webpipe/input
 }
 
 dot-demo() {
-  local dest=${1:-~/webpipe/watched}
+  local dest=${1:-~/webpipe/input}
   cp plugins/dot/examples/cluster.dot $dest
 }
 
 markdown-demo() {
-  local dest=${1:-~/webpipe/watched}
+  local dest=${1:-~/webpipe/input}
   cat >$dest/foo.markdown <<EOF
 title
 =====
@@ -73,7 +78,7 @@ EOF
 }
 
 json-demo() {
-  local dest=${1:-~/webpipe/watched}
+  local dest=${1:-~/webpipe/input}
   cat >$dest/foo.json <<EOF
 {"a": 1, "b": [1,2,3], "c": {"d": [4,5,6]}}
 EOF
@@ -81,22 +86,22 @@ EOF
 
 # TODO: fold this into the repo
 treemap-demo() {
-  local dest=${1:-~/webpipe/watched}
+  local dest=${1:-~/webpipe/input}
   ~/hg/treemap/run.sh find-with-format-string '%s %p\n' . | tee $dest/demo.treemap
 }
 
 treemap-plugin() {
-  local dest=${1:-~/webpipe/watched}
+  local dest=${1:-~/webpipe/input}
   plugins/treemap/render $dest/demo.treemap 3
 }
 
 ansi-demo() {
-  local dest=${1:-~/webpipe/watched}
+  local dest=${1:-~/webpipe/input}
   cp testdata/typescript $dest
 }
 
 write-demo() {
-  local dest=~/webpipe/watched
+  local dest=~/webpipe/input
   set -x
 
   sleep 1
@@ -104,9 +109,11 @@ write-demo() {
 
   sleep 1
   html-demo > $dest/test.html
+  wp show $dest/test.html
 
   sleep 1
   txt-demo > $dest/test.txt
+  wp show $dest/test.txt
 
   sleep 1
   csv-demo > $dest/test.csv
@@ -152,18 +159,18 @@ test-serve() {
 
 # not fatal
 test-recv-bad-fields() {
-  echo -n '0:}8:1:a,1:b,}' | ./wp-dev.sh recv ~/webpipe/watched
+  echo -n '0:}8:1:a,1:b,}' | ./wp-dev.sh recv ~/webpipe/input
   echo $?
 }
 
 # fatal, because the stream could be messed up
 test-recv-bad-message() {
-  echo -n 'abc' | ./wp-dev.sh recv ~/webpipe/watched
+  echo -n 'abc' | ./wp-dev.sh recv ~/webpipe/input
   echo $?
 }
 
 test-recv-empty() {
-  echo -n '' | ./wp-dev.sh recv ~/webpipe/watched
+  echo -n '' | ./wp-dev.sh recv ~/webpipe/input
   echo $?
 }
 
@@ -182,11 +189,11 @@ test-stub-with-busybox() {
 }
 
 test-send-recv() {
-  local out=~/webpipe/watched/webpipe-stub.sh
+  local out=~/webpipe/input/webpipe-stub.sh
   rm $out
   echo webpipe-stub.sh \
     | ./webpipe-stub.sh send \
-    | ./wp-dev.sh recv ~/webpipe/watched
+    | ./wp-dev.sh recv ~/webpipe/input
   ls -al $out
   diff webpipe-stub.sh $out
   echo $?
