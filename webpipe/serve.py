@@ -65,7 +65,7 @@ class ReadStdin(object):
 class Notify(object):
   """Thread to read from queue and notify waiter."""
 
-  def __init__(self, q, waiter, spy_client):
+  def __init__(self, q, waiter):
     """
     Args:
       q: Queue
@@ -73,7 +73,6 @@ class Notify(object):
     """
     self.q = q
     self.waiter = waiter
-    self.spy_client = spy_client
 
   def __call__(self):
     # take care of index.html ?  Is this the right way to do it?
@@ -91,12 +90,6 @@ class Notify(object):
       self.waiter.Notify()
 
       i += 1
-      # For now, just how many parts there are.  Later we could see what file
-      # types are being used.
-      #
-      # We send 'num-parts: 10' AFTER we have notified 10 parts.
-      if i % 10 == 0:
-        self.spy_client.SendRecord('every10', {'num-parts': i})
 
 
 def SuffixGen():
@@ -132,7 +125,7 @@ def MakeSession(out_dir):
   return session, full_path
 
 
-def Serve(opts, scroll_path, waiter, package_dir, spy_client):
+def Serve(opts, scroll_path, waiter, package_dir):
   # Pipeline:
   # Read stdin messages -> notify server
 
@@ -160,7 +153,7 @@ def Serve(opts, scroll_path, waiter, package_dir, spy_client):
   t1.setDaemon(True)  # So Ctrl-C works
   t1.start()
 
-  n = Notify(q, waiter, spy_client)
+  n = Notify(q, waiter)
   t2 = threading.Thread(target=n)
   t2.setDaemon(True)  # So Ctrl-C works
   t2.start()
@@ -212,7 +205,7 @@ def CreateOptionsParser():
   return parser
 
 
-def AppMain(argv, spy_client):
+def AppMain(argv):
   """Returns the length of the scroll created."""
 
   try:
@@ -244,7 +237,7 @@ def AppMain(argv, spy_client):
 
     waiter = handlers.SequenceWaiter()
     try:
-      Serve(opts, scroll_path, waiter, package_dir, spy_client)
+      Serve(opts, scroll_path, waiter, package_dir)
     except KeyboardInterrupt:
       log('Stopped')
       return waiter.Length()
@@ -260,6 +253,8 @@ def AppMain(argv, spy_client):
 def main(argv):
   """Returns an exit code."""
 
+  # In this process we send start and end records.  In the xrender process, we
+  # send latency for each rendering.
   spy_client = spy.GetClientFromConfig()
 
   d = {'argv': sys.argv, 'user': getpass.getuser()}
@@ -268,7 +263,7 @@ def main(argv):
   # TODO: also report unhandled exceptions.  The ones in the serving thread are
   # caught by a library though -- we should get at them.
   try:
-    length = AppMain(sys.argv, spy_client)
+    length = AppMain(sys.argv)
     d = {'scroll-length': length}
     spy_client.SendRecord('end', d)
   except Error, e:
