@@ -32,9 +32,14 @@ big-csv() {
 }
 
 # TODO: fold this into the repo
-treemap-demo() {
-  local dest=${1:-~/webpipe/input}
-  ~/hg/treemap/run.sh find-with-format-string '%s %p\n' . | tee $dest/demo.treemap
+treemap-testdata() {
+  ~/hg/treemap/run.sh find-with-format-string '%s %p\n' . \
+    | tee plugins/treemap/testdata/tiny.treemap
+}
+
+zip-testdata() {
+  echo foo > _tmp/foo.txt
+  zip plugins/zip/testdata/tiny.zip _tmp/foo.txt
 }
 
 treemap-plugin() {
@@ -62,15 +67,27 @@ write-demo() {
   wp show plugins/csv/testdata/tiny.csv
   sleep 1
 
+  wp show plugins/json/testdata/tiny.json
+  sleep 1
+
   # TODO: typescript should be its own file type.  People might want to use a
   # different plugin.  Need aliases.
   wp show plugins/ansi/testdata/typescript
   sleep 1
 
+  wp show plugins/dot/examples/cluster.dot
+  sleep 1
+
+  wp show plugins/treemap/testdata/tiny.treemap
+  sleep 1
+
+  # archives
+  wp show plugins/zip/testdata/tiny.zip
+  sleep 1
+
   wp show testdata/file.unknown
   sleep 1
 
-  wp show plugins/dot/examples/cluster.dot
 }
 
 #
