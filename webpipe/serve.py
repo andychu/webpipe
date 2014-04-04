@@ -249,6 +249,10 @@ def AppMain(argv, spy_client):
       log('Stopped')
       return waiter.Length()
 
+  elif action == 'noop':
+    # For testing latency
+    log('noop')
+
   else:
     raise Error('Invalid action %r' % action)
 
@@ -268,7 +272,7 @@ def main(argv):
     d = {'scroll-length': length}
     spy_client.SendRecord('end', d)
   except Error, e:
-    print >>sys.stderr, 'webpipe:', e.args[0]
+    log('%s', e.args[0])
     return 1
 
   return 0

@@ -159,6 +159,29 @@ run() {
     | serve serve $session "$@"
 }
 
+# Like run, but just test latency.
+noop() {
+  local sessionName=${1:-}
+  check-tools
+
+  local stamp=$(date +%Y-%m-%d)
+  if test -z "$sessionName"; then
+    sessionName=$stamp
+  else
+    # Special syntax: + prepends the current date.
+    # run +foo  ==>  session name is 2014-03-30-foo
+    sessionName=$(echo $sessionName | sed s/+/$stamp-/)
+  fi
+
+  export PYTHONUNBUFFERED=1
+
+  # make sure it succeeds
+  echo foo >/tmp/foo.txt
+  echo foo.txt \
+    | xrender /tmp /tmp \
+    | serve noop
+}
+
 show() {
   for filename in "$@"; do
     echo "$PWD/$filename" | nc localhost 8988
@@ -257,7 +280,7 @@ fi
 
 case $1 in 
   # generally public ones
-  help|init|run|run-recv|package-dir|publish|show|sink|stub-path|scp-stub|version)
+  help|init|run|noop|run-recvpackage-dir|publish|show|sink|stub-path|scp-stub|version)
     "$@"
     ;;
   ssh)
