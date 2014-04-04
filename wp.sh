@@ -184,7 +184,12 @@ noop() {
 
 show() {
   for filename in "$@"; do
-    echo "$PWD/$filename" | nc localhost 8988
+    if test ${filename:0:1} = /; then
+      echo "$filename" | nc localhost 8988
+    else
+      # relative path, make it absolute.
+      echo "$PWD/$filename" | nc localhost 8988
+    fi
   done
 }
 
