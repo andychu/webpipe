@@ -8,9 +8,10 @@ default-formatter: raw
 <html lang=en>
 
 <head>
-  <meta charset=utf-8>
+  <!-- note: tidy complains about this html5 -->
+  <meta charset="utf-8">
   <title>[title]</title>
-  <style>
+  <style type="text/css">
     #latch-status {
       text-align: center;
       color: grey;

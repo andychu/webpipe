@@ -17,7 +17,7 @@ main() {
   local html=$output.html
   echo '<pre>' >$html
   unzip -l $input | WP_HtmlEscape >>$html
-  echo '<pre>' >>$html
+  echo '</pre>' >>$html
 
   echo $html
 }

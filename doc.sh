@@ -88,7 +88,7 @@ EOF
   # Generate snippets.  TODO: should be use a <div> or something?
 
   for p in $plugin_types; do
-    echo "<a id=\"$p\"><h3>$p</h3> </a>"
+    echo "<a id=\"$p\"></a><h3>$p</h3>"
     # snippet inline
     cat $base/out/$p.html
   done
@@ -113,6 +113,11 @@ gallery() {
   make-dict $body | to-html $out
 
   ls -al $base_dir/out
+}
+
+check() {
+  # TODO: put this in a test?
+  tidy -errors  _tmp/gallery/out/index.html
 }
 
 "$@"
