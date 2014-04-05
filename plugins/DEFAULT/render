@@ -8,22 +8,32 @@ checkDeps() {
   which file >/dev/null || die "$msg"
 }
 
-showFileType() {
-  local input=$1
+showFile() {
+  local eInput=$1
+  file $eInput 
+  echo
+
+  # Show file stat.  TODO: show size pretty printed?
+  # note: filename is escaped so could be in a different location
+  stat $(readlink -f $eInput)
+}
+
+showHtml() {
+  local eInput="$1"
   echo '<i>(no render plugin, DEFAULT used)</i><p>'
   echo '<pre>'
-  file $input | WP_HtmlEscape
+  showFile $eInput | WP_HtmlEscape
   echo '</pre>'
 }
 
 main() {
-  local input=$1
-  local output=$2
+  local eInput=$1
+  local eOutput=$2
 
   checkDeps
 
-  local html=$output.html
-  showFileType $input WP_HtmlEscape >$html
+  local html=$eOutput.html
+  showHtml $eInput WP_HtmlEscape >$html
   echo $html
 }
 
