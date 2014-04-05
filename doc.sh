@@ -146,4 +146,16 @@ check() {
   tidy -errors  _tmp/gallery/out/index.html
 }
 
+# NOTE: it has to be 3 levels deep
+# TODO: deploy other docs
+deploy-gallery() {
+  set -o errexit
+  # create a file in this dir with the base dir, e.g. user@host.com:mydir
+  local base=$(cat ssh-base.txt)
+  echo $base
+  # Have to get all the generated dirs.  NOTE: Don't need the individual
+  # snippets.  Maybe remove.
+  scp -r _tmp/gallery/out/* $base/webpipe/doc/gallery
+}
+
 "$@"
