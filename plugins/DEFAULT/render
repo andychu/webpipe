@@ -1,0 +1,31 @@
+#!/bin/sh
+
+readonly THIS_DIR=$(dirname $0)
+. $THIS_DIR/../webpipe-lib.sh
+
+checkDeps() {
+  local msg="file not found.  Run 'sudo apt-get install file'"
+  which file >/dev/null || die "$msg"
+}
+
+showFileType() {
+  local input=$1
+  echo '<i>(no render plugin, DEFAULT used)</i><p>'
+  echo '<pre>'
+  file $input | WP_HtmlEscape
+  echo '</pre>'
+}
+
+main() {
+  local input=$1
+  local output=$2
+
+  checkDeps
+
+  local html=$output.html
+  showFileType $input WP_HtmlEscape >$html
+  echo $html
+}
+
+main "$@"
+

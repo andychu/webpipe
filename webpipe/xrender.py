@@ -226,7 +226,8 @@ def main(argv):
     #    package
     # 3. Builtins
 
-    plugin_bin = res.GetPluginBin(file_type)
+    # The DEFAULT plugin should handle everything
+    plugin_bin = res.GetPluginBin(file_type) or res.GetPluginBin('DEFAULT')
     if plugin_bin:
 
       # protocol is:
@@ -282,7 +283,7 @@ def main(argv):
         continue
 
     else:
-      log('No renderer for %r; ignored', filename)
+      log('No renderer for %r and no DEFAULT; ignored', filename)
       continue
 
     counter += 1
