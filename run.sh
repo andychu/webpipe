@@ -76,6 +76,10 @@ make-alias() {
   ln -s -v jpeg jpg
   ln -s -v html htm
   ln -s -v markdown md
+
+  # TODO: make your own png plugin, should show metadata, etc.
+  # "file" shows dimensions, colormap, etc. of png
+  ln -s -v Rplot.png png
   popd
 }
 
