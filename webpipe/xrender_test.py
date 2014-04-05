@@ -17,6 +17,10 @@ class FunctionsTest(unittest.TestCase):
 
   def testGetFileType(self):
     self.assertEqual('png', xrender.GetFileType('Rplot001.png'))
+    self.assertEqual('Rplot.png', xrender.GetFileType('001.Rplot.png'))
+
+    self.assertEqual('tar.gz', xrender.GetFileType('foo.tar.gz'))
+
     self.assertEqual('typescript', xrender.GetFileType('mysession.typescript'))
     self.assertEqual('typescript', xrender.GetFileType('typescript'))
     self.assertEqual('typescript', xrender.GetFileType('/tmp/typescript'))

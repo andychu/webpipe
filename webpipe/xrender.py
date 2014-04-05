@@ -113,16 +113,18 @@ def GetFileType(input_path):
     input_path: could be relative or absolute
   """
   basename = os.path.basename(input_path)
-  filename, ext = os.path.splitext(basename)
-  if ext == '':
-    # If no extension, then the file type is the filename,  e.g. 'typescript'
-    # or 'Makefile'
-    return filename
-  else:
-    # .png -> png
-    return ext[1:]
 
-  return file_type
+  # NOTE: Don't use os.path.splitext because it takes only the LAST extension.
+  # We want "tar.gz", not "gz" it takes the LAST extension.  We want "tar.gz",
+  # not "gz".
+
+  i = basename.find('.')
+  if i == -1:
+    # e.g. 'Makefile'
+    return basename
+  else:
+    # e.g. tar.gz, png
+    return basename[i+1:]
 
 
 # TODO: Move this to util/resources or something
