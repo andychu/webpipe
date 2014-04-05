@@ -205,6 +205,17 @@ show() {
   done
 }
 
+# Show a file, specifying file type first.
+#
+# $ wp show-as txt NOTES
+# $ gen-html | wp show-as html
+#
+# wp as could be an alias.
+
+show-as() {
+  echo 'TODO: change protocol to allow file type?'
+}
+
 publish() {
   $THIS_DIR/webpipe/publish.py "$@"
 }
@@ -286,7 +297,7 @@ fi
 
 case $1 in 
   # generally public ones
-  help|init|run|noop|run-recvpackage-dir|publish|show|sink|stub-path|scp-stub|version)
+  help|init|run|noop|run-recvpackage-dir|publish|show|show-as|stub-path|scp-stub|version)
     "$@"
     ;;
   ssh)
