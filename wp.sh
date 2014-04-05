@@ -182,7 +182,19 @@ noop() {
     | serve noop
 }
 
+# Show a file (webpipe client).
+# If no filename is given, then it reads from stdin.
+#
+# $ wp show foo.csv
+# $ ls -l | wp show
+
 show() {
+  # read from stdin
+  if test $# -eq 0; then
+    local tempfile=$INPUT_DIR/sink/$$.txt
+    cat > $tempfile
+    echo $tempfile | nc localhost 8988
+  fi
   for filename in "$@"; do
     if test ${filename:0:1} = /; then
       echo "$filename" | nc localhost 8988
@@ -191,17 +203,6 @@ show() {
       echo "$PWD/$filename" | nc localhost 8988
     fi
   done
-}
-
-# Sink for local render.
-# Example:
-#   ls | wp sink
-sink() {
-  local ext=${1:-txt}  # e.g. dot graph
-  # Use process ID for now.  It's OK if it's overwritten.
-  local tempfile=$INPUT_DIR/sink/$$.$ext
-  cat > $tempfile
-  echo $tempfile | nc localhost 8988
 }
 
 publish() {

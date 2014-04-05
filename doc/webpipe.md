@@ -66,9 +66,9 @@ You can also display files from the shell:
 
     $ wp show mydata.csv
 
-Or you can pipe stdin to the browser with the `sink` action:
+With no file, `show` reads from stdin.
 
-    $ ls -l | wp sink
+    $ ls -l | wp show
 
 Use `wp help` to see more actions.
 

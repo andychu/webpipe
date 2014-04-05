@@ -7,8 +7,9 @@ wp run [session]
   Run the terminal -> browser pipeline.  There will be a rendering process and
   a server process.  The default session is derived from today's date.
 
-wp show <file>...
-  Show files in the browser.
+wp show [file]...
+  Show files in the browser.  If no file is given, show stdin as text (type
+  'txt').
 
 wp sink [ext]
   Show stdin in the browser, e.g. 'ls -l | wp sink'.
