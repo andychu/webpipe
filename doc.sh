@@ -41,9 +41,11 @@ main() {
 
 # TODO: Just list the plugins/ dir?
 plugin-types() {
-  echo txt html markdown json treemap zip
-  # TODO: csv has issue with importing JSON Template; not being hermetic
-  # R generates <html>, it's not a real snippet.
+  echo dot html json markdown treemap txt zip
+  # TODO:
+  # - csv has issue with importing JSON Template; not being hermetic
+  # - R generates <html>, it's not a real snippet
+  # - ansi is also generates html
 }
 
 # Generate a named snippet for each plugin type.  Then join them into an HTML
@@ -58,13 +60,26 @@ gallery-snippets() {
 
   for p in $plugin_types; do
     local plugin=$PWD/plugins/$p/render 
-    local in=$PWD/plugins/$p/testdata/tiny.$p
+    local input
+    case $p in
+      dot)
+        input=$PWD/plugins/dot/testdata/cluster.dot
+        ;;
+      ansi)
+        # disabled
+        input=$PWD/plugins/ansi/testdata/typescript
+        ;;
+      *)
+        input=$PWD/plugins/$p/testdata/tiny.$p
+        ;;
+    esac
+
     # NOTE: we are not providing a number
-    local out=$p
+    local output=$p
 
     # plugins are written to be in the output dir.
     pushd $base/out
-    $plugin $in $out
+    $plugin $input $output
     popd >/dev/null
   done
 }
@@ -88,6 +103,7 @@ EOF
   # Generate snippets.  TODO: should be use a <div> or something?
 
   for p in $plugin_types; do
+    echo '<hr />'
     echo "<a id=\"$p\"></a><h3>$p</h3>"
     # snippet inline
     cat $base/out/$p.html
