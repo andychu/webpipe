@@ -1,0 +1,31 @@
+#!/bin/sh
+
+readonly THIS_DIR=$(dirname $0)
+. $THIS_DIR/../webpipe-lib.sh
+
+checkDeps() {
+  local msg="tar not found.  Run 'sudo apt-get install tar'"
+  which tar >/dev/null || die "$msg"
+}
+
+main() {
+  local input=$1
+  local output=$2
+
+  checkDeps
+
+  local html=$output.html
+  echo '<pre>' >$html
+
+  # notes:
+  # - assumes GNU tar
+  # - verbose shows file perms, etc.
+  tar --verbose --list -z < $input | WP_HtmlEscape >>$html
+
+  echo '</pre>' >>$html
+
+  echo $html
+}
+
+main "$@"
+
