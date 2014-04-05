@@ -69,7 +69,7 @@ write-demo() {
 
   # TODO: typescript should be its own file type.  People might want to use a
   # different plugin.  Need aliases.
-  wp show plugins/ansi/testdata/typescript
+  wp show plugins/typescript/testdata/typescript
   sleep 1
 
   wp show plugins/dot/examples/cluster.dot

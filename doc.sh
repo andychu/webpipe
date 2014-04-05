@@ -45,7 +45,7 @@ plugin-types() {
   # TODO:
   # - csv has issue with importing JSON Template; not being hermetic
   # - R generates <html>, it's not a real snippet
-  # - ansi is also generates html
+  # - typescript is also generates html
 }
 
 # Generate a named snippet for each plugin type.  Then join them into an HTML
@@ -65,9 +65,9 @@ gallery-snippets() {
       dot)
         input=$PWD/plugins/dot/testdata/cluster.dot
         ;;
-      ansi)
+      typescript)
         # disabled
-        input=$PWD/plugins/ansi/testdata/typescript
+        input=$PWD/plugins/typescript/testdata/typescript
         ;;
       *)
         input=$PWD/plugins/$p/testdata/tiny.$p

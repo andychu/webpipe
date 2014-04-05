@@ -107,7 +107,7 @@ def CleanFilename(filename):
 #
 # Also: aliases like htm, html, etc. are detected
 
-def GuessFileType(input_path):
+def GetFileType(input_path):
   """
   Args:
     input_path: could be relative or absolute
@@ -115,12 +115,9 @@ def GuessFileType(input_path):
   basename = os.path.basename(input_path)
   filename, ext = os.path.splitext(basename)
   if ext == '':
-    # The 'script' command defaults to a file called 'typescript'.  We assume
-    # the terminal is ansi, so we use the ansi plugin to handle it.
-    if filename == 'typescript':
-      return 'ansi'
-    else:
-      return None
+    # If no extension, then the file type is the filename,  e.g. 'typescript'
+    # or 'Makefile'
+    return filename
   else:
     # .png -> png
     return ext[1:]
@@ -216,7 +213,7 @@ def main(argv):
       log('%s', e)
       continue
 
-    file_type = GuessFileType(filename)
+    file_type = GetFileType(filename)
     log('file type: %s', file_type)
 
     if file_type is None:

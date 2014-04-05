@@ -49,17 +49,6 @@ EOF
 }
 
 #
-# Manually demo plugins
-#
-
-ansi() {
-  plugins/bin/ansi typescript ~/webpipe/input/ansi.html
-  sleep 1
-  plugins/bin/ansi diff.ansi ~/webpipe/input/diff.html
-}
-
-
-#
 # Latch
 #
 
@@ -67,6 +56,17 @@ ansi() {
 
 latch-demo() {
   ./latch.sh rebuild './doc.sh main' README.md doc/*.md
+}
+
+#
+# Aliases
+#
+
+make-alias() {
+  pushd plugins
+  # assume terminal is ansi
+  ln -s -v ansi typescript
+  popd
 }
 
 "$@"
