@@ -216,10 +216,6 @@ def main(argv):
     file_type = GetFileType(filename)
     log('file type: %s', file_type)
 
-    if file_type is None:
-      log("Couldn't determine file type for %r; ignored", filename)
-      continue
-
     out_html_filename = '%d.html' % counter
     out_html_path = os.path.join(out_dir, out_html_filename)
 
