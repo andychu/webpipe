@@ -8,21 +8,37 @@ checkDeps() {
   which tar >/dev/null || die "$msg"
 }
 
-main() {
-  local input=$1
-  local output=$2
+showFile() {
+  local eInput=$1
 
-  checkDeps
+  # TODO:
+  # - factor into WP_GetFileSize?
+  # - would be nice to sum the column, show compression ratio, etc.
 
-  local html=$output.html
-  echo '<pre>' >$html
+  local size=$(stat --printf '%s' $eInput)
+  echo "<p>$eInput, $size bytes</p>"
+
+  echo '<pre>'
 
   # notes:
   # - assumes GNU tar
   # - verbose shows file perms, etc.
-  tar --verbose --list -z < $input | WP_HtmlEscape >>$html
+  tar --verbose --list -z < $eInput | WP_HtmlEscape 
 
-  echo '</pre>' >>$html
+  echo '</pre>'
+}
+
+main() {
+  local eInput=$1
+  local eOutput=$2
+
+  checkDeps
+
+  set -o errexit
+
+  local html=$eOutput.html
+
+  showFile $eInput >$html
 
   echo $html
 }

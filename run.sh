@@ -48,6 +48,10 @@ EOF
   ls -l $path
 }
 
+make-tar-bz2() {
+  tar --verbose --create --bzip --file _tmp/test.tar.bz2 README.md
+}
+
 #
 # Latch
 #
