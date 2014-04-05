@@ -66,6 +66,9 @@ make-alias() {
   pushd plugins
   # assume terminal is ansi
   ln -s -v ansi typescript
+  ln -s -v jpeg jpg
+  ln -s -v html htm
+  ln -s -v markdown md
   popd
 }
 
