@@ -41,7 +41,7 @@ main() {
 
 # TODO: Just list the plugins/ dir?
 plugin-types() {
-  echo dot html json markdown treemap txt zip
+  echo dot html json markdown png treemap txt zip
   # TODO:
   # - csv has issue with importing JSON Template; not being hermetic
   # - R generates <html>, it's not a real snippet
@@ -110,9 +110,19 @@ EOF
   done
 }
 
-# TODO: how to get the .js to work?
+# TODO:
+# - how to get the .js to work?
 # It goes ../../...
 # Maybe it should be a variable, like $WEBPIPE_PLUGIN_BASE_URL.
+#
+# could publish it to:
+# there will be:
+# webpipe/plugins/
+# webpipe/s/2014-04-04/1.html
+# webpipe/doc/gallery/index.html
+# png testdata
+#   - just make a little R plot
+
 
 gallery() {
   local plugin_types="$(plugin-types)"

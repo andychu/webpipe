@@ -34,6 +34,21 @@ usage-config() {
 }
 
 #
+# Gen testdata
+#
+
+make-plot-png() {
+  local path=plugins/png/testdata/tiny.png
+  R --vanilla --slave <<EOF
+print('hi')
+png('$path')
+plot(1:3)
+dev.off()
+EOF
+  ls -l $path
+}
+
+#
 # Manually demo plugins
 #
 
