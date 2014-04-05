@@ -1,0 +1,5 @@
+#!/bin/sh
+
+thisDir=$(dirname $0)
+# pass input and output, append --gzip
+exec $thisDir/../_bin/render-tar.sh "$@" --gzip

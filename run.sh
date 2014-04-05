@@ -48,8 +48,11 @@ EOF
   ls -l $path
 }
 
-make-tar-bz2() {
+make-tar-compressed() {
+  # TODO: create in testdata folder
+  tar --verbose --create --gzip --file _tmp/test.tar.bz2 README.md
   tar --verbose --create --bzip --file _tmp/test.tar.bz2 README.md
+  tar --verbose --create --xz --file _tmp/test.tar.xz README.md
 }
 
 #

@@ -255,8 +255,16 @@ def main(argv):
       argv = [plugin_bin, input_path, str(counter)]
       log('argv: %s cwd %s', argv, out_dir)
 
+      subprocess_exc = None  # record
       start_time = time.time()
-      exit_code = subprocess.call(argv, cwd=out_dir)
+      try:
+        exit_code = subprocess.call(argv, cwd=out_dir)
+      except OSError, e:
+        subprocess_exc = e
+        log('%s', e)
+        # NOTE: should we be consistent and print in the HTML window?
+        continue
+
       elapsed = time.time() - start_time
 
       if exit_code != 0:
@@ -269,8 +277,12 @@ def main(argv):
         counter += 1
         continue
 
+      # BUG: These aren't send in error case!   Fix that.
+
       # Record how long rendering plugin takes.
       d = {'pluginPath': plugin_bin, 'exitCode': exit_code, 'elapsed': elapsed}
+      if subprocess_exc:
+        d['subprocessExc'] = str(subprocess_exc)
       spy_client.SendRecord('xrender-plugin', d)
 
       # Check that the plugin actually create the file.

@@ -10,6 +10,7 @@ checkDeps() {
 
 showFile() {
   local eInput=$1
+  local tarFlag=$2
 
   # TODO:
   # - factor into WP_GetFileSize?
@@ -23,7 +24,7 @@ showFile() {
   # notes:
   # - assumes GNU tar
   # - verbose shows file perms, etc.
-  tar --verbose --list -z < $eInput | WP_HtmlEscape 
+  tar --verbose --list $tarFlag < $eInput | WP_HtmlEscape 
 
   echo '</pre>'
 }
@@ -31,6 +32,7 @@ showFile() {
 main() {
   local eInput=$1
   local eOutput=$2
+  local tarFlag=$3  # -z, -j, etc.
 
   checkDeps
 
@@ -38,7 +40,7 @@ main() {
 
   local html=$eOutput.html
 
-  showFile $eInput >$html
+  showFile $eInput $tarFlag >$html
 
   echo $html
 }
