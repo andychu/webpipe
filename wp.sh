@@ -182,19 +182,30 @@ noop() {
     | serve noop
 }
 
-# Show a file (webpipe client).
-# If no filename is given, then it reads from stdin.
+# Show a file, specifying file type first.
 #
-# $ wp show foo.csv
-# $ ls -l | wp show
+# $ wp show-as txt NOTES
+# $ gen-html | wp show-as html
+#
+# wp as could be an alias.
 
-show() {
-  # read from stdin
+
+show-as() {
+  local ext=$1
+  shift
+
+  # no args; read from stdin
   if test $# -eq 0; then
-    local tempfile=$INPUT_DIR/sink/$$.txt
+    if test -z "$ext"; then
+      ext=txt
+    fi
+    local tempfile=$INPUT_DIR/sink/$$.$ext
     cat > $tempfile
     echo $tempfile | nc localhost 8988
   fi
+
+  # TODO: respect $ext here.  Need to send it as a TNET message I suppose.
+
   for filename in "$@"; do
     if test ${filename:0:1} = /; then
       echo "$filename" | nc localhost 8988
@@ -205,15 +216,19 @@ show() {
   done
 }
 
-# Show a file, specifying file type first.
-#
-# $ wp show-as txt NOTES
-# $ gen-html | wp show-as html
-#
-# wp as could be an alias.
+as() {
+  show-as "$@"
+}
 
-show-as() {
-  echo 'TODO: change protocol to allow file type?'
+# Show a file (webpipe client).
+# If no filename is given, then it reads from stdin.  File type is inferred
+# from extension.
+#
+# $ wp show foo.csv
+# $ ls -l | wp show
+
+show() {
+  show-as '' "$@"
 }
 
 publish() {
@@ -297,7 +312,7 @@ fi
 
 case $1 in 
   # generally public ones
-  help|init|run|noop|run-recvpackage-dir|publish|show|show-as|stub-path|scp-stub|version)
+  help|init|run|noop|run-recvpackage-dir|publish|show|show-as|as|stub-path|scp-stub|version)
     "$@"
     ;;
   ssh)

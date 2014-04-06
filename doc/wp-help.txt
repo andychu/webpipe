@@ -11,8 +11,10 @@ wp show [file]...
   Show files in the browser.  If no file is given, show stdin as text (type
   'txt').
 
-wp sink [ext]
-  Show stdin in the browser, e.g. 'ls -l | wp sink'.
+wp show-as <ext> [file]...
+  Show files in the browser, with the given file type.  If no file is given,
+  show stdin.
+  Alias: wp as
 
 wp publish <entry> <dest>
   Publish an entry in a scroll.  <dest> is the name of a publishing plugin.
