@@ -40,8 +40,10 @@ main() {
 }
 
 # TODO: Just list the plugins/ dir?
+# - need to show symlinks
+
 plugin-types() {
-  echo dot html json markdown png treemap txt zip
+  echo dot html json markdown Rplot.png treemap tar.gz txt zip
   # TODO:
   # - csv has issue with importing JSON Template; not being hermetic
   # - R generates <html>, it's not a real snippet

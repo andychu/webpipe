@@ -37,10 +37,12 @@ usage-config() {
 # Gen testdata
 #
 
-make-plot-png() {
-  local path=plugins/png/testdata/tiny.png
+make-Rplot-testdata() {
+  local dir=plugins/Rplot.png/testdata
+  mkdir -p $dir
+  local path=$dir/tiny.Rplot.png
+
   R --vanilla --slave <<EOF
-print('hi')
 png('$path')
 plot(1:3)
 dev.off()
@@ -48,11 +50,19 @@ EOF
   ls -l $path
 }
 
-make-tar-compressed() {
-  # TODO: create in testdata folder
-  tar --verbose --create --gzip --file _tmp/test.tar.bz2 README.md
-  tar --verbose --create --bzip --file _tmp/test.tar.bz2 README.md
-  tar --verbose --create --xz --file _tmp/test.tar.xz README.md
+
+make-tar-file() {
+  local ext=$1
+  local flag=$2
+  local out_dir=plugins/tar.$ext/testdata
+  mkdir -p $out_dir
+  tar --verbose --create $flag --file $out_dir/tiny.tar.$ext README.md
+}
+
+make-tar-testdata() {
+  make-tar-file gz --gzip
+  make-tar-file bz2 --bzip2
+  make-tar-file xz --xz
 }
 
 #
