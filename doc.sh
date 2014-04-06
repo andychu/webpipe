@@ -107,6 +107,14 @@ EOF
   for p in $plugin_types; do
     echo '<hr />'
     echo "<a id=\"$p\"></a><h3>$p</h3>"
+
+    # TODO: alternative text?
+    local path=plugins/$p/gallery.md
+    if test -f $path; then
+      # display on stdout
+      markdown $path
+    fi
+
     # snippet inline
     cat $base/out/$p.html
   done
