@@ -185,7 +185,24 @@ frames() {
     frames_out="$out_dir/$(basename $video_in)"
   fi
 
+  # TODO: use png or gif?
   time mplayer -ao null $video_in -vo jpeg:outdir=$frames_out
+}
+
+# Took 4m 37s for a 1.4 MB ogv?  Resulted in 50 MB animated gif.
+animated-gif() {
+  local frames_in=$1
+  local gif_out=${2:-_tmp/gif/screencast.gif}
+  mkdir -p $(dirname $gif_out)
+  time convert $frames_in/* $gif_out
+}
+
+# This method is down to 1MB from 50MB
+optimize-gif() {
+  local gif_in=$1
+  local gif_out=$(echo $gif_in | sed 's/\.gif/_opt.gif/')
+  set -x
+  time convert $gif_in -fuzz 10% -layers Optimize $gif_out
 }
 
 "$@"

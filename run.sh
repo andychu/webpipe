@@ -82,17 +82,18 @@ latch-demo() {
 make-alias() {
   pushd plugins
   # assume terminal is ansi
-  ln -s -v ansi typescript
-  ln -s -v jpeg jpg
-  ln -s -v html htm
-  ln -s -v markdown md
+  ln -s -v -T ansi typescript
+  ln -s -v -T jpeg jpg
+  ln -s -v -T html htm
+  ln -s -v -T markdown md
 
   # TODO: make your own png plugin, should show metadata, etc.
   # "file" shows dimensions, colormap, etc. of png
-  ln -s -v Rplot.png png
+  ln -s -v -T Rplot.png png
 
   # For now, jpeg does what png does.
-  ln -s -v png jpeg
+  ln -s -v -T png jpeg
+  ln -s -v -T png gif
 
   popd
 }
