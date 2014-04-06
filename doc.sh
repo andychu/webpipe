@@ -168,4 +168,24 @@ deploy-gallery() {
   scp -r _tmp/gallery/out/* $base/webpipe/doc/gallery
 }
 
+#
+# Screencast
+#
+
+# Use the method here.  "Record my desktop", then convert using mplayer then Image Magick.
+#
+# http://askubuntu.com/questions/107726/how-to-create-animated-gif-images-of-a-screencast
+
+frames() {
+  local video_in=$1
+  local frames_out=${2:-}
+  if test -z "$frames_out"; then
+    local out_dir=_tmp/frames
+    mkdir -p $out_dir
+    frames_out="$out_dir/$(basename $video_in)"
+  fi
+
+  time mplayer -ao null $video_in -vo jpeg:outdir=$frames_out
+}
+
 "$@"
