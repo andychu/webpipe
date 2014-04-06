@@ -90,6 +90,10 @@ make-alias() {
   # TODO: make your own png plugin, should show metadata, etc.
   # "file" shows dimensions, colormap, etc. of png
   ln -s -v Rplot.png png
+
+  # For now, jpeg does what png does.
+  ln -s -v png jpeg
+
   popd
 }
 
