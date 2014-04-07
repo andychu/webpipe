@@ -80,8 +80,16 @@ The renderer process is called `xrender`, which shells out to various plugins.
 It understands `.png` files, plain text, HTML, and CSV files.  (TODO: document
 the full list)
 
+More Docs
+---------
+
+   * [Gallery](gallery/) of plugin types (under construction)
+
 Publishing
 ----------
+
+You can publish entries to "shared hosting", so you don't have to keep your
+server up.
 
 TODO ...
 
