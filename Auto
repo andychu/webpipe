@@ -17,7 +17,13 @@ export PYTHONPATH=$THIS_DIR:~/hg/tnet/python:~/hg/json-template/python
 # Now do the data directory, but make sure to only get the stuff we want.  Not
 # examples, testdata, .swp files, etc.
 plugins-manifest() {
-  find plugins -name render -o -name \*.js -o -name \*.css -o -name \*.html
+  # sh: including _bin/render-tar.sh now
+  find plugins \
+    -name render -o \
+    -name \*.sh -o \
+    -name \*.js -o \
+    -name \*.css -o \
+    -name \*.html
 }
 
 manifest() {
@@ -34,10 +40,6 @@ manifest() {
 
   # docs are used for help
   ls doc/wp-help*.txt
-
-  # Include lib, but not test.  TODO: Should this be an environment variable?
-  # $WEBPIPE_LIB_DIR?
-  ls plugins/webpipe-lib.sh
 
   plugins-manifest
 }
