@@ -55,10 +55,10 @@ plugin-types() {
 
 gallery-snippets() {
   local plugin_types="$1"
-  local base=$2
+  local out_dir=$2
 
-  rm -rf $base/out  # so it's numbered from 1
-  mkdir -p $base/in $base/out
+  rm -rf $out_dir
+  mkdir -p $out_dir
 
   for p in $plugin_types; do
     local plugin=$PWD/plugins/$p/render 
@@ -80,7 +80,7 @@ gallery-snippets() {
     local output=$p
 
     # plugins are written to be in the output dir.
-    pushd $base/out
+    pushd $out_dir
     $plugin $input $output
     popd >/dev/null
   done
@@ -88,13 +88,13 @@ gallery-snippets() {
 
 print-gallery() {
   local plugin_types="$1"
-  local base=$2
+  local base_dir=$2
 
   cat <<EOF
 <h1>webpipe Gallery</h1>
 
-<p>Here is a list of file types and example documents.  Click through.</p>
-
+<p>Here is a list of file types and example documents.  There is a JavaScript
+visualization behind some links.</p>
 EOF
 
   # Generate TOC.
@@ -116,7 +116,7 @@ EOF
     fi
 
     # snippet inline
-    cat $base/out/$p.html
+    cat $base_dir/$p.html
   done
 }
 
@@ -140,15 +140,18 @@ gallery() {
 
   gallery-snippets "$plugin_types" $base_dir
 
-  local body=$base_dir/out/body.html
-  local out=$base_dir/out/index.html
+  local body=$base_dir/body.html
+  local out=$base_dir/index.html
   print-gallery "$plugin_types" $base_dir > $body
 
   # NOTE: It's interesting that #anchors don't work without <html>?  At least
   # in Chrome.
   make-dict $body | to-html $out
 
-  ls -al $base_dir/out
+  # The gallery needs to link to static assets.  TODO: Should be _tmp/doc?
+  ln -v -s $PWD/plugins _tmp/plugins
+
+  ls -al $base_dir
 }
 
 check() {
