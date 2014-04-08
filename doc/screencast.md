@@ -1,10 +1,17 @@
-Screencast
-==========
-
 Back to [webpipe](webpipe.html)
 
+webpipe Screencast
+==================
 
-<img src="screenshot.jpg" />
+NOTE: This requires HTML5 and ogg video support in your browser.
+
+<video controls id="video-player" poster="screenshot.jpg">
+  <source src="screencast.ogv" type='video/ogg; codecs="theora, vorbis"'> 
+</video>
+
+
+Other
+-----
 
 
 TODO:
