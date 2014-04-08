@@ -10,21 +10,3 @@ NOTE: This requires HTML5 and ogg video support in your browser.
 </video>
 
 
-Other
------
-
-
-TODO:
-
-- fix bug in latch.
-- margins are off for an image
-
-what is going on
-
-fdssdfds
-sfdsfd
-
-
-
-
-

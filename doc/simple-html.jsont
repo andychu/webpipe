@@ -3,7 +3,7 @@ default-formatter: raw
 
 <!DOCTYPE HTML>
 
-[# A template for HTML docs with text]
+[# A simple template for HTML docs]
 
 <html lang=en>
 
@@ -16,18 +16,6 @@ default-formatter: raw
       text-align: center;
       color: grey;
     }
-
-    /* Make it skinny. */
-    body {
-      margin: 0 auto;
-      width: 80ex;
-      font-family: serif;
-    }
-    
-    /* Inline code */
-    code {
-      color: green;
-    }
   </style>
 
   <!-- INSERT LATCH JS -->
@@ -35,7 +23,7 @@ default-formatter: raw
 </head>
 
 [# NOTE: id="content" is needed for the toc.js script]
-<body onload="[.section onload-js][@][.end]" id="content">
+<body id="content">
 
 <p id="latch-status">Waiting for latch...</p>
 

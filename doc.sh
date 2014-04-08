@@ -34,7 +34,18 @@ main() {
 
   ls -al $body
 
-  make-dict $body | to-html $out
+  local template
+  case $base_in in
+    # Use simpler template from the screencast (so it's not skinny)
+    screencast.md)
+      template=doc/simple-html.jsont
+      ;;
+    *)
+      template=doc/html.jsont
+      ;;
+  esac
+
+  make-dict $body | jsont $template > $out
 
   ls -al $out
 }
