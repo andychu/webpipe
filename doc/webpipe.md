@@ -9,10 +9,14 @@ It gets rid of the `Alt-Tab F5` dance when creating content.
 
 [R]: http://r-project.org/
 
+<a href="screencast.html">
+  <img src="screenshot_small.jpg" alt="webpipe screenshot" />
+</a>
+
 Setup
 -----
 
-(Optionally) Put `wp` in your `PATH`:
+Put `wp` in your `PATH`.  For example:
 
     $ ln -s /path/to/webpipe/wp.sh ~/bin/wp
 

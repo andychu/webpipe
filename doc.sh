@@ -39,6 +39,10 @@ main() {
   ls -al $out
 }
 
+shrink-screenshot() {
+  convert doc/screenshot.jpg -scale '50%' _tmp/screenshot_small.jpg
+}
+
 # TODO: Just list the plugins/ dir?
 # - need to show symlinks
 
@@ -179,6 +183,7 @@ deploy-gallery() {
 #
 # http://askubuntu.com/questions/107726/how-to-create-animated-gif-images-of-a-screencast
 
+# 57s for a 2.7 M file.
 frames() {
   local video_in=$1
   local frames_out=${2:-}
@@ -200,11 +205,15 @@ animated-gif() {
   time convert $frames_in/* $gif_out
 }
 
-# This method is down to 1MB from 50MB
+# This method reduces gif from 50MB to 1MB.
+#
+# But on 142MB gif, this doesn't just crash, but hangs the machine!
+
 optimize-gif() {
   local gif_in=$1
   local gif_out=$(echo $gif_in | sed 's/\.gif/_opt.gif/')
   set -x
+  export MAGICK_THREAD_LIMIT=1
   time convert $gif_in -fuzz 10% -layers Optimize $gif_out
 }
 
