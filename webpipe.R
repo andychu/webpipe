@@ -14,11 +14,7 @@
 # - Can the user configure the input dir?  Environment var?
 
 # NOTE: png() accepts ~/webpipe, but CairoPNG doesn't.  (It doesn't expand ~).
-home = Sys.getenv('HOME')
-if (home == '') {
-  stop("webpipe error: $HOME environment variable isn't set")
-}
-web.plot.dest = file.path(home, 'webpipe/input')
+web.plot.dest = path.expand('~/webpipe/input')  # expand ~
 
 web.plot.num = 0
 
