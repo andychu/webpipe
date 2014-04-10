@@ -25,7 +25,9 @@ web.png = function(func, ...) {
   # NOTE: giving it the "dual extension" .Rplot.png, so we can possibly do
   # different things with it, vs. a regular png.
   plot.path = file.path(web.plot.dest, sprintf('%03d.Rplot.png', web.plot.num))
-  # TODO: allow option to use CairoPNG here.
+
+  # NOTE: in an interactive session, it's possible to do png <- CairoPNG to
+  # avoid "x11 is not available" errors.
   png(filename=plot.path)
   func(...)
   dev.off()
