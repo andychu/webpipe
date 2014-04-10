@@ -13,7 +13,12 @@
 # TODO:
 # - Can the user configure the input dir?  Environment var?
 
-web.plot.dest = '~/webpipe/input'
+# NOTE: png() accepts ~/webpipe, but CairoPNG doesn't.  (It doesn't expand ~).
+home = Sys.getenv('HOME')
+if (home == '') {
+  stop("webpipe error: $HOME environment variable isn't set")
+}
+web.plot.dest = file.path(home, 'webpipe/input')
 
 web.plot.num = 0
 
@@ -24,9 +29,14 @@ web.png = function(func, ...) {
   # NOTE: giving it the "dual extension" .Rplot.png, so we can possibly do
   # different things with it, vs. a regular png.
   plot.path = file.path(web.plot.dest, sprintf('%03d.Rplot.png', web.plot.num))
-  png(file=plot.path)
+  # TODO: allow option to use CairoPNG here.
+  png(filename=plot.path)
   func(...)
   dev.off()
+  # Debug: assert that the file was created.
+  #if (!file.exists(plot.path)) {
+  #  print(paste0('ERROR ', plot.path))
+  #}
   cat(sprintf('%s\n', plot.path))
 
   web.plot.num <<- web.plot.num + 1  # increment global
