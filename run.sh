@@ -98,4 +98,9 @@ make-alias() {
   popd
 }
 
+
+treemap-client() {
+  ~/hg/treemap/run.sh find-with-format-string '%s %p\n' "$@"
+}
+
 "$@"
