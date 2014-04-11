@@ -37,7 +37,7 @@ build() {
   local template
   case $base_in in
     # Use simpler template from the screencast (so it's not skinny)
-    screencast.md)
+    screencast)
       template=doc/simple-html.jsont
       ;;
     *)
@@ -57,9 +57,9 @@ build-all() {
   gallery
 
   # For the video
-  ln -sf \
+  ln -v -s -f \
     ../../doc/screenshot.jpg \
-    ../../doc/out.ogv \
+    ../../doc/screencast.ogv \
     _tmp/doc
 
   tree _tmp/doc
@@ -189,16 +189,15 @@ check() {
   tidy -errors  _tmp/gallery/out/index.html
 }
 
-# NOTE: it has to be 3 levels deep
-# TODO: deploy other docs
-deploy-gallery() {
+# NOTE: gallery has to be 3 levels deep to access ../../../plugins/*/static
+deploy() {
   set -o errexit
   # create a file in this dir with the base dir, e.g. user@host.com:mydir
   local base=$(cat ssh-base.txt)
   echo $base
   # Have to get all the generated dirs.  NOTE: Don't need the individual
   # snippets.  Maybe remove.
-  scp -r _tmp/gallery/out/* $base/webpipe/doc/gallery
+  scp -r _tmp/doc/* $base/webpipe/doc
 }
 
 #
