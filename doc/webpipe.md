@@ -168,7 +168,7 @@ usage:
 Known Issues
 ------------
 
-- Plugins should have more consistent style, CSS, etc.
+- Plugins should have more consistent style (CSS, etc.)
 - There is too much debug spew on the terminal.
 
 Feedback
