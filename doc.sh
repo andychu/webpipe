@@ -163,6 +163,21 @@ EOF
 # png testdata
 #   - just make a little R plot
 
+makelink() {
+  local src=$1
+  local dest=$2
+  mkdir -p $(dirname $dest)
+  ln -v -s -f $src --no-target-directory $dest
+}
+
+# The gallery needs to reference static assets.  list the ones with static.
+# TODO: automate this more?
+
+link-static() {
+  makelink $PWD/plugins/treemap/static/ _tmp/plugins/treemap/static
+  makelink $PWD/plugins/json/static/ _tmp/plugins/json/static
+  tree _tmp/doc
+}
 
 gallery() {
   local plugin_types="$(plugin-types)"
@@ -179,7 +194,7 @@ gallery() {
   make-dict $body | to-html $out
 
   # The gallery needs to link to static assets.  TODO: Should be _tmp/doc?
-  ln -v -s -f ../../plugins _tmp/doc/plugins
+  link-static
 
   ls -al $base_dir
 }
@@ -198,6 +213,7 @@ deploy() {
   # Have to get all the generated dirs.  NOTE: Don't need the individual
   # snippets.  Maybe remove.
   scp -r _tmp/doc/* $base/webpipe/doc
+  scp -r _tmp/plugins $base/webpipe
 }
 
 #
