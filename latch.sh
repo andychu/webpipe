@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# file-latch.sh
+# latch.sh
 #
 # Usage:
 #   ...
@@ -74,7 +74,7 @@ _monitor-vim() {
 readonly LATCH_HOST=localhost:8990
 
 # Usage:
-# ./doc.sh rebuild <build cmd> <files to watch>...
+# ./latch.sh rebuild <build cmd> <files to watch>...
 
 rebuild() {
   local build_cmd=$1
@@ -86,18 +86,18 @@ rebuild() {
   while true; do
     # Wait for a changed file
     local changed=$(wait-vim "$@")
-
     log "changed $changed"
 
-    local rel_output="$(basename $changed .md).html"
+    # We need to know the output name here relative to _tmp to notify the
+    # server.
+    local rel_output="doc/$(basename $changed .md).html"
 
-    # TODO: need better path manipulation
-    local output=_tmp/$rel_output
-
-    log "output $output"
+    local output="_tmp/$rel_output"
 
     # Rebuild
     $build_cmd $changed $output
+
+    log "notify $rel_output"
 
     # Release latch so that the page is refreshed.
     notify $rel_output

@@ -72,7 +72,7 @@ make-tar-testdata() {
 # for doc.sh, use Makefile perhaps?
 
 latch-demo() {
-  ./latch.sh rebuild './doc.sh main' README.md doc/*.md
+  ./latch.sh rebuild './doc.sh build' README.md doc/*.md
 }
 
 #

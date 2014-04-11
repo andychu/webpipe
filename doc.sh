@@ -21,11 +21,11 @@ make-dict() {
 
 # Build main docs.  Called by ./run.sh latch-demo, which calls './latch.sh
 # rebuild'.
-main() {
+build() {
   local in=$1
   local out=$2
 
-  local base_in=$(basename $in)  # For now, get rid of subdirs
+  local base_in=$(basename $in .md)  # For now, get rid of subdirs
   local body=_tmp/$base_in-body.html
 
   echo "Building $in -> $body -> $out"
@@ -50,8 +50,23 @@ main() {
   ls -al $out
 }
 
+build-all() {
+  build doc/webpipe.md _tmp/doc/webpipe.html
+  build doc/screencast.md _tmp/doc/screencast.html
+  shrink-screenshot
+  gallery
+
+  # For the video
+  ln -sf \
+    ../../doc/screenshot.jpg \
+    ../../doc/out.ogv \
+    _tmp/doc
+
+  tree _tmp/doc
+}
+
 shrink-screenshot() {
-  convert doc/screenshot.jpg -scale '50%' _tmp/screenshot_small.jpg
+  convert doc/screenshot.jpg -scale '50%' _tmp/doc/screenshot_small.jpg
 }
 
 # TODO: Just list the plugins/ dir?
@@ -151,7 +166,7 @@ EOF
 
 gallery() {
   local plugin_types="$(plugin-types)"
-  local base_dir=$PWD/_tmp/gallery  # absolute path
+  local base_dir=$PWD/_tmp/doc/gallery  # absolute path
 
   gallery-snippets "$plugin_types" $base_dir
 
@@ -164,7 +179,7 @@ gallery() {
   make-dict $body | to-html $out
 
   # The gallery needs to link to static assets.  TODO: Should be _tmp/doc?
-  ln -v -s $PWD/plugins _tmp/plugins
+  ln -v -s -f ../../plugins _tmp/doc/plugins
 
   ls -al $base_dir
 }
