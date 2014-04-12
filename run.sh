@@ -103,4 +103,11 @@ treemap-client() {
   ~/hg/treemap/run.sh find-with-format-string '%s %p\n' "$@"
 }
 
+# image magick command line to display all exif data
+# http://www.imagemagick.org/script/escape.php
+# TODO: use this for jpg plugin.
+exif() {
+  identify -format '%[exif:*]' "$@"
+}
+
 "$@"
