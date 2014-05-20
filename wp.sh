@@ -51,8 +51,8 @@ readonly INPUT_DIR=~/webpipe/input
 readonly WATCH_DIR=~/webpipe/watched
 
 check-tools() {
-  local err="'nc' not found.  Run 'sudo apt-get install netcat'?"
-  which nc >/dev/null || die "$err"
+  local err="'socat' not found.  On Ubuntu/Debian, run 'sudo apt-get install socat'"
+  which socat >/dev/null || die "$err"
 }
 
 #
@@ -121,11 +121,12 @@ serve() {
   $THIS_DIR/webpipe/serve.py "$@"
 }
 
-nc-listen() {
+socat-listen() {
   local port=$1
-  # -k: keep listening after one connection
-  # -l listen
-  nc -v -k -l localhost $port </dev/null
+  # -u: unidirection (</dev/null would be the same)
+  # fork: fork a child process for each connection; gives us the "loop"
+  # behavior.
+  socat -u TCP4-LISTEN:$port,fork -
 }
 
 # Run the whole pipeline.
@@ -154,7 +155,7 @@ run() {
 
   export PYTHONUNBUFFERED=1
 
-  nc-listen 8988 \
+  socat-listen 8988 \
     | xrender $INPUT_DIR $session \
     | serve serve $session
 }
@@ -189,6 +190,10 @@ noop() {
 #
 # wp as could be an alias.
 
+socat-send() {
+  local port=$1
+  socat - TCP4:localhost:$port
+}
 
 show-as() {
   local ext=$1
@@ -201,17 +206,17 @@ show-as() {
     fi
     local tempfile=$INPUT_DIR/sink/$$.$ext
     cat > $tempfile
-    echo $tempfile | nc localhost 8988
+    echo $tempfile | socat-send 8988
   fi
 
   # TODO: respect $ext here.  Need to send it as a TNET message I suppose.
 
   for filename in "$@"; do
     if test ${filename:0:1} = /; then
-      echo "$filename" | nc localhost 8988
+      echo "$filename" | socat-send 8988
     else
       # relative path, make it absolute.
-      echo "$PWD/$filename" | nc localhost 8988
+      echo "$PWD/$filename" | socat-send 8988
     fi
   done
 }
@@ -268,9 +273,9 @@ recv() {
 }
 
 run-recv() {
-  nc-listen 8987 \
+  socat-listen 8987 \
     | recv ~/webpipe/input \
-    | while read line; do echo $line | nc localhost 8988; done
+    | while read line; do echo $line | socat - TCP4:localhost:8988; done
 }
 
 #
