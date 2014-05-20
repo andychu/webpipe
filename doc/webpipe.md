@@ -63,6 +63,16 @@ ggplot works easily as well:
     > p = ggplot(mtcars, aes(wt, mpg)) + geom_point()
     > web.plot(p)
 
+R client options
+----------------
+
+The `webpipe.png.args` option is used to determine additional arguments to the
+`png` device.  Example:
+
+    options(webpipe.png.args=list(width=800, height=600))
+
+This can be put in your `~/.Rprofile`, if desired.
+
 Shell Usage
 -----------
 
