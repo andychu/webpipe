@@ -39,10 +39,14 @@ Portability
 -----------
 
 There are multiple components to `webpipe`, each with different portability
-constraints.
+goals.
 
-It's somewhat confusing because the webpipe client often runs on servers, and
-the webpipe server may run on your client (i.e. "localhost").
+It's somewhat confusing because the webpipe client often runs on server
+machines, and the webpipe server may run on your client machine (i.e.
+"localhost").
+
+"Server" machines are some kind of Linux, or perhaps BSD.  Client machines
+include those, but also add Mac.
 
 From roughly least to most portable:
 
