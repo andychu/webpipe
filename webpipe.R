@@ -19,7 +19,8 @@
 # TODO:
 # - Can the user configure the input dir?  Environment var?
 
-web.plot.dest = '~/webpipe/input'
+# NOTE: png() accepts ~/webpipe, but CairoPNG doesn't.  (It doesn't expand ~).
+web.plot.dest = path.expand('~/webpipe/input')  # expand ~
 
 web.plot.num = 0
 
@@ -35,9 +36,16 @@ web.png = function(func, ...) {
   png.args = getOption("webpipe.png.args", list())
   png.args$file = plot.path
 
+  # NOTE: in an interactive session, it's possible to do png <- CairoPNG to
+  # avoid "x11 is not available" errors.
   do.call(png, png.args)
   func(...)
   dev.off()
+
+  # Debug: assert that the file was created.
+  #if (!file.exists(plot.path)) {
+  #  print(paste0('ERROR ', plot.path))
+  #}
 
   cat(sprintf('%s\n', plot.path))
 

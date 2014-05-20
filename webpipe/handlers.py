@@ -34,11 +34,13 @@ log = util.Logger(util.ANSI_BLUE)
 # TODO:
 # - The "Directory Listing" page should let you go back up.
 # - link to help text?
+# - use same <head> everywhere -- reuse templates
+#   - doctype, charset, etc.
 
 HOME_PAGE = jsontemplate.Template("""\
 <html>
   <head>
-    <title>json $output</title>
+    <title>webpipe home</title>
     <link href="/static/webpipe.css" rel="stylesheet">
   </head>
   <body>

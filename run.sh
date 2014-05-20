@@ -72,7 +72,7 @@ make-tar-testdata() {
 # for doc.sh, use Makefile perhaps?
 
 latch-demo() {
-  ./latch.sh rebuild './doc.sh main' README.md doc/*.md
+  ./latch.sh rebuild './doc.sh build' README.md doc/*.md
 }
 
 #
@@ -96,6 +96,18 @@ make-alias() {
   ln -s -v -T png gif
 
   popd
+}
+
+
+treemap-client() {
+  ~/hg/treemap/run.sh find-with-format-string '%s %p\n' "$@"
+}
+
+# image magick command line to display all exif data
+# http://www.imagemagick.org/script/escape.php
+# TODO: use this for jpg plugin.
+exif() {
+  identify -format '%[exif:*]' "$@"
 }
 
 "$@"
