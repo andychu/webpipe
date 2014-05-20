@@ -48,6 +48,10 @@ Pipeline implementation options:
 - threads and Queue()
 - coroutines
   - it's synchronous dataflow, so you don't need queues really.
+  - BUT: if each stage has input from a real socket, and the previous stage,
+    can you do that with Python coroutines?  can you do fan in?
+    I think so.  Call stage.send() from two places.
+    Multiple network ports need a select() loop.
 
 Add --listen for every stage?  So you can listen on recv input, xrender input,
 or server input port (and listen on HTTP serving port too)
