@@ -5,30 +5,18 @@ xrender.py
 A filter that reads filenames from stdin, and prints HTML directories on
 stdout.
 
-File types:
+TODO: Make this usable as a library too?  So in the common case you can have a
+single process.
 
-- .png -> inline HTML images (data URIs) 
-- .csv -> table
+File types:
 
 Next:
 
-- .script -- type script for Shell session
-  - a configurable prefix, like "hostname; whoami;" etc. would be useful.
 - .grep -- grep results
   - But then do we have to copy a ton of files over?
   - xrender needs have access to the original directory.
   - and the command
 
-Ideas:
-
-- .url file -> previews of URLs?
-- .foo-url -> previews of a certain page?
-
-Should this call a shell script then?  Or it could be a shell script?  The
-function will use the tnet tool?
-
-TODO: Make this usable as a library too?  So in the common case you can have a
-single process.
 
 Plugins
 -------
@@ -56,8 +44,6 @@ See comments below for the interface.
     - maybe you have to dereference the link.
 """
 
-import cgi
-import errno
 import json
 import os
 import re
@@ -189,6 +175,7 @@ def main(argv):
   sys.stdout.write(tnet.dump_line(header))
 
   while True:
+    # TODO: Read from Queue?  Could be pipe or socket.
     line = sys.stdin.readline()
     if not line:
       break
