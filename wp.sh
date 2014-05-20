@@ -155,6 +155,14 @@ run() {
 
   export PYTHONUNBUFFERED=1
 
+  # TODO: Add xrender --listen-port 8988.  If port is specified, then instead of
+  # reading from stdin, we listen on a port.
+  #
+  # nc servers don't reliably work the same way on all machines.  socat isn't
+  # installed.
+  #
+  # We might want recv --listen-port too, but maybe later.  And even server
+  # --listen-port.
   socat-listen 8988 \
     | xrender $INPUT_DIR $session \
     | serve serve $session
