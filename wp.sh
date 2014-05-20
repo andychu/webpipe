@@ -272,6 +272,8 @@ recv() {
   $THIS_DIR/webpipe/recv.py "$@"
 }
 
+# TODO: This should be documented.  This is in conjunction with wp ssh, and
+# remove wp-stub.sh send, I think.
 run-recv() {
   socat-listen 8987 \
     | recv ~/webpipe/input \
