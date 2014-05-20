@@ -99,7 +99,6 @@ EOF
 
 test-serve() {
   # Test it without a renderer.
-  local stub=$PWD/webpipe-stub.sh
   local dev=$PWD/wp-dev.sh
   # TODO: It expects a message with "files" on stdin.  It could just take a
   # line like '1.html'
@@ -125,28 +124,30 @@ test-recv-empty() {
   echo $?
 }
 
+# TODO: 'wp-stub send' tests are broken.  Semantics are unclear.
+
 test-send() {
-  ( echo webpipe-stub.sh;
+  ( echo wp-stub.sh;
     echo nonexistent ) \
-  | ./webpipe-stub.sh send
+  | ./wp-stub.sh send
 }
 
 # Since the stub can be copied to many machines, test that it an run with a
 # non-bash shell.
 test-stub-with-busybox() {
-  ( echo webpipe-stub.sh;
+  ( echo wp-stub.sh;
     echo nonexistent ) \
-  | busybox sh webpipe-stub.sh send
+  | busybox sh wp-stub.sh send
 }
 
 test-send-recv() {
-  local out=~/webpipe/input/webpipe-stub.sh
+  local out=~/webpipe/input/wp-stub.sh
   rm $out
-  echo webpipe-stub.sh \
-    | ./webpipe-stub.sh send \
+  echo wp-stub.sh \
+    | ./wp-stub.sh send \
     | ./wp-dev.sh recv ~/webpipe/input
   ls -al $out
-  diff webpipe-stub.sh $out
+  diff wp-stub.sh $out
   echo $?
 }
 

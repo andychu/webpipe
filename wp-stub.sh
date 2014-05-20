@@ -15,10 +15,10 @@
 #
 # How to get it to the remote machine:
 #
-#   $ scp $(webpipe stub-path) user@example.org:bin
+#   $ scp $(wp stub-path) user@example.org:bin
 #
 # Usage:
-#   ./webpipe-stub.sh <function name>
+#   ./wp-stub.sh <function name>
 
 set -o nounset
 
