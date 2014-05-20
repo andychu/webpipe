@@ -9,6 +9,12 @@
 #
 # > web.png(hist, rnorm(10))     # alternative to hist(rnorm(10))
 # > web.plot(hist(rnorm(10), plot=F))   # another alternative
+#
+# The webpipe.png.args option is used to determine additional arguments to the
+# png device.
+#
+# Example:
+#   options(webpipe.png.args=list(width=800, height=600))
 
 # TODO:
 # - Can the user configure the input dir?  Environment var?
@@ -24,9 +30,15 @@ web.png = function(func, ...) {
   # NOTE: giving it the "dual extension" .Rplot.png, so we can possibly do
   # different things with it, vs. a regular png.
   plot.path = file.path(web.plot.dest, sprintf('%03d.Rplot.png', web.plot.num))
-  png(file=plot.path)
+
+  # Let the user pass their own dimensions, etc.  filename can't be overridden.
+  png.args = getOption("webpipe.png.args", list())
+  png.args$file = plot.path
+
+  do.call(png, png.args)
   func(...)
   dev.off()
+
   cat(sprintf('%s\n', plot.path))
 
   web.plot.num <<- web.plot.num + 1  # increment global
@@ -59,4 +71,3 @@ web.plot = function(...) {
 web.hist = function(...) {
   web.plot(hist(..., plot=F))
 }
-
