@@ -1,6 +1,8 @@
 Using webpipe with the shell
 ============================
 
+Or "Bringing back graphical computing for headless servers"
+
 The original idea behind webpipe was to use it with an R client.  But using it
 at the shell opens up a lot of possibilities, e.g. for system administration
 and performance analysis.
@@ -28,10 +30,12 @@ $ wp scp-stub example.com
 
 $ wp ssh example.com    # Local 8987 tunnel
 
+# TODO: Also need to test two tunnels.  Can we use the same port?  What about
+# with big files?
+
 example.com$ wp-stub show foo.png
 
 Now foo.png appears in the browser on localhost:8989.
-
 
 Even further generalization:
 
@@ -83,4 +87,35 @@ directory that webpipe uses.  I guess we write the file last for this reason.
 What does the client look like?  Difference between show and send?  I think you
 want to use show everywhere.  Both local and remote.  Ports are the same.
 "show" goes to port 8988?  "send" goes to port 8987.
+
+Ports:
+- 8987 for recv input
+- 8988 for xrender input
+- TODO: change is to it's 8980 8981 8982?  Three consecutive ports
+  WEBPIPE_RECV_PORT
+  WEBPIPE_XRENDER_PORT
+  WEBPIPE_HTML_PORT
+  Need this because those ports might be used on the machine.
+
+- 8989 is webpipe HTTP server
+- 8900 is for latch HTTP
+
+
+More advanced idea
+------------------
+
+Along the lines of "bringing back graphical computing".
+
+- What if you want a "live top" or something.  Or a "live pstree".  A visualization.
+
+Then you aren't just sending files back.  You want a client program that prints
+a textual protocol to stdout for updates.  Like it will print CPU usage lines
+or something.
+
+And then you want to pipe that directly to JS and visualize it?
+
+The easiest demo is some kind of time series.  You scp a little shell/Python
+script to a server.  And then it will output a time series.
+
+
 
