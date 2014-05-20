@@ -43,3 +43,40 @@ remotely, but server locally.  If you want to be secure, and don't want to
 expose an HTTP server.
 
 
+Pipeline implementation options:
+
+- threads and Queue()
+- coroutines
+  - it's synchronous dataflow, so you don't need queues really.
+
+Add --listen for every stage?  So you can listen on recv input, xrender input,
+or server input port (and listen on HTTP serving port too)
+
+What's the command line syntax?  You can run:
+
+- serve
+- xrender and serve
+- recv xrender and serve
+
+And you can run other parts on the remote machine.
+
+- send
+- xrender then send
+
+So pipelines look like this, where == is a TCP socket separating machines.  |
+is a pipe, or possibly in-process Queue/channel.
+
+xrender | serve (local machine only)
+
+send == recv | xrender | serve
+
+xrender | send == recv | serve
+
+NOTE: send does not currently handle directories, or the combo of file +
+directory that webpipe uses.  I guess we write the file last for this reason.
+
+
+What does the client look like?  Difference between show and send?  I think you
+want to use show everywhere.  Both local and remote.  Ports are the same.
+"show" goes to port 8988?  "send" goes to port 8987.
+
