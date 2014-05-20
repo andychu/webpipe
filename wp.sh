@@ -275,7 +275,7 @@ recv() {
 run-recv() {
   socat-listen 8987 \
     | recv ~/webpipe/input \
-    | while read line; do echo $line | socat - TCP4:localhost:8988; done
+    | while read line; do echo $line | socat-send 8988; done
 }
 
 #
@@ -317,7 +317,7 @@ fi
 
 case $1 in 
   # generally public ones
-  help|init|run|noop|run-recvpackage-dir|publish|show|show-as|as|stub-path|scp-stub|version)
+  help|init|run|noop|run-recv|package-dir|publish|show|show-as|as|stub-path|scp-stub|version)
     "$@"
     ;;
   ssh)
