@@ -135,13 +135,7 @@ class Resources(object):
     return None
 
 
-def main(argv):
-  """Returns an exit code."""
-
-  # NOTE: This is the input base path.  We just join them with the filenames on
-  # stdin.
-  in_dir = argv[1]
-  out_dir = argv[2]
+def Loop(in_dir, out_dir):
   # TODO:
   # - input is a single line for now.  Later it could be a message, if you want
   # people to specify an explicit file type.  I guess that can be done with a
@@ -290,6 +284,16 @@ def main(argv):
     counter += 1
 
   return 0
+
+
+def main(argv):
+  """Returns an exit code."""
+  # NOTE: This is the input base path.  We just join them with the filenames on
+  # stdin.
+  in_dir = argv[1]
+  out_dir = argv[2]
+
+  Loop(in_dir, out_dir)
 
 
 if __name__ == '__main__':
