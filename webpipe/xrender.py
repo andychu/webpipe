@@ -135,7 +135,11 @@ class Resources(object):
     return None
 
 
-def Loop(in_dir, out_dir):
+def PluginDispatchLoop(in_dir, out_dir):
+  """
+  Coroutine that passes its input to a rendering plugin.
+  """
+
   # TODO:
   # - input is a single line for now.  Later it could be a message, if you want
   # people to specify an explicit file type.  I guess that can be done with a
@@ -169,10 +173,8 @@ def Loop(in_dir, out_dir):
   sys.stdout.write(tnet.dump_line(header))
 
   while True:
-    # TODO: Read from Queue?  Could be pipe or socket.
-    line = sys.stdin.readline()
-    if not line:
-      break
+    # NOTE: Coroutine
+    line = yield
 
     # TODO: If file contains punctuation, escape it to be BOTH shell and HTML
     # safe, and then MOVE It to ~/webpipe/safe-name
@@ -283,8 +285,6 @@ def Loop(in_dir, out_dir):
 
     counter += 1
 
-  return 0
-
 
 def main(argv):
   """Returns an exit code."""
@@ -293,7 +293,23 @@ def main(argv):
   in_dir = argv[1]
   out_dir = argv[2]
 
-  Loop(in_dir, out_dir)
+  # PluginDispatchLoop is a coroutine.  It takes items to render on stdin.
+  loop = PluginDispatchLoop(in_dir, out_dir)
+
+  # "prime" the coroutine.
+  next(loop)
+
+  while True:
+    line = sys.stdin.readline()
+    if not line:  # EOF
+      break
+
+    try:
+      loop.send(line)
+    except StopIteration:
+      break
+
+  return 0
 
 
 if __name__ == '__main__':
