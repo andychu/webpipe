@@ -47,6 +47,7 @@ See comments below for the interface.
 import json
 import os
 import re
+import socket
 import subprocess
 import sys
 import time
@@ -173,12 +174,10 @@ def PluginDispatchLoop(in_dir, out_dir):
   sys.stdout.write(tnet.dump_line(header))
 
   while True:
-    # NOTE: Coroutine
-    line = yield
-
+    # NOTE: This is a coroutine.
+    filename = yield
     # TODO: If file contains punctuation, escape it to be BOTH shell and HTML
     # safe, and then MOVE It to ~/webpipe/safe-name
-    filename = line.strip()
 
     # NOTE: Right now, this allows absolute paths too.
     input_path = os.path.join(in_dir, filename)
@@ -286,6 +285,63 @@ def PluginDispatchLoop(in_dir, out_dir):
     counter += 1
 
 
+def Lines(f, target):
+  """
+  Read lines from the given file object and deliver to the given coroutine.
+  """
+  target.next()  # "prime" coroutine
+
+  while True:
+    line = f.readline()
+    if not line:  # EOF
+      break
+
+    filename = line.strip()
+    try:
+      target.send(filename)
+    except StopIteration:
+      break
+
+
+# Max 1 megabyte.  We close it anyway.
+BUF_SIZE = 1 << 20
+
+# TODO: Should this be moved to "util" so other stages can use it?
+def TcpServer(port, target):
+  """
+  Listen on a port, and read (small) values send from different clients, and
+  deliver them to the given coroutine.
+
+  This basically replaces "nc -k -l 8000 </dev/null", which is not portable
+  across machines (especially OS X).
+  """
+  sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+  # When we die, let other processes use port immediately.
+  sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+  sock.bind(('', port))
+  sock.listen(1)  # backlog of 1; meant to be used on localhost
+  log('Listening on port %d', port)
+
+  target.next()  # "prime" coroutine
+
+  while True:
+    client, addr = sock.accept()
+    log('Connection from %s', addr)
+
+    # The payload is a line right now.  Should we loop until we actually get a
+    # newline?  Could test a trickle.
+    line = client.recv(BUF_SIZE)
+    client.close()
+    if not line:
+      break
+
+    filename = line.strip()
+    try:
+      target.send(filename)
+    except StopIteration:
+      break
+
+
 def main(argv):
   """Returns an exit code."""
   # NOTE: This is the input base path.  We just join them with the filenames on
@@ -296,18 +352,23 @@ def main(argv):
   # PluginDispatchLoop is a coroutine.  It takes items to render on stdin.
   loop = PluginDispatchLoop(in_dir, out_dir)
 
-  # "prime" the coroutine.
-  next(loop)
+  # TODO:
+  # create a tcp server.  reads one connection at a timv 
 
-  while True:
-    line = sys.stdin.readline()
-    if not line:  # EOF
-      break
+  Lines(sys.stdin, loop)
 
-    try:
-      loop.send(line)
-    except StopIteration:
-      break
+  ## "prime" the coroutine.
+  #next(loop)
+
+  #while True:
+  #  line = sys.stdin.readline()
+  #  if not line:  # EOF
+  #    break
+
+  #  try:
+  #    loop.send(line)
+  #  except StopIteration:
+  #    break
 
   return 0
 

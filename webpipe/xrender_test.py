@@ -44,5 +44,20 @@ class ResourcesTest(unittest.TestCase):
     print p
 
 
+def Echo():
+  while True:
+    filename = yield
+    if not filename:
+      break
+    print filename
+
+
+class TcpServerTest(unittest.TestCase):
+
+  def testServer(self):
+    e = Echo()
+    xrender.TcpServer(8002, e)
+
+
 if __name__ == '__main__':
   unittest.main()
