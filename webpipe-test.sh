@@ -5,6 +5,9 @@
 
 set -o nounset
 
+# TODO: make this a proper dep
+. ~/hg/taste/taste.sh
+
 #
 # Components
 #
@@ -82,6 +85,11 @@ write-demo() {
 #
 # Tests
 #
+
+test-xrender-badport() {
+  xrender -p invalid
+  check $? -eq 1
+}
 
 test-xrender() {
   xrender ~/webpipe/input ~/webpipe/s/webpipe-test <<EOF
