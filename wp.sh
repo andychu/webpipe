@@ -50,9 +50,11 @@ readonly INPUT_DIR=~/webpipe/input
 # but it is still possible.
 readonly WATCH_DIR=~/webpipe/watched
 
+# 'nc' is required for wp show and in the R client.  Right now we check at 'wp
+# init' time.
 check-tools() {
-  local err="'socat' not found.  On Ubuntu/Debian, run 'sudo apt-get install socat'"
-  which socat >/dev/null || die "$err"
+  local err="'nc' not found.  On Ubuntu/Debian, run 'sudo apt-get install netcat'"
+  which nc >/dev/null || die "$err"
 }
 
 #
@@ -141,7 +143,6 @@ socat-listen() {
 
 run() {
   local sessionName=${1:-}
-  check-tools
 
   local stamp=$(date +%Y-%m-%d)
   if test -z "$sessionName"; then
@@ -172,7 +173,6 @@ run() {
 # Like run, but just test latency.
 noop() {
   local sessionName=${1:-}
-  check-tools
 
   local stamp=$(date +%Y-%m-%d)
   if test -z "$sessionName"; then
@@ -192,18 +192,18 @@ noop() {
     | serve noop
 }
 
+# NOTE: Use nc for a CLIENT only.  Anything else isn't portable.
+nc-send() {
+  local port=$1
+  nc localhost $port
+}
+
 # Show a file, specifying file type first.
 #
 # $ wp show-as txt NOTES
 # $ gen-html | wp show-as html
 #
 # wp as could be an alias.
-
-socat-send() {
-  local port=$1
-  socat - TCP4:localhost:$port
-}
-
 show-as() {
   local ext=$1
   shift
@@ -215,17 +215,17 @@ show-as() {
     fi
     local tempfile=$INPUT_DIR/sink/$$.$ext
     cat > $tempfile
-    echo $tempfile | socat-send 8988
+    echo $tempfile | nc-send 8988
   fi
 
   # TODO: respect $ext here.  Need to send it as a TNET message I suppose.
 
   for filename in "$@"; do
     if test ${filename:0:1} = /; then
-      echo "$filename" | socat-send 8988
+      echo "$filename" | nc-send 8988
     else
       # relative path, make it absolute.
-      echo "$PWD/$filename" | socat-send 8988
+      echo "$PWD/$filename" | nc-send 8988
     fi
   done
 }
@@ -288,7 +288,7 @@ recv() {
 run-recv() {
   socat-listen 8987 \
     | recv ~/webpipe/input \
-    | while read line; do echo $line | socat-send 8988; done
+    | while read line; do echo $line | nc-send 8988; done
 }
 
 #
