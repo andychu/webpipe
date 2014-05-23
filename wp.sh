@@ -121,6 +121,8 @@ serve() {
   $THIS_DIR/webpipe/serve.py "$@"
 }
 
+# Better/more portable server than nc.  Should only be used when we don't care
+# about running on Mac.
 socat-listen() {
   local port=$1
   # -u: unidirection (</dev/null would be the same)
@@ -163,8 +165,7 @@ run() {
   #
   # We might want recv --listen-port too, but maybe later.  And even server
   # --listen-port.
-  socat-listen 8988 \
-    | xrender $INPUT_DIR $session \
+  xrender -p 8988 $INPUT_DIR $session \
     | serve serve $session
 }
 
@@ -282,6 +283,8 @@ recv() {
 
 # TODO: This should be documented.  This is in conjunction with wp ssh, and
 # remove wp-stub.sh send, I think.
+# NOTE: We're using socat here because this is for Linux people?  Could also
+# add recv -p (factor the code out of xrender and put it in util/common).
 run-recv() {
   socat-listen 8987 \
     | recv ~/webpipe/input \
