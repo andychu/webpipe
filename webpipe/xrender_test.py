@@ -56,6 +56,8 @@ class TcpServerTest(unittest.TestCase):
 
   def testServer(self):
     e = Echo()
+    # This is a 'manual' test; it listens.
+    return
     xrender.TcpServer(8002, e)
 
 

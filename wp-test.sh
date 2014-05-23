@@ -3,6 +3,8 @@
 # Usage:
 #   ./wp-test.sh <function name>
 
+set -o nounset
+
 # TODO: make this a proper dep
 . ~/hg/taste/taste.sh
 

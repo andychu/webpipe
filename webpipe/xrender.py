@@ -37,13 +37,15 @@ See comments below for the interface.
 - provide original file for download (in most cases)
 
 - zero copy
-  - if you make a symlink, then the plugin can read that stuff, create a summary
+  - if you make a symlink, then the plugin can read that stuff, create a
+    summary
   - and then can it output a *capability* for the server to serve files
     anywhere on the file system?
     - or perhaps the symlink is enough?  well it could change.
     - maybe you have to dereference the link.
 """
 
+import getopt
 import json
 import os
 import re
@@ -344,10 +346,23 @@ def TcpServer(port, target):
 
 def main(argv):
   """Returns an exit code."""
-  # NOTE: This is the input base path.  We just join them with the filenames on
-  # stdin.
-  in_dir = argv[1]
-  out_dir = argv[2]
+  port = None
+
+  # Just use simple getopt for now.  This isn't exposed to the UI really.
+  opts, argv = getopt.getopt(argv, 'p:')
+  for name, value in opts:
+    if name == '-p':
+      try:
+        port = int(value)
+      except ValueError:
+        raise Error('Invalid port %r' % value)
+    else:
+      raise AssertionError
+
+  # NOTE: This is the input base path.  We just join them with the filenames
+  # on stdin.
+  in_dir = argv[0]
+  out_dir = argv[1]
 
   # PluginDispatchLoop is a coroutine.  It takes items to render on stdin.
   loop = PluginDispatchLoop(in_dir, out_dir)
@@ -355,27 +370,17 @@ def main(argv):
   # TODO:
   # create a tcp server.  reads one connection at a timv 
 
-  Lines(sys.stdin, loop)
-
-  ## "prime" the coroutine.
-  #next(loop)
-
-  #while True:
-  #  line = sys.stdin.readline()
-  #  if not line:  # EOF
-  #    break
-
-  #  try:
-  #    loop.send(line)
-  #  except StopIteration:
-  #    break
+  if port:
+    TcpServer(port, loop)
+  else:
+    Lines(sys.stdin, loop)
 
   return 0
 
 
 if __name__ == '__main__':
   try:
-    sys.exit(main(sys.argv))
+    sys.exit(main(sys.argv[1:]))
   except KeyboardInterrupt:
     log('Stopped')
     sys.exit(0)
