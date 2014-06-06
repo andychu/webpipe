@@ -64,3 +64,8 @@ From roughly least to most portable:
 TODO: Get rid of nc servers.  Not portable.  socat servers also won't run well
 on Mac, and are not installed by default on Linux.  So do it in Python.
 
+Notes
+-----
+
+Disclaimer: This is not an official Google project.
+
