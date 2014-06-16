@@ -1,0 +1,10 @@
+The plugins/ directory is for webpipe plugins.
+
+Plugins are basically scripts (usually shell) that take a file as input and
+produce static HTML as output, and can have associated JS/CSS.
+
+Each subdirectory here is a plugin for a particular type of file.
+
+See doc/plugins.md for details.
+
+
