@@ -35,6 +35,7 @@ manifest() {
 
   # TODO: Use deps in _tmp
   # TODO: build basis package
+  # TODO: add publish.py
   py-deps webpipe.serve webpipe.xrender
   ls webpipe/*.html webpipe.R wp.sh 
 
