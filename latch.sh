@@ -38,7 +38,7 @@ print-files() {
 
 check-tools() {
   which inotifywait >/dev/null \
-    || die "inotifywait must be installed (sudo apt-get install inotifytools)."
+    || die "inotifywait must be installed (sudo apt-get install inotify-tools)."
 
   which which >/dev/null \
     || die "curl must be installed (sudo apt-get install curl)."
