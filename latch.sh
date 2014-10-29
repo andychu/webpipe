@@ -3,7 +3,21 @@
 # latch.sh
 #
 # Usage:
-#   ...
+#   ./latch.sh <function>
+#
+# To reload edit docs quickly, do:
+#
+#   ./latch.sh rebuild <command> <files>...
+#
+# This rebuilds files in a loop.
+#
+# Then.
+#
+#   ./latch.sh serve
+#
+# TODO: There should be a 'latch run' command that does 'watch and 'serve'
+# together.  This is like 'webpipe run'.
+
 
 set -o nounset
 
@@ -126,9 +140,6 @@ watch() {
   done
 }
 
-# TODO: There should be a 'latch run' command that does 'watch and 'serve'
-# together.  This is like 'webpipe run'.
-
 serve() {
   export PYTHONPATH=$THIS_DIR:~/hg/json-template/python
   $THIS_DIR/latch/latch.py "$@"
@@ -138,5 +149,14 @@ notify() {
   local name=$1
   curl --request POST http://$LATCH_HOST/-/latch/$name
 }
+
+help() {
+  cat $THIS_DIR/doc/latch-help.txt
+}
+
+if test $# -eq 0; then
+  help
+  exit 0
+fi
 
 "$@"
