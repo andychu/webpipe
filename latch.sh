@@ -108,6 +108,21 @@ rebuild() {
 
     local output="_tmp/$rel_output"
 
+    # HACK to sleep 100ms before building.  Otherwise we get:
+    #
+    # Couldn't watch doc/tutorial.md: No such file or directory
+    # changed 
+    # ./build.sh: line 68: doc/tutorial.md: No such file or directory
+    #
+    # What is happening is that:
+    # - we get notificatino of a changed inode
+    # - but vim hasn't actually saved the new file yet
+    # - we can't build without the new file
+    # - TODO: should we listen for another event in wait-vim?  move_self vs
+    # modify?
+
+    sleep 0.1
+
     # Rebuild
     $build_cmd $changed $output
 
