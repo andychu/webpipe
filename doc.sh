@@ -19,6 +19,9 @@ to-html() {
   jsont doc/html.jsont > $out
 }
 
+# TODO: Get rid of bad dependencies:
+#
+# webpipe docs -> pin -> docopt
 make-dict() {
   local body_filename=$1
   pin --title-tag=h1 $body_filename
@@ -33,6 +36,7 @@ build() {
   local base_in=$(basename $in .md)  # For now, get rid of subdirs
   local body=_tmp/$base_in-body.html
 
+  mkdir -p --verbose $(dirname $out)
   echo "Building $in -> $body -> $out"
 
   markdown $in >$body

@@ -171,6 +171,10 @@ LATCH_HEAD = """\
 <script src="/-/latch.js"></script>
 """
 
+LATCH_BODY = """\
+<p id="latch-status">Waiting for latch...</p>
+"""
+
 class LatchRequestHandler(httpd.BaseRequestHandler):
   """
   Notify latches
@@ -239,6 +243,9 @@ class LatchRequestHandler(httpd.BaseRequestHandler):
         stripped = line.strip()
         if stripped == '<!-- INSERT LATCH JS -->':
           out = LATCH_HEAD
+          log('replaced %r', stripped)
+        elif stripped == '<!-- INSERT LATCH HTML -->':
+          out = LATCH_BODY
           log('replaced %r', stripped)
         else:
           out = line

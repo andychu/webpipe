@@ -115,4 +115,11 @@ exif() {
   identify -format '%[exif:*]' "$@"
 }
 
+_link() { ln -s -f -v "$@"; }
+
+install() {
+  _link $PWD/latch.sh ~/bin/latch
+  _link $PWD/wp.sh ~/bin/wp
+}
+
 "$@"

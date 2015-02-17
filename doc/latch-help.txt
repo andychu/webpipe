@@ -1,0 +1,15 @@
+Usage: latch [ rebuild | serve ]
+
+NOTE: This interface is subject to change.
+
+latch rebuild <shell command> <files...>
+  Whenever one of the files change, runs the command to rebuild them.
+
+latch serve <dir>
+  Start latch server.  Your static file should have the string
+  '<!-- INSERT LATCH JS -->' in it.  This will be replaced by JavaScript which
+  does a hanging GET on a rebuild event.
+  
+latch help
+  Show this help.
+  

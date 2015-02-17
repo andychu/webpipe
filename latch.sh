@@ -8,7 +8,21 @@
 # latch.sh
 #
 # Usage:
-#   ...
+#   ./latch.sh <function>
+#
+# To reload edit docs quickly, do:
+#
+#   ./latch.sh rebuild <command> <files>...
+#
+# This rebuilds files in a loop.
+#
+# Then.
+#
+#   ./latch.sh serve
+#
+# TODO: There should be a 'latch run' command that does 'watch and 'serve'
+# together.  This is like 'webpipe run'.
+
 
 set -o nounset
 
@@ -43,7 +57,7 @@ print-files() {
 
 check-tools() {
   which inotifywait >/dev/null \
-    || die "inotifywait must be installed (sudo apt-get install inotifytools)."
+    || die "inotifywait must be installed (sudo apt-get install inotify-tools)."
 
   which which >/dev/null \
     || die "curl must be installed (sudo apt-get install curl)."
@@ -99,6 +113,21 @@ rebuild() {
 
     local output="_tmp/$rel_output"
 
+    # HACK to sleep 100ms before building.  Otherwise we get:
+    #
+    # Couldn't watch doc/tutorial.md: No such file or directory
+    # changed 
+    # ./build.sh: line 68: doc/tutorial.md: No such file or directory
+    #
+    # What is happening is that:
+    # - we get notificatino of a changed inode
+    # - but vim hasn't actually saved the new file yet
+    # - we can't build without the new file
+    # - TODO: should we listen for another event in wait-vim?  move_self vs
+    # modify?
+
+    sleep 0.1
+
     # Rebuild
     $build_cmd $changed $output
 
@@ -131,9 +160,6 @@ watch() {
   done
 }
 
-# TODO: There should be a 'latch run' command that does 'watch and 'serve'
-# together.  This is like 'webpipe run'.
-
 serve() {
   export PYTHONPATH=$THIS_DIR:~/hg/json-template/python
   $THIS_DIR/latch/latch.py "$@"
@@ -143,5 +169,14 @@ notify() {
   local name=$1
   curl --request POST http://$LATCH_HOST/-/latch/$name
 }
+
+help() {
+  cat $THIS_DIR/doc/latch-help.txt
+}
+
+if test $# -eq 0; then
+  help
+  exit 0
+fi
 
 "$@"
