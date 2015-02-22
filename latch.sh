@@ -109,7 +109,7 @@ rebuild() {
 
     # We need to know the output name here relative to _tmp to notify the
     # server.
-    local rel_output="doc/$(basename $changed .md).html"
+    local rel_output="doc/$(dirname $changed)/$(basename $changed .md).html"
 
     local output="_tmp/$rel_output"
 
