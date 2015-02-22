@@ -110,6 +110,8 @@ rebuild() {
     # We need to know the output name here relative to _tmp to notify the
     # server.
     local rel_output="doc/$(dirname $changed)/$(basename $changed .md).html"
+    # Hacky normalization to remove /./ , since that isn't valid in a URL
+    rel_output=$(echo $rel_output | sed 's|/./|/|g')
 
     local output="_tmp/$rel_output"
 
