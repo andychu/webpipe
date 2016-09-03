@@ -98,20 +98,21 @@ readonly LATCH_HOST=localhost:8990
 rebuild() {
   local build_cmd=$1
   shift
-  log "build_cmd $build_cmd"
+  log "build_cmd: $build_cmd"
 
   check-tools
 
   while true; do
     # Wait for a changed file
     local changed=$(wait-vim "$@")
-    log "changed $changed"
+    log "changed file: $changed"
 
     # We need to know the output name here relative to _tmp to notify the
     # server.
-    local rel_output="doc/$(dirname $changed)/$(basename $changed .md).html"
+    local rel_output="$(dirname $changed)/$(basename $changed .md).html"
     # Hacky normalization to remove /./ , since that isn't valid in a URL
     rel_output=$(echo $rel_output | sed 's|/./|/|g')
+    log "rel_output: $rel_output"
 
     local output="_tmp/$rel_output"
 
