@@ -274,7 +274,7 @@ class LatchRequestHandler(httpd.BaseRequestHandler):
 def main(argv):
   """Returns an exit code."""
 
-  (opts, _) = CreateOptionsParser().parse_args(argv[2:])
+  (opts, _) = CreateOptionsParser().parse_args(argv[1:])
 
   # TODO:
   # pass request handler map
@@ -305,7 +305,9 @@ def main(argv):
 
   s = httpd.ThreadedHTTPServer(('', opts.port), handler_class)
 
-  log("Serving on port %d... (Ctrl-C to quit)", opts.port)
+  log("Serving dir %s on port %d... (Ctrl-C to quit)",
+      opts.root_dir, opts.port)
+
   s.serve_forever()
 
 
