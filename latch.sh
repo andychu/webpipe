@@ -114,7 +114,8 @@ rebuild() {
     rel_output=$(echo $rel_output | sed 's|/./|/|g')
     log "rel_output: $rel_output"
 
-    local output="_tmp/$rel_output"
+    # TODO: Don't hard-code _site!
+    local output="_site/$rel_output"
 
     # HACK to sleep 100ms before building.  Otherwise we get:
     #
