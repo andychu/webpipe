@@ -124,7 +124,7 @@ rebuild() {
     # ./build.sh: line 68: doc/tutorial.md: No such file or directory
     #
     # What is happening is that:
-    # - we get notificatino of a changed inode
+    # - we get notification of a changed inode
     # - but vim hasn't actually saved the new file yet
     # - we can't build without the new file
     # - TODO: should we listen for another event in wait-vim?  move_self vs
@@ -138,6 +138,20 @@ rebuild() {
     log "notify $rel_output"
 
     # Release latch so that the page is refreshed.
+    notify $rel_output
+  done
+}
+
+# For Oil posts with presenter notes
+one-rebuild-loop() {
+  local in=$1
+  local rel_output=$2  # URL
+  local build_cmd=$3
+
+  while true; do
+    wait-vim $in
+
+    $build_cmd
     notify $rel_output
   done
 }
