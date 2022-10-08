@@ -63,13 +63,18 @@ check-tools() {
     || die "curl must be installed (sudo apt-get install curl)."
 }
 
+wait-vscodium() {
+  log "wait-vscodium: Watching $@"
+  inotifywait --quiet --format '%w' --event modify "$@"
+}
+
 # Wait on the first change to a group of files by vim.
 #
 # NOTE: This has to be a list of files, like *.txt.  Directories would require
 # a different %w format.
 
 wait-vim() {
-  log "Watching $@"
+  log "wait-vim: Watching $@"
   inotifywait --quiet --format '%w' --event move_self "$@"
 }
 
@@ -97,14 +102,16 @@ readonly LATCH_HOST=localhost:8990
 
 rebuild() {
   local build_cmd=$1
-  shift
+  local wait_cmd=${2:-wait-vim}
+  shift 2
+
   log "build_cmd: $build_cmd"
 
   check-tools
 
   while true; do
     # Wait for a changed file
-    local changed=$(wait-vim "$@")
+    local changed=$($wait_cmd "$@")
     log "changed file: $changed"
 
     # We need to know the output name here relative to _tmp to notify the
