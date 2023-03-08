@@ -38,16 +38,6 @@ die() {
 }
 
 
-# NOTE: inotifywait is very fiddly.
-# - --monitor doesn't work here because vim creates new files, with new inodes,
-# and inotifywait is stuck on the old ones
-# - -e modify/close_write foo.txt bar.txt doesn't seem to print the filename?
-# odd.
-# - -e move_self foo.txt bar.txt seems to work, but that could be vim specific?
-
-# Protocol we want: just print out the filename (which is the same as the latch
-# name).  This unfortunately seems to require editor-specific info.
-
 print-files() {
   set -x
   #inotifywait --monitor --event close_write "$@"
@@ -63,15 +53,24 @@ check-tools() {
     || die "curl must be installed (sudo apt-get install curl)."
 }
 
+# Protocol we want: just print out the filename (which is the same as the latch
+# name).  This unfortunately seems to require editor-specific info.
+
+wait-default() {
+  ### Seems to work with Kate GUI editor, vim, VScode
+
+  # With --event move_self, it doesn't print the right path to stdout.
+  # Not sure if I even need that for Vim and vscodium.
+
+  log "wait-other: Watching $@"
+  inotifywait --quiet --format '%w' "$@"
+}
+
+# TODO: Delete wait-vscodium and wait-vim?
 wait-vscodium() {
   log "wait-vscodium: Watching $@"
   inotifywait --quiet --format '%w' --event modify "$@"
 }
-
-# Wait on the first change to a group of files by vim.
-#
-# NOTE: This has to be a list of files, like *.txt.  Directories would require
-# a different %w format.
 
 wait-vim() {
   log "wait-vim: Watching $@"
@@ -102,7 +101,7 @@ readonly LATCH_HOST=localhost:8990
 
 rebuild() {
   local build_cmd=$1
-  local wait_cmd=${2:-wait-vim}
+  local wait_cmd=${2:-wait-default}
   shift 2
 
   log "build_cmd: $build_cmd"
